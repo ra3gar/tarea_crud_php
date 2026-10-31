@@ -129,3 +129,7 @@ ignorados por git. Se incluye `secrets.example.php` como plantilla.
 - (Nombre y apellido)
 
 > _Materia: Desarrollo de Aplicaciones Multiplataforma._
+
+---
+
+Diseñado y mantenido por **Ricardo Alvarez**.
