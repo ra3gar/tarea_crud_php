@@ -7,11 +7,10 @@ por pregunta de seguridad.
 
 Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 
-> 📖 **Guía de instalación paso a paso** (con instrucciones separadas para
-> **Windows, macOS y Linux**): abrí el archivo **`docs/guia-instalacion.html`**
-> directamente en tu navegador (doble clic). Es una página independiente que
-> **no necesita que el proyecto esté corriendo** — justamente te guía para montarlo
-> desde cero.
+> 📖 **Guía de instalación paso a paso** (explicada pieza por pieza, con
+> instrucciones por **Windows, macOS y Linux**): abrí el archivo
+> **`docs/guia-instalacion.html`** directamente en tu navegador (doble clic).
+> No necesita que el proyecto esté corriendo — justamente te guía para montarlo.
 
 ---
 
@@ -23,7 +22,6 @@ Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 - **Seguridad**: consultas con PDO + *prepared statements* (anti inyección SQL),
   contraseñas y respuestas con `password_hash()` (nunca en texto plano),
   y salida escapada con `htmlspecialchars()` (anti XSS).
-- **Listo para correr desde cero** con un solo comando (Docker Compose).
 - Interfaz propia con indicadores de estado de stock.
 
 ## 🧰 Tecnologías
@@ -34,70 +32,67 @@ Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 | Base de datos | MySQL 8 |
 | Acceso a datos | PDO (prepared statements) |
 | Estilos | CSS propio + Bootstrap 5 (local) |
-| Entorno | Docker + Docker Compose |
+| Entorno | Docker |
 | Administración BD | phpMyAdmin |
 
 ---
 
-## 🚀 Puesta en marcha (paso a paso)
+## 🚀 Puesta en marcha (resumen)
 
-**Requisitos previos:** tener instalados **Docker Desktop** y **Git**. Si no
-los tenés, abrí la guía **`docs/guia-instalacion.html`**, que explica cómo
-instalarlos según tu sistema operativo.
+**Requisitos:** **Docker Desktop** y **Git** instalados.
 
-> 💻 **Todos los comandos de abajo se escriben en una terminal:**
-> - **Windows:** usá **Git Bash** (se instala junto con Git).
-> - **macOS / Linux:** usá la app **Terminal**.
-
-### Paso 1 — Descargar el proyecto
-En la terminal, ubicate en la carpeta donde lo quieras guardar y cloná el repositorio:
+> 📖 Si nunca lo hiciste, seguí la **guía explicada paso a paso**:
+> abrí **`docs/guia-instalacion.html`** en el navegador (incluye la instalación
+> de Docker y Git según tu sistema operativo).
+>
+> 💻 Los comandos van en una **terminal**: **Git Bash** en Windows; **Terminal**
+> en macOS/Linux. Escribí cada línea y presioná **Enter**.
+>
+> 🔑 **La contraseña de la base la elegís vos** (inventás una). Va en DOS lugares que deben coincidir: `secrets.php` (paso 2) y el `docker run` de MySQL (paso 4). Se clona PRIMERO porque la app se construye desde los archivos del repo.
 
 ```bash
+# 1. Descargar el proyecto
 git clone https://github.com/ra3gar/tarea_crud_php.git
 cd tarea_crud_php
+
+# 2. Crear secrets.php y poner TU contraseña (editá la línea $DB_PASS)
+cp secrets.example.php secrets.php
+
+# 3. Crear la red de Docker (para que los contenedores se vean entre sí)
+docker network create red_proyectos
+
+# 4. Levantar MySQL  (usá la MISMA clave que pusiste en secrets.php)
+docker run -d --name mysql_global --network red_proyectos \
+  -e MYSQL_ROOT_PASSWORD='mi_clave_local' -p 3306:3306 mysql:8.4
+
+# 5. Levantar phpMyAdmin (administrar la base en localhost:8080)
+docker run -d --name pma_global --network red_proyectos \
+  -e PMA_HOST=mysql_global -p 8080:80 phpmyadmin
+
+# 6. Construir la imagen de la app (ojo con el punto final)
+docker build -t tarea_crud_php:8.5 .
+
+# 7. Levantar la app (quedará en localhost:8001)
+docker run -d --name tarea_crud_web --network red_proyectos \
+  -p 8001:80 -v "$(pwd):/var/www/html" tarea_crud_php:8.5
+
+# 8. Importar la base de datos (te pedirá la contraseña de MySQL)
+docker exec -i mysql_global mysql -u root -p < database/schema.sql
+
+# 9. Abrir http://localhost:8001  ->  "Crear cuenta" e iniciar sesión
 ```
 
-### Paso 2 — Preparar las credenciales
-El proyecto trae una plantilla `.env.example`. Copiala como `.env` y poné tu propia clave local:
+> **Atajo opcional:** el proyecto incluye un `docker-compose.yml`. Una vez que
+> entendés los pasos, `docker compose up -d --build` (con un `.env` que tenga
+> `DB_PASS`) hace los pasos 3 a 8 de una sola vez.
+
+### 🛠️ Comandos útiles
 
 ```bash
-cp .env.example .env
-```
-
-Luego abrí el archivo `.env` (en un editor o en VSCode) y dejá tu contraseña:
-
-```
-DB_PASS=mi_clave_local
-```
-
-> El `.env` **no se sube a git**: tu contraseña queda solo en tu máquina.
-
-### Paso 3 — Levantar el entorno
-Un solo comando construye y enciende la base de datos, phpMyAdmin y la aplicación.
-La base de datos y sus tablas **se crean solas** la primera vez:
-
-```bash
-docker compose up -d --build
-```
-
-> ⏳ La primera vez puede tardar 1–3 minutos (descarga imágenes). Esperá unos
-> 30 segundos extra para que MySQL termine de arrancar.
-
-### Paso 4 — Abrir la aplicación
-En el navegador entrá a:
-
-- **Aplicación:** http://localhost:8001 → hacé clic en *"Crear cuenta"*, registrate e iniciá sesión.
-- **phpMyAdmin** (opcional, para ver la base): http://localhost:8080 → usuario `root`, la clave de tu `.env`.
-
----
-
-### 🛑 Comandos útiles
-
-```bash
-docker compose down        # apagar todo (conserva los datos)
-docker compose down -v     # apagar y BORRAR la base (empezar de cero)
-docker compose ps          # ver el estado de los contenedores
-docker compose logs -f     # ver los registros en vivo
+docker ps                                              # ver contenedores corriendo
+docker stop tarea_crud_web pma_global mysql_global     # apagar (no borra nada)
+docker start mysql_global pma_global tarea_crud_web    # encender
+docker rm -f mysql_global                              # eliminar para recrear
 ```
 
 ---
@@ -111,18 +106,19 @@ tarea_crud_php/
 ├── login/registro/recuperar/logout.php   Autenticación
 ├── auth.php               Protección de páginas privadas
 ├── config.php             Conexión PDO a MySQL
+├── secrets.example.php    Plantilla de credenciales (creás tu secrets.php)
 ├── database/schema.sql    Crea base, tablas y datos de prueba
 ├── includes/              Encabezado y pie comunes
 ├── assets/                Estilos, Bootstrap y fuentes (locales)
 ├── docs/                  Guía de instalación (guia-instalacion.html)
 ├── Dockerfile             Imagen PHP con drivers de MySQL
-└── docker-compose.yml     Levanta todo el entorno
+└── docker-compose.yml     Atajo opcional para levantar todo
 ```
 
 ## 🔐 Nota de seguridad
 
-Las credenciales **no se versionan**: viven en `.env` y/o `secrets.php`
-(ambos ignorados por git). Se incluye `.env.example` como plantilla.
+Las credenciales **no se versionan**: viven en `secrets.php` (o `.env`),
+ignorados por git. Se incluye `secrets.example.php` como plantilla.
 
 ---
 
