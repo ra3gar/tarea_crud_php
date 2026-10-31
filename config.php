@@ -1,28 +1,29 @@
 <?php
 // =====================================================================
 //  config.php — Conexion a MySQL con PDO. NO contiene secretos.
-//  Las credenciales viven en secrets.php (que NO se sube a git).
-//  Este archivo lo incluyen TODAS las paginas que usan la base.
+//  Toma las credenciales de:
+//    1) Variables de entorno (las inyecta docker-compose), o
+//    2) secrets.php (para el setup manual, sin compose).
 // =====================================================================
+if (getenv('DB_PASS') !== false) {
+    // --- Opcion 1: variables de entorno (docker-compose) ---
+    $DB_HOST = getenv('DB_HOST') ?: 'mysql_global';
+    $DB_NAME = getenv('DB_NAME') ?: 'tarea_crud_db';
+    $DB_USER = getenv('DB_USER') ?: 'root';
+    $DB_PASS = getenv('DB_PASS');
+} else {
+    // --- Opcion 2: archivo local secrets.php (setup manual) ---
+    require_once __DIR__ . '/secrets.php';   // define $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS
+}
 
-// Trae las variables $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS
-require_once __DIR__ . '/secrets.php';
-
-// DSN = "cadena de conexion": driver + host + base + codificacion.
-// OJO: el host es mysql_global (el contenedor), NO localhost.
 $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4";
-
-// Opciones de PDO (buenas practicas):
 $opciones = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // ante un error, lanza excepcion (facil de ver)
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // resultados como arreglos asociativos ($fila['nombre'])
-    PDO::ATTR_EMULATE_PREPARES   => false,                 // prepared statements REALES de MySQL (mas seguro)
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
 ];
-
 try {
-    // $pdo es el objeto de conexion que reutilizaremos en todo el proyecto.
     $pdo = new PDO($dsn, $DB_USER, $DB_PASS, $opciones);
 } catch (PDOException $e) {
-    // Si falla, detener con un mensaje claro.
     die("Error de conexion a la base de datos: " . $e->getMessage());
 }

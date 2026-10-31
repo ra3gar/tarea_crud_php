@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía de instalación — Inventario CRUD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#152238; --ink-2:#1f3252;
+    --bg:#eceff4; --surface:#ffffff;
+    --line:#dde3ec; --text:#1f2a3d; --muted:#6b7890;
+    --brand:#2f5fe0; --brand-strong:#2449b8;
+    --ok:#157f52;  --ok-bg:#e4f5ec;
+    --warn:#9a6212; --warn-bg:#fbeeda;
+    --bad:#b23b3b; --bad-bg:#fbe6e6;
+    --code-bg:#0f1b30;
+    --radius:12px;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.6;
+  }
+  h1,h2,h3,.brand,.step-n{ font-family:"Space Grotesk","Inter",sans-serif; letter-spacing:-.01em; }
+
+  /* Encabezado */
+  .hero{ background:var(--ink); color:#fff; }
+  .hero-in{ max-width:860px; margin:0 auto; padding:40px 24px 44px; }
+  .brand{ display:flex; align-items:center; gap:11px; font-weight:700; font-size:1.1rem; color:#cdd8ea; }
+  .hero h1{ font-size:2.1rem; margin:18px 0 8px; color:#fff; line-height:1.12; }
+  .hero p{ margin:0; color:#aebdd4; max-width:62ch; }
+  .hero .meta{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
+  .chip{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#dbe4f2;
+         padding:6px 12px; border-radius:999px; font-size:.85rem; }
+
+  /* Contenedor */
+  main{ max-width:860px; margin:0 auto; padding:8px 24px 72px; }
+  section{ margin-top:40px; }
+  h2{ font-size:1.5rem; margin:0 0 4px; color:var(--ink); }
+  h2 .kicker{ display:block; font-family:"Inter"; font-size:.8rem; font-weight:600; color:var(--brand); letter-spacing:.02em; margin-bottom:6px; }
+  h3{ font-size:1.12rem; margin:26px 0 8px; color:var(--ink); }
+  p{ margin:10px 0; }
+  a{ color:var(--brand); }
+
+  /* Indice */
+  .toc{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px; margin-top:28px; }
+  .toc h2{ font-size:1rem; margin-bottom:10px; }
+  .toc ol{ margin:0; padding-left:20px; columns:2; column-gap:28px; }
+  .toc li{ margin:4px 0; }
+  .toc a{ text-decoration:none; }
+  .toc a:hover{ text-decoration:underline; }
+
+  /* Pasos numerados */
+  .step{ display:flex; gap:16px; margin:18px 0; }
+  .step-n{ flex:none; width:34px; height:34px; border-radius:9px; background:var(--brand); color:#fff;
+           display:grid; place-items:center; font-weight:600; }
+  .step-body{ flex:1; min-width:0; }
+  .step-body h3{ margin:4px 0 6px; }
+
+  /* Tarjeta genérica */
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px; }
+
+  /* Pestañas por SO */
+  .tabs{ margin-top:14px; }
+  .tab-btns{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tab-btn{ font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--line);
+            background:var(--surface); color:var(--text); padding:9px 16px; border-radius:9px; display:flex; gap:8px; align-items:center; }
+  .tab-btn[aria-selected="true"]{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .tab-panel{ display:none; margin-top:14px; }
+  .tab-panel.active{ display:block; }
+
+  /* Código */
+  .code{ position:relative; background:var(--code-bg); border-radius:10px; margin:12px 0; }
+  .code pre{ margin:0; padding:15px 46px 15px 16px; overflow-x:auto; color:#e7edf7;
+             font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:.9rem; line-height:1.55; }
+  .code .cm{ color:#7f93b4; } /* comentario */
+  .copy{ position:absolute; top:8px; right:8px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06);
+         color:#cfe; border-radius:7px; padding:4px 9px; font:inherit; font-size:.78rem; cursor:pointer; }
+  .copy:hover{ background:rgba(255,255,255,.14); }
+  code.inline{ background:#e7ebf2; border-radius:5px; padding:1px 6px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.88em; }
+
+  /* Callouts */
+  .note{ border-left:4px solid var(--brand); background:var(--surface); border:1px solid var(--line);
+         border-left-width:4px; border-radius:10px; padding:12px 16px; margin:14px 0; }
+  .note.tip{ border-left-color:var(--ok); } .note.tip .note-t{ color:var(--ok); }
+  .note.warn{ border-left-color:var(--warn); } .note.warn .note-t{ color:var(--warn); }
+  .note.bad{ border-left-color:var(--bad); } .note.bad .note-t{ color:var(--bad); }
+  .note-t{ font-weight:600; color:var(--brand); display:block; margin-bottom:2px; font-size:.92rem; }
+  .note p{ margin:4px 0 0; }
+
+  /* Checklist */
+  .check{ list-style:none; padding:0; margin:12px 0; }
+  .check li{ padding:8px 0 8px 30px; position:relative; border-bottom:1px solid var(--line); }
+  .check li:last-child{ border-bottom:0; }
+  .check li::before{ content:"✓"; position:absolute; left:0; top:8px; color:var(--ok); font-weight:700; }
+
+  /* Tabla de estructura */
+  table.files{ width:100%; border-collapse:collapse; margin:10px 0; font-size:.93rem; }
+  table.files td{ padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.files td:first-child{ white-space:nowrap; font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--ink); font-size:.86rem; }
+
+  footer{ border-top:1px solid var(--line); background:var(--surface); }
+  .foot-in{ max-width:860px; margin:0 auto; padding:20px 24px; color:var(--muted); font-size:.85rem; }
+
+  @media (max-width:620px){
+    .hero h1{ font-size:1.6rem; } .toc ol{ columns:1; }
+  }
+  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/></svg>
+      Inventario · Tarea CRUD PHP
+    </div>
+    <h1>Guía de instalación, de cero a funcionando</h1>
+    <p>Esta guía te lleva paso a paso para correr el proyecto en tu computadora, aunque nunca hayas usado Docker. Al terminar vas a tener el sistema de inventario abierto en tu navegador.</p>
+    <div class="meta">
+      <span class="chip">⏱️ ~20–30 min</span>
+      <span class="chip">🐳 Docker</span>
+      <span class="chip">🐘 PHP 8.5 + MySQL</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <nav class="toc">
+    <h2>En esta guía</h2>
+    <ol>
+      <li><a href="#que-es">Qué vas a instalar</a></li>
+      <li><a href="#requisitos">Requisitos</a></li>
+      <li><a href="#paso1">Paso 1: instalar según tu SO</a></li>
+      <li><a href="#paso2">Paso 2: levantar el proyecto</a></li>
+      <li><a href="#verificar">Verificar que funcionó</a></li>
+      <li><a href="#problemas">Problemas comunes</a></li>
+      <li><a href="#estructura">Estructura del proyecto</a></li>
+      <li><a href="#comandos">Comandos útiles</a></li>
+    </ol>
+  </nav>
+
+  <section id="que-es">
+    <h2><span class="kicker">El objetivo</span>Qué vas a instalar</h2>
+    <p>Un sistema web de <strong>inventario de productos</strong> con login: podés crear, listar, editar y eliminar productos, con usuarios y recuperación de contraseña. Está hecho en <strong>PHP + MySQL</strong> y corre dentro de <strong>contenedores Docker</strong>.</p>
+    <div class="note tip">
+      <span class="note-t">¿Por qué Docker?</span>
+      <p>Docker empaqueta el servidor web, PHP y la base de datos en "cajas" aisladas. No tenés que instalar PHP ni MySQL en tu máquina: con un solo comando se arma todo igual en cualquier computadora. Eso es lo que hace que el proyecto sea reproducible para todo el grupo.</p>
+    </div>
+  </section>
+
+  <section id="requisitos">
+    <h2><span class="kicker">Antes de empezar</span>Requisitos</h2>
+    <p>Solo necesitás tres cosas. En el <strong>Paso 1</strong> te muestro cómo instalar las dos primeras según tu sistema operativo.</p>
+    <ul class="check">
+      <li><strong>Docker Desktop</strong> — el motor que corre los contenedores.</li>
+      <li><strong>Git</strong> — para descargar el proyecto desde GitHub.</li>
+      <li><strong>Un navegador</strong> (Chrome, Edge, Firefox…) — ya lo tenés.</li>
+    </ul>
+    <p class="muted">Opcional: <strong>VSCode</strong> para ver y editar el código con comodidad.</p>
+  </section>
+
+  <section id="paso1">
+    <h2><span class="kicker">Paso 1</span>Instalá los requisitos según tu sistema</h2>
+    <p>Elegí tu sistema operativo. Solo tenés que hacer la pestaña que te corresponde.</p>
+
+    <div class="tabs">
+      <div class="tab-btns" role="tablist">
+        <button class="tab-btn" role="tab" aria-selected="true" data-tab="win">🪟 Windows</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="mac">🍎 macOS</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="lin">🐧 Linux</button>
+      </div>
+
+      <!-- WINDOWS -->
+      <div class="tab-panel active" data-panel="win">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <h3>Activar WSL 2</h3>
+            <p>Docker en Windows necesita WSL 2 (un Linux liviano por debajo). Abrí <strong>PowerShell como administrador</strong> y corré:</p>
+            <div class="code"><button class="copy">Copiar</button><pre>wsl --install</pre></div>
+            <p>Reiniciá la computadora si te lo pide.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <h3>Instalar Docker Desktop</h3>
+            <p>Descargá <strong>Docker Desktop for Windows</strong> desde <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>, instalalo y abrilo. Esperá a que el ícono diga <em>"Engine running"</em>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <h3>Instalar Git</h3>
+            <p>Descargá <strong>Git for Windows</strong> desde <a href="https://git-scm.com/download/win">git-scm.com</a> e instalalo con las opciones por defecto. Vas a usar la terminal <strong>Git Bash</strong> que trae.</p>
+          </div>
+        </div>
+        <div class="note warn">
+          <span class="note-t">Verificá</span>
+          <p>Abrí <strong>Git Bash</strong> y corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran un número de versión, estás listo.</p>
+        </div>
+      </div>
+
+      <!-- MACOS -->
+      <div class="tab-panel" data-panel="mac">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <h3>Instalar Docker Desktop</h3>
+            <p>Descargá <strong>Docker Desktop for Mac</strong> desde <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>. Elegí la versión correcta: <strong>Apple Silicon</strong> (M1/M2/M3) o <strong>Intel</strong>. Arrastralo a Aplicaciones, abrilo y esperá a que diga <em>"Engine running"</em>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <h3>Instalar Git</h3>
+            <p>La forma más simple: abrí la <strong>Terminal</strong> y corré <code class="inline">git --version</code>. Si no lo tenés, macOS te ofrece instalar las herramientas de desarrollo; aceptá. (O instalalo con <a href="https://brew.sh">Homebrew</a>: <code class="inline">brew install git</code>.)</p>
+          </div>
+        </div>
+        <div class="note warn">
+          <span class="note-t">Verificá</span>
+          <p>En la Terminal corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran versión, estás listo.</p>
+        </div>
+      </div>
+
+      <!-- LINUX -->
+      <div class="tab-panel" data-panel="lin">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <h3>Instalar Docker Engine + Compose</h3>
+            <p>En Ubuntu/Debian (para otras distros, mirá la <a href="https://docs.docker.com/engine/install/">guía oficial</a>):</p>
+            <div class="code"><button class="copy">Copiar</button><pre>sudo apt update
+sudo apt install -y docker.io docker-compose-plugin
+sudo systemctl enable --now docker</pre></div>
+            <p>Para usar Docker sin <code class="inline">sudo</code>, agregate al grupo y volvé a iniciar sesión:</p>
+            <div class="code"><button class="copy">Copiar</button><pre>sudo usermod -aG docker $USER</pre></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <h3>Instalar Git</h3>
+            <div class="code"><button class="copy">Copiar</button><pre>sudo apt install -y git</pre></div>
+          </div>
+        </div>
+        <div class="note warn">
+          <span class="note-t">Verificá</span>
+          <p>Corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran versión, estás listo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="paso2">
+    <h2><span class="kicker">Paso 2</span>Levantar el proyecto (igual en todos los sistemas)</h2>
+    <p>Desde acá los comandos son los mismos en Windows (Git Bash), macOS y Linux. Docker Compose se encarga de todo.</p>
+
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>Descargar el proyecto</h3>
+        <p>En la terminal, ubicate donde quieras guardar el proyecto y cloná el repositorio:</p>
+        <div class="code"><button class="copy">Copiar</button><pre>git clone https://github.com/ra3gar/tarea_crud_php.git
+cd tarea_crud_php</pre></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>Configurar tu contraseña de base de datos</h3>
+        <p>El proyecto trae un archivo de ejemplo <code class="inline">.env.example</code>. Copialo como <code class="inline">.env</code> y poné una contraseña local (la que quieras):</p>
+        <div class="code"><button class="copy">Copiar</button><pre><span class="cm"># copia la plantilla</span>
+cp .env.example .env</pre></div>
+        <p>Abrí <code class="inline">.env</code> en un editor y dejá algo así:</p>
+        <div class="code"><button class="copy">Copiar</button><pre>DB_PASS=mi_clave_local_123</pre></div>
+        <div class="note tip">
+          <span class="note-t">Por qué un .env</span>
+          <p>La contraseña vive solo en tu máquina (el <code class="inline">.env</code> no se sube a GitHub). El mismo valor lo usan la base de datos y la aplicación, así que con cambiarlo en un solo lugar alcanza.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>Levantar todo con un comando</h3>
+        <div class="code"><button class="copy">Copiar</button><pre>docker compose up -d --build</pre></div>
+        <p>Esto hace, solo, todo lo siguiente:</p>
+        <ul class="check">
+          <li>Construye la imagen de PHP con los drivers de MySQL.</li>
+          <li>Levanta <strong>MySQL</strong>, <strong>phpMyAdmin</strong> y la <strong>app</strong>.</li>
+          <li><strong>Crea la base y la tabla</strong> e inserta datos de prueba (la primera vez).</li>
+        </ul>
+        <div class="note warn">
+          <span class="note-t">Paciencia la primera vez</span>
+          <p>La primera vez descarga imágenes y prepara la base: puede tardar 1–3 minutos. Esperá ~30 segundos extra después de que termine para que MySQL arranque del todo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h3>Abrir la aplicación</h3>
+        <p>En el navegador, entrá a:</p>
+        <div class="code"><button class="copy">Copiar</button><pre>http://localhost:8001</pre></div>
+        <p>Como es la primera vez, hacé clic en <strong>"Crear cuenta"</strong>, registrate (usuario, contraseña y una pregunta de seguridad) y después iniciá sesión. ¡Ya estás adentro del inventario!</p>
+        <div class="note tip">
+          <span class="note-t">Bonus: ver la base de datos</span>
+          <p>phpMyAdmin queda en <a href="http://localhost:8080">http://localhost:8080</a>. Usuario <code class="inline">root</code> y la contraseña que pusiste en el <code class="inline">.env</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="verificar">
+    <h2><span class="kicker">Control</span>Verificar que funcionó</h2>
+    <div class="card">
+      <ul class="check">
+        <li><code class="inline">docker compose ps</code> muestra 3 contenedores "running".</li>
+        <li><strong>localhost:8001</strong> abre la pantalla de login (fondo gris, barra azul marino).</li>
+        <li>Al registrarte e ingresar, ves la tabla con 5 productos de prueba y las métricas arriba.</li>
+        <li><strong>localhost:8080</strong> (phpMyAdmin) muestra la base <code class="inline">tarea_crud_db</code> con las tablas <code class="inline">productos</code> y <code class="inline">usuarios</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="problemas">
+    <h2><span class="kicker">Si algo falla</span>Problemas comunes</h2>
+
+    <div class="note bad">
+      <span class="note-t">"port is already allocated" / puerto ocupado</span>
+      <p>Algo ya usa el puerto 8001, 8080 o 3306. Cerrá ese programa, o cambiá el puerto en <code class="inline">docker-compose.yml</code> (por ejemplo <code class="inline">"8002:80"</code>) y volvé a correr <code class="inline">docker compose up -d</code>.</p>
+    </div>
+    <div class="note bad">
+      <span class="note-t">"docker compose: command not found"</span>
+      <p>Tenés una versión vieja de Docker. Probá con guion: <code class="inline">docker-compose up -d --build</code>, o actualizá Docker Desktop.</p>
+    </div>
+    <div class="note bad">
+      <span class="note-t">La página dice "Error de conexión a la base de datos"</span>
+      <p>MySQL todavía no terminó de arrancar: esperá 30 segundos y recargá. Si sigue, revisá los logs con <code class="inline">docker compose logs mysql_global</code> y confirmá que tu <code class="inline">.env</code> tiene <code class="inline">DB_PASS</code>.</p>
+    </div>
+    <div class="note bad">
+      <span class="note-t">Cambié schema.sql y no se reflejó</span>
+      <p>La base solo se importa la <em>primera</em> vez. Para recrearla desde cero: <code class="inline">docker compose down -v</code> y luego <code class="inline">docker compose up -d --build</code>. <strong>Ojo:</strong> <code class="inline">-v</code> borra los datos.</p>
+    </div>
+  </section>
+
+  <section id="estructura">
+    <h2><span class="kicker">Mapa</span>Estructura del proyecto</h2>
+    <table class="files">
+      <tr><td>docker-compose.yml</td><td>Levanta todos los contenedores de una sola vez.</td></tr>
+      <tr><td>Dockerfile</td><td>Receta de la imagen PHP (con los drivers de MySQL).</td></tr>
+      <tr><td>.env.example</td><td>Plantilla de la contraseña; cada quien crea su <code class="inline">.env</code>.</td></tr>
+      <tr><td>config.php</td><td>Conexión a la base con PDO.</td></tr>
+      <tr><td>index.php</td><td>Lista de productos (pantalla principal del CRUD).</td></tr>
+      <tr><td>crear · editar · eliminar.php</td><td>Alta, modificación y baja de productos.</td></tr>
+      <tr><td>login · registro · recuperar · logout.php</td><td>Autenticación y recuperación por pregunta.</td></tr>
+      <tr><td>auth.php</td><td>Protege las páginas privadas (exige sesión).</td></tr>
+      <tr><td>database/schema.sql</td><td>Crea la base, las tablas y los datos de prueba.</td></tr>
+      <tr><td>includes/</td><td>Encabezado y pie comunes a todas las páginas.</td></tr>
+      <tr><td>assets/</td><td>Estilos propios, Bootstrap y fuentes (locales).</td></tr>
+      <tr><td>DOCUMENTACION_MD/</td><td>Contexto y decisiones del proyecto.</td></tr>
+    </table>
+  </section>
+
+  <section id="comandos">
+    <h2><span class="kicker">Referencia</span>Comandos útiles</h2>
+    <div class="code"><button class="copy">Copiar</button><pre><span class="cm"># levantar todo (en segundo plano)</span>
+docker compose up -d
+
+<span class="cm"># ver el estado de los contenedores</span>
+docker compose ps
+
+<span class="cm"># ver los logs (por ejemplo, de la base)</span>
+docker compose logs -f mysql_global
+
+<span class="cm"># apagar todo (conserva los datos)</span>
+docker compose down
+
+<span class="cm"># apagar y BORRAR la base para empezar de cero</span>
+docker compose down -v</pre></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-in">Guía de instalación del Inventario CRUD — Desarrollo de Aplicaciones Multiplataforma.</div>
+</footer>
+
+<script>
+  // Pestañas por sistema operativo
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var tab = btn.getAttribute('data-tab');
+      btn.parentElement.querySelectorAll('.tab-btn').forEach(function(b){ b.setAttribute('aria-selected', b===btn ? 'true':'false'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p){
+        p.classList.toggle('active', p.getAttribute('data-panel')===tab);
+      });
+    });
+  });
+  // Botón copiar en los bloques de código
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentElement.querySelector('pre');
+      var text = pre.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var old = btn.textContent; btn.textContent = '¡Copiado!';
+        setTimeout(function(){ btn.textContent = old; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>

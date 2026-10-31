@@ -1,5 +1,6 @@
 # Secretos: nunca subir credenciales al repositorio
 secrets.php
+.env
 
 # Archivos del sistema operativo
 .DS_Store
