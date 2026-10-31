@@ -7,6 +7,11 @@ por pregunta de seguridad.
 
 Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 
+> 📖 **Guía de instalación paso a paso** (con instrucciones separadas para
+> **Windows, macOS y Linux**): está en **`docs/guia-instalacion.html`**.
+> Ábrela en el navegador después de clonar el repo
+> (o en `http://localhost:8001/docs/guia-instalacion.html` con el proyecto corriendo).
+
 ---
 
 ## ✨ Características
@@ -36,9 +41,8 @@ Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 ## 🚀 Inicio rápido (desde cero)
 
 > Requisitos: **Docker Desktop** y **Git** instalados.
-> La instalación detallada por sistema operativo (Windows / macOS / Linux)
-> está en **[`docs/guia-instalacion.html`](docs/guia-instalacion.html)**
-> (ábrela en el navegador después de clonar).
+> Si es tu primera vez, seguí la **guía detallada** en
+> [`docs/guia-instalacion.html`](docs/guia-instalacion.html).
 
 ```bash
 # 1. Clonar el proyecto
@@ -74,7 +78,7 @@ tarea_crud_php/
 ├── database/schema.sql    Crea base, tablas y datos de prueba
 ├── includes/              Encabezado y pie comunes
 ├── assets/                Estilos, Bootstrap y fuentes (locales)
-├── docs/                  Guía de instalación
+├── docs/                  Guía de instalación (guia-instalacion.html)
 ├── Dockerfile             Imagen PHP con drivers de MySQL
 └── docker-compose.yml     Levanta todo el entorno
 ```

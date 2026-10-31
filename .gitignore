@@ -2,5 +2,8 @@
 secrets.php
 .env
 
+# Documentación de contexto: solo local, no va al repositorio
+DOCUMENTACION_MD/
+
 # Archivos del sistema operativo
 .DS_Store
