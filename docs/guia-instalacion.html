@@ -26,18 +26,13 @@
     font-family:"Inter",system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.6;
   }
   h1,h2,h3,.brand,.step-n{ font-family:"Space Grotesk","Inter",sans-serif; letter-spacing:-.01em; }
-
-  /* Encabezado */
   .hero{ background:var(--ink); color:#fff; }
   .hero-in{ max-width:860px; margin:0 auto; padding:40px 24px 44px; }
   .brand{ display:flex; align-items:center; gap:11px; font-weight:700; font-size:1.1rem; color:#cdd8ea; }
   .hero h1{ font-size:2.1rem; margin:18px 0 8px; color:#fff; line-height:1.12; }
   .hero p{ margin:0; color:#aebdd4; max-width:62ch; }
   .hero .meta{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
-  .chip{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#dbe4f2;
-         padding:6px 12px; border-radius:999px; font-size:.85rem; }
-
-  /* Contenedor */
+  .chip{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#dbe4f2; padding:6px 12px; border-radius:999px; font-size:.85rem; }
   main{ max-width:860px; margin:0 auto; padding:8px 24px 72px; }
   section{ margin-top:40px; }
   h2{ font-size:1.5rem; margin:0 0 4px; color:var(--ink); }
@@ -45,70 +40,45 @@
   h3{ font-size:1.12rem; margin:26px 0 8px; color:var(--ink); }
   p{ margin:10px 0; }
   a{ color:var(--brand); }
-
-  /* Indice */
   .toc{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px; margin-top:28px; }
   .toc h2{ font-size:1rem; margin-bottom:10px; }
   .toc ol{ margin:0; padding-left:20px; columns:2; column-gap:28px; }
   .toc li{ margin:4px 0; }
   .toc a{ text-decoration:none; }
   .toc a:hover{ text-decoration:underline; }
-
-  /* Pasos numerados */
-  .step{ display:flex; gap:16px; margin:18px 0; }
-  .step-n{ flex:none; width:34px; height:34px; border-radius:9px; background:var(--brand); color:#fff;
-           display:grid; place-items:center; font-weight:600; }
+  .step{ display:flex; gap:16px; margin:22px 0; }
+  .step-n{ flex:none; width:34px; height:34px; border-radius:9px; background:var(--brand); color:#fff; display:grid; place-items:center; font-weight:600; }
   .step-body{ flex:1; min-width:0; }
   .step-body h3{ margin:4px 0 6px; }
-
-  /* Tarjeta genérica */
   .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px; }
-
-  /* Pestañas por SO */
   .tabs{ margin-top:14px; }
   .tab-btns{ display:flex; gap:8px; flex-wrap:wrap; }
-  .tab-btn{ font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--line);
-            background:var(--surface); color:var(--text); padding:9px 16px; border-radius:9px; display:flex; gap:8px; align-items:center; }
+  .tab-btn{ font:inherit; font-weight:500; cursor:pointer; border:1px solid var(--line); background:var(--surface); color:var(--text); padding:9px 16px; border-radius:9px; display:flex; gap:8px; align-items:center; }
   .tab-btn[aria-selected="true"]{ background:var(--ink); color:#fff; border-color:var(--ink); }
   .tab-panel{ display:none; margin-top:14px; }
   .tab-panel.active{ display:block; }
-
-  /* Código */
   .code{ position:relative; background:var(--code-bg); border-radius:10px; margin:12px 0; }
-  .code pre{ margin:0; padding:15px 46px 15px 16px; overflow-x:auto; color:#e7edf7;
-             font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:.9rem; line-height:1.55; }
-  .code .cm{ color:#7f93b4; } /* comentario */
-  .copy{ position:absolute; top:8px; right:8px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06);
-         color:#cfe; border-radius:7px; padding:4px 9px; font:inherit; font-size:.78rem; cursor:pointer; }
+  .code pre{ margin:0; padding:15px 46px 15px 16px; overflow-x:auto; color:#e7edf7; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:.9rem; line-height:1.55; }
+  .code .cm{ color:#7f93b4; }
+  .copy{ position:absolute; top:8px; right:8px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#cfe; border-radius:7px; padding:4px 9px; font:inherit; font-size:.78rem; cursor:pointer; }
   .copy:hover{ background:rgba(255,255,255,.14); }
   code.inline{ background:#e7ebf2; border-radius:5px; padding:1px 6px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.88em; }
-
-  /* Callouts */
-  .note{ border-left:4px solid var(--brand); background:var(--surface); border:1px solid var(--line);
-         border-left-width:4px; border-radius:10px; padding:12px 16px; margin:14px 0; }
+  .note{ border:1px solid var(--line); border-left:4px solid var(--brand); border-radius:10px; padding:12px 16px; margin:14px 0; background:var(--surface); }
   .note.tip{ border-left-color:var(--ok); } .note.tip .note-t{ color:var(--ok); }
   .note.warn{ border-left-color:var(--warn); } .note.warn .note-t{ color:var(--warn); }
   .note.bad{ border-left-color:var(--bad); } .note.bad .note-t{ color:var(--bad); }
   .note-t{ font-weight:600; color:var(--brand); display:block; margin-bottom:2px; font-size:.92rem; }
   .note p{ margin:4px 0 0; }
-
-  /* Checklist */
   .check{ list-style:none; padding:0; margin:12px 0; }
   .check li{ padding:8px 0 8px 30px; position:relative; border-bottom:1px solid var(--line); }
   .check li:last-child{ border-bottom:0; }
   .check li::before{ content:"✓"; position:absolute; left:0; top:8px; color:var(--ok); font-weight:700; }
-
-  /* Tabla de estructura */
   table.files{ width:100%; border-collapse:collapse; margin:10px 0; font-size:.93rem; }
   table.files td{ padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
   table.files td:first-child{ white-space:nowrap; font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--ink); font-size:.86rem; }
-
   footer{ border-top:1px solid var(--line); background:var(--surface); }
   .foot-in{ max-width:860px; margin:0 auto; padding:20px 24px; color:var(--muted); font-size:.85rem; }
-
-  @media (max-width:620px){
-    .hero h1{ font-size:1.6rem; } .toc ol{ columns:1; }
-  }
+  @media (max-width:620px){ .hero h1{ font-size:1.6rem; } .toc ol{ columns:1; } }
   @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
 </style>
 </head>
@@ -121,10 +91,10 @@
       Inventario · Tarea CRUD PHP
     </div>
     <h1>Guía de instalación, de cero a funcionando</h1>
-    <p>Esta guía te lleva paso a paso para correr el proyecto en tu computadora, aunque nunca hayas usado Docker. Al terminar vas a tener el sistema de inventario abierto en tu navegador.</p>
+    <p>Esta guía arma el entorno <strong>paso a paso, explicando cada pieza</strong>: la base de datos MySQL, phpMyAdmin y la aplicación PHP, cada una en su contenedor de Docker. Al terminar vas a entender qué hace cada parte y tener el sistema abierto en tu navegador.</p>
     <div class="meta">
-      <span class="chip">⏱️ ~20–30 min</span>
-      <span class="chip">🐳 Docker</span>
+      <span class="chip">⏱️ ~25–35 min</span>
+      <span class="chip">🐳 Docker (paso a paso)</span>
       <span class="chip">🐘 PHP 8.5 + MySQL</span>
     </div>
   </div>
@@ -138,7 +108,7 @@
       <li><a href="#que-es">Qué vas a instalar</a></li>
       <li><a href="#requisitos">Requisitos</a></li>
       <li><a href="#paso1">Paso 1: instalar según tu SO</a></li>
-      <li><a href="#paso2">Paso 2: levantar el proyecto</a></li>
+      <li><a href="#paso2">Paso 2: montar el proyecto</a></li>
       <li><a href="#verificar">Verificar que funcionó</a></li>
       <li><a href="#problemas">Problemas comunes</a></li>
       <li><a href="#estructura">Estructura del proyecto</a></li>
@@ -148,11 +118,17 @@
 
   <section id="que-es">
     <h2><span class="kicker">El objetivo</span>Qué vas a instalar</h2>
-    <p>Un sistema web de <strong>inventario de productos</strong> con login: podés crear, listar, editar y eliminar productos, con usuarios y recuperación de contraseña. Está hecho en <strong>PHP + MySQL</strong> y corre dentro de <strong>contenedores Docker</strong>.</p>
+    <p>Un sistema web de <strong>inventario de productos</strong> con login: podés crear, listar, editar y eliminar productos, con usuarios y recuperación de contraseña. Está hecho en <strong>PHP + MySQL</strong> y cada componente corre en un <strong>contenedor Docker</strong>.</p>
     <div class="note tip">
-      <span class="note-t">¿Por qué Docker?</span>
-      <p>Docker empaqueta el servidor web, PHP y la base de datos en "cajas" aisladas. No tenés que instalar PHP ni MySQL en tu máquina: con un solo comando se arma todo igual en cualquier computadora. Eso es lo que hace que el proyecto sea reproducible para todo el grupo.</p>
+      <span class="note-t">¿Qué es un contenedor? (en una línea)</span>
+      <p>Una "caja" aislada y liviana que trae adentro un programa listo para correr (acá: MySQL, o PHP, o phpMyAdmin), sin que tengas que instalarlo en tu sistema. Vamos a levantar <strong>tres cajas</strong> y conectarlas entre sí.</p>
     </div>
+    <p>El sistema tiene tres piezas:</p>
+    <ul class="check">
+      <li><strong>MySQL</strong> — la base de datos, donde se guardan productos y usuarios.</li>
+      <li><strong>phpMyAdmin</strong> — una herramienta visual para ver/administrar la base (opcional, pero cómoda).</li>
+      <li><strong>La aplicación PHP</strong> — el sitio web en sí, que vos usás en el navegador.</li>
+    </ul>
   </section>
 
   <section id="requisitos">
@@ -163,13 +139,12 @@
       <li><strong>Git</strong> — para descargar el proyecto desde GitHub.</li>
       <li><strong>Un navegador</strong> (Chrome, Edge, Firefox…) — ya lo tenés.</li>
     </ul>
-    <p class="muted">Opcional: <strong>VSCode</strong> para ver y editar el código con comodidad.</p>
+    <p class="muted">Recomendado: <strong>VSCode</strong> para ver y editar el código con comodidad.</p>
   </section>
 
   <section id="paso1">
     <h2><span class="kicker">Paso 1</span>Instalá los requisitos según tu sistema</h2>
     <p>Elegí tu sistema operativo. Solo tenés que hacer la pestaña que te corresponde.</p>
-
     <div class="tabs">
       <div class="tab-btns" role="tablist">
         <button class="tab-btn" role="tab" aria-selected="true" data-tab="win">🪟 Windows</button>
@@ -177,148 +152,153 @@
         <button class="tab-btn" role="tab" aria-selected="false" data-tab="lin">🐧 Linux</button>
       </div>
 
-      <!-- WINDOWS -->
       <div class="tab-panel active" data-panel="win">
-        <div class="step">
-          <div class="step-n">1</div>
-          <div class="step-body">
-            <h3>Activar WSL 2</h3>
-            <p>Docker en Windows necesita WSL 2 (un Linux liviano por debajo). Abrí <strong>PowerShell como administrador</strong> y corré:</p>
-            <div class="code"><button class="copy">Copiar</button><pre>wsl --install</pre></div>
-            <p>Reiniciá la computadora si te lo pide.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">2</div>
-          <div class="step-body">
-            <h3>Instalar Docker Desktop</h3>
-            <p>Descargá <strong>Docker Desktop for Windows</strong> desde <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>, instalalo y abrilo. Esperá a que el ícono diga <em>"Engine running"</em>.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">3</div>
-          <div class="step-body">
-            <h3>Instalar Git</h3>
-            <p>Descargá <strong>Git for Windows</strong> desde <a href="https://git-scm.com/download/win">git-scm.com</a> e instalalo con las opciones por defecto. Vas a usar la terminal <strong>Git Bash</strong> que trae.</p>
-          </div>
-        </div>
-        <div class="note warn">
-          <span class="note-t">Verificá</span>
-          <p>Abrí <strong>Git Bash</strong> y corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran un número de versión, estás listo.</p>
-        </div>
+        <div class="step"><div class="step-n">1</div><div class="step-body">
+          <h3>Activar WSL 2</h3>
+          <p>Docker en Windows necesita WSL 2 (un Linux liviano por debajo). Abrí <strong>PowerShell como administrador</strong> y corré:</p>
+          <div class="code"><button class="copy">Copiar</button><pre>wsl --install</pre></div>
+          <p>Reiniciá la computadora si te lo pide.</p>
+        </div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">
+          <h3>Instalar Docker Desktop</h3>
+          <p>Descargá <strong>Docker Desktop for Windows</strong> desde <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>, instalalo y abrilo. Esperá a que el ícono diga <em>"Engine running"</em>.</p>
+        </div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">
+          <h3>Instalar Git</h3>
+          <p>Descargá <strong>Git for Windows</strong> desde <a href="https://git-scm.com/download/win">git-scm.com</a> e instalalo con las opciones por defecto. Vas a usar la terminal <strong>Git Bash</strong> que trae.</p>
+        </div></div>
+        <div class="note warn"><span class="note-t">Verificá</span><p>Abrí <strong>Git Bash</strong> y corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran un número de versión, estás listo.</p></div>
       </div>
 
-      <!-- MACOS -->
       <div class="tab-panel" data-panel="mac">
-        <div class="step">
-          <div class="step-n">1</div>
-          <div class="step-body">
-            <h3>Instalar Docker Desktop</h3>
-            <p>Descargá <strong>Docker Desktop for Mac</strong> desde <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>. Elegí la versión correcta: <strong>Apple Silicon</strong> (M1/M2/M3) o <strong>Intel</strong>. Arrastralo a Aplicaciones, abrilo y esperá a que diga <em>"Engine running"</em>.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">2</div>
-          <div class="step-body">
-            <h3>Instalar Git</h3>
-            <p>La forma más simple: abrí la <strong>Terminal</strong> y corré <code class="inline">git --version</code>. Si no lo tenés, macOS te ofrece instalar las herramientas de desarrollo; aceptá. (O instalalo con <a href="https://brew.sh">Homebrew</a>: <code class="inline">brew install git</code>.)</p>
-          </div>
-        </div>
-        <div class="note warn">
-          <span class="note-t">Verificá</span>
-          <p>En la Terminal corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran versión, estás listo.</p>
-        </div>
+        <div class="step"><div class="step-n">1</div><div class="step-body">
+          <h3>Instalar Docker Desktop</h3>
+          <p>Descargá <strong>Docker Desktop for Mac</strong> desde <a href="https://www.docker.com/products/docker-desktop/">docker.com</a>. Elegí la versión correcta: <strong>Apple Silicon</strong> (M1/M2/M3) o <strong>Intel</strong>. Arrastralo a Aplicaciones, abrilo y esperá a que diga <em>"Engine running"</em>.</p>
+        </div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">
+          <h3>Instalar Git</h3>
+          <p>Abrí la <strong>Terminal</strong> y corré <code class="inline">git --version</code>. Si no lo tenés, macOS te ofrece instalar las herramientas de desarrollo; aceptá. (O con <a href="https://brew.sh">Homebrew</a>: <code class="inline">brew install git</code>.)</p>
+        </div></div>
+        <div class="note warn"><span class="note-t">Verificá</span><p>En la Terminal corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran versión, estás listo.</p></div>
       </div>
 
-      <!-- LINUX -->
       <div class="tab-panel" data-panel="lin">
-        <div class="step">
-          <div class="step-n">1</div>
-          <div class="step-body">
-            <h3>Instalar Docker Engine + Compose</h3>
-            <p>En Ubuntu/Debian (para otras distros, mirá la <a href="https://docs.docker.com/engine/install/">guía oficial</a>):</p>
-            <div class="code"><button class="copy">Copiar</button><pre>sudo apt update
-sudo apt install -y docker.io docker-compose-plugin
-sudo systemctl enable --now docker</pre></div>
-            <p>Para usar Docker sin <code class="inline">sudo</code>, agregate al grupo y volvé a iniciar sesión:</p>
-            <div class="code"><button class="copy">Copiar</button><pre>sudo usermod -aG docker $USER</pre></div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">2</div>
-          <div class="step-body">
-            <h3>Instalar Git</h3>
-            <div class="code"><button class="copy">Copiar</button><pre>sudo apt install -y git</pre></div>
-          </div>
-        </div>
-        <div class="note warn">
-          <span class="note-t">Verificá</span>
-          <p>Corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran versión, estás listo.</p>
-        </div>
+        <div class="step"><div class="step-n">1</div><div class="step-body">
+          <h3>Instalar Docker</h3>
+          <p>En Ubuntu/Debian (para otras distros, mirá la <a href="https://docs.docker.com/engine/install/">guía oficial</a>):</p>
+          <div class="code"><button class="copy">Copiar</button><pre>sudo apt update
+sudo apt install -y docker.io
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER</pre></div>
+          <p>Cerrá sesión y volvé a entrar para usar Docker sin <code class="inline">sudo</code>.</p>
+        </div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">
+          <h3>Instalar Git</h3>
+          <div class="code"><button class="copy">Copiar</button><pre>sudo apt install -y git</pre></div>
+        </div></div>
+        <div class="note warn"><span class="note-t">Verificá</span><p>Corré <code class="inline">docker --version</code> y <code class="inline">git --version</code>. Si ambos muestran versión, estás listo.</p></div>
       </div>
     </div>
   </section>
 
   <section id="paso2">
-    <h2><span class="kicker">Paso 2</span>Levantar el proyecto (igual en todos los sistemas)</h2>
-    <p>Desde acá los comandos son los mismos en Windows (Git Bash), macOS y Linux. Docker Compose se encarga de todo.</p>
+    <h2><span class="kicker">Paso 2</span>Montar el proyecto (paso a paso)</h2>
+    <p>Ahora armamos el entorno nosotros mismos, entendiendo cada pieza. Todos los comandos se escriben en una <strong>terminal</strong> (Git Bash en Windows; Terminal en macOS/Linux): escribí o pegá la línea y presioná <strong>Enter</strong>.</p>
 
-    <div class="step">
-      <div class="step-n">1</div>
-      <div class="step-body">
-        <h3>Descargar el proyecto</h3>
-        <p>En la terminal, ubicate donde quieras guardar el proyecto y cloná el repositorio:</p>
-        <div class="code"><button class="copy">Copiar</button><pre>git clone https://github.com/ra3gar/tarea_crud_php.git
+    <div class="note tip">
+      <span class="note-t">Antes de arrancar: cómo encaja todo (leer esto primero)</span>
+      <p><strong>1) La contraseña de la base la elegís vos.</strong> No sale de ningún contenedor ni hay que "sacarla" de ningún lado: inventás una clave y la escribís en <strong>dos lugares que tienen que coincidir</strong> — en <code class="inline">secrets.php</code> (Paso 2) y al crear MySQL (Paso 4). Si no coinciden, la app no se podrá conectar.</p>
+      <p><strong>2) Clonamos el proyecto PRIMERO.</strong> No se levantan los contenedores antes de clonar, porque la app PHP se <em>construye</em> a partir del <code class="inline">Dockerfile</code> y usa los archivos que vienen en el repositorio (el <code class="inline">secrets.php</code>, el <code class="inline">schema.sql</code>, la carpeta que se monta como sitio web). Sin clonar, no habría con qué armarla.</p>
+      <p>Por eso el orden es: <strong>clonar → elegir la clave en secrets.php → crear la base MySQL con esa misma clave → …</strong></p>
+    </div>
+
+    <div class="step"><div class="step-n">1</div><div class="step-body">
+      <h3>Descargar el proyecto</h3>
+      <p>Ubicate en la carpeta donde quieras guardarlo (por ejemplo el Escritorio con <code class="inline">cd Desktop</code>). Después, <code class="inline">git clone</code> crea una carpeta nueva <code class="inline">tarea_crud_php</code> con todo adentro, y <code class="inline">cd</code> entra en ella:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>git clone https://github.com/ra3gar/tarea_crud_php.git
 cd tarea_crud_php</pre></div>
-      </div>
-    </div>
+      <p>A partir de acá, la terminal queda "parada" dentro de la carpeta del proyecto. No cierres esta terminal.</p>
+    </div></div>
 
-    <div class="step">
-      <div class="step-n">2</div>
-      <div class="step-body">
-        <h3>Configurar tu contraseña de base de datos</h3>
-        <p>El proyecto trae un archivo de ejemplo <code class="inline">.env.example</code>. Copialo como <code class="inline">.env</code> y poné una contraseña local (la que quieras):</p>
-        <div class="code"><button class="copy">Copiar</button><pre><span class="cm"># copia la plantilla</span>
-cp .env.example .env</pre></div>
-        <p>Abrí <code class="inline">.env</code> en un editor y dejá algo así:</p>
-        <div class="code"><button class="copy">Copiar</button><pre>DB_PASS=mi_clave_local_123</pre></div>
-        <div class="note tip">
-          <span class="note-t">Por qué un .env</span>
-          <p>La contraseña vive solo en tu máquina (el <code class="inline">.env</code> no se sube a GitHub). El mismo valor lo usan la base de datos y la aplicación, así que con cambiarlo en un solo lugar alcanza.</p>
-        </div>
-      </div>
-    </div>
+    <div class="step"><div class="step-n">2</div><div class="step-body">
+      <h3>Elegir tu contraseña de base de datos</h3>
+      <p>El proyecto trae una plantilla <code class="inline">secrets.example.php</code>. Copiala como <code class="inline">secrets.php</code> (ahí va la contraseña que usará la app para conectarse a la base):</p>
+      <div class="code"><button class="copy">Copiar</button><pre>cp secrets.example.php secrets.php</pre></div>
+      <p>Abrí <code class="inline">secrets.php</code> (lo más fácil, en <strong>VSCode</strong>: <em>Archivo → Abrir carpeta…</em> y elegí <code class="inline">tarea_crud_php</code>) y poné una contraseña inventada por vos en la línea <code class="inline">$DB_PASS</code>:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>$DB_PASS = 'mi_clave_local';</pre></div>
+      <div class="note warn"><span class="note-t">Importante</span><p>Anotá esa contraseña: la vas a volver a usar en el <strong>Paso 4</strong> al crear MySQL, y <strong>tienen que coincidir</strong>. Si no, la app no podrá conectarse.</p></div>
+      <div class="note tip"><span class="note-t">¿Por qué?</span><p><code class="inline">config.php</code> lee este archivo para conectarse a la base. El <code class="inline">secrets.php</code> <strong>no se sube a GitHub</strong> (está en <code class="inline">.gitignore</code>), así que tu clave queda solo en tu máquina.</p></div>
+    </div></div>
 
-    <div class="step">
-      <div class="step-n">3</div>
-      <div class="step-body">
-        <h3>Levantar todo con un comando</h3>
-        <div class="code"><button class="copy">Copiar</button><pre>docker compose up -d --build</pre></div>
-        <p>Esto hace, solo, todo lo siguiente:</p>
-        <ul class="check">
-          <li>Construye la imagen de PHP con los drivers de MySQL.</li>
-          <li>Levanta <strong>MySQL</strong>, <strong>phpMyAdmin</strong> y la <strong>app</strong>.</li>
-          <li><strong>Crea la base y la tabla</strong> e inserta datos de prueba (la primera vez).</li>
-        </ul>
-        <div class="note warn">
-          <span class="note-t">Paciencia la primera vez</span>
-          <p>La primera vez descarga imágenes y prepara la base: puede tardar 1–3 minutos. Esperá ~30 segundos extra después de que termine para que MySQL arranque del todo.</p>
-        </div>
-      </div>
-    </div>
+    <div class="step"><div class="step-n">3</div><div class="step-body">
+      <h3>Crear la red de Docker</h3>
+      <p>Creamos una "red" compartida para que los contenedores puedan encontrarse entre sí por su nombre:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>docker network create red_proyectos</pre></div>
+      <div class="note tip"><span class="note-t">¿Por qué una red?</span><p>Así el contenedor de PHP puede hablarle al de MySQL usando el nombre <code class="inline">mysql_global</code> (como una agenda de contactos interna). Si dice <em>"already exists"</em>, ignoralo: ya estaba creada.</p></div>
+    </div></div>
 
-    <div class="step">
-      <div class="step-n">4</div>
-      <div class="step-body">
-        <h3>Abrir la aplicación</h3>
-        <p>En el navegador, entrá a:</p>
-        <div class="code"><button class="copy">Copiar</button><pre>http://localhost:8001</pre></div>
-        <p>Como es la primera vez, hacé clic en <strong>"Crear cuenta"</strong>, registrate (usuario, contraseña y una pregunta de seguridad) y después iniciá sesión. ¡Ya estás adentro del inventario!</p>
-        <div class="note tip">
-          <span class="note-t">Bonus: ver la base de datos</span>
-          <p>phpMyAdmin queda en <a href="http://localhost:8080">http://localhost:8080</a>. Usuario <code class="inline">root</code> y la contraseña que pusiste en el <code class="inline">.env</code>.</p>
-        </div>
-      </div>
+    <div class="step"><div class="step-n">4</div><div class="step-body">
+      <h3>Levantar la base de datos (MySQL)</h3>
+      <p>Creamos el contenedor de MySQL. <strong>Reemplazá <code class="inline">mi_clave_local</code> por la misma contraseña que pusiste en <code class="inline">secrets.php</code>:</strong></p>
+      <div class="code"><button class="copy">Copiar</button><pre>docker run -d --name mysql_global --network red_proyectos \
+  -e MYSQL_ROOT_PASSWORD='mi_clave_local' \
+  -p 3306:3306 mysql:8.4</pre></div>
+      <p>Qué significa cada parte:</p>
+      <ul class="check">
+        <li><code class="inline">-d</code> → corre en segundo plano (te devuelve la terminal).</li>
+        <li><code class="inline">--name mysql_global</code> → el nombre del contenedor (así lo encuentra la app).</li>
+        <li><code class="inline">--network red_proyectos</code> → lo conecta a la red del paso anterior.</li>
+        <li><code class="inline">-e MYSQL_ROOT_PASSWORD=...</code> → la contraseña del usuario <code class="inline">root</code> (¡la misma de <code class="inline">secrets.php</code>!).</li>
+        <li><code class="inline">-p 3306:3306</code> → abre el puerto de MySQL.</li>
+        <li><code class="inline">mysql:8.4</code> → la imagen de MySQL a usar (se descarga la primera vez).</li>
+      </ul>
+    </div></div>
+
+    <div class="step"><div class="step-n">5</div><div class="step-body">
+      <h3>Levantar phpMyAdmin</h3>
+      <p>Una herramienta visual para administrar la base desde el navegador:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>docker run -d --name pma_global --network red_proyectos \
+  -e PMA_HOST=mysql_global \
+  -p 8080:80 phpmyadmin</pre></div>
+      <div class="note tip"><span class="note-t">¿Qué hace PMA_HOST?</span><p>Le dice a phpMyAdmin a qué servidor MySQL conectarse: a <code class="inline">mysql_global</code> (por eso ambos están en la misma red). Quedará en <strong>localhost:8080</strong>.</p></div>
+    </div></div>
+
+    <div class="step"><div class="step-n">6</div><div class="step-body">
+      <h3>Construir la imagen de la app (PHP)</h3>
+      <p>El proyecto trae un <code class="inline">Dockerfile</code> (la "receta"). Este comando arma una imagen de PHP 8.5 con los drivers de MySQL ya incluidos:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>docker build -t tarea_crud_php:8.5 .</pre></div>
+      <div class="note bad"><span class="note-t">¡No te olvides del punto final!</span><p>Ese <code class="inline">.</code> al final significa "usá el Dockerfile de esta carpeta". Si lo omitís, verás el error <em>"requires 1 argument"</em>.</p></div>
+    </div></div>
+
+    <div class="step"><div class="step-n">7</div><div class="step-body">
+      <h3>Levantar la aplicación (PHP)</h3>
+      <p>Creamos el contenedor de la app a partir de la imagen que acabás de construir:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>docker run -d --name tarea_crud_web --network red_proyectos \
+  -p 8001:80 -v "$(pwd):/var/www/html" \
+  tarea_crud_php:8.5</pre></div>
+      <ul class="check">
+        <li><code class="inline">-p 8001:80</code> → la app quedará en <strong>localhost:8001</strong>.</li>
+        <li><code class="inline">-v "$(pwd):/var/www/html"</code> → monta la carpeta del proyecto como la raíz web. <code class="inline">$(pwd)</code> es "la carpeta actual" y funciona igual en Git Bash, macOS y Linux.</li>
+        <li><code class="inline">--network red_proyectos</code> → para que pueda alcanzar a <code class="inline">mysql_global</code>.</li>
+      </ul>
+    </div></div>
+
+    <div class="step"><div class="step-n">8</div><div class="step-body">
+      <h3>Crear la base y la tabla (importar el SQL)</h3>
+      <p>MySQL ya corre, pero está <strong>vacío</strong>. Importamos <code class="inline">database/schema.sql</code>, que crea la base <code class="inline">tarea_crud_db</code>, la tabla y unos datos de prueba. Elegí una opción:</p>
+      <p><strong>Opción A — Terminal</strong> (te pedirá la contraseña de MySQL):</p>
+      <div class="code"><button class="copy">Copiar</button><pre>docker exec -i mysql_global mysql -u root -p &lt; database/schema.sql</pre></div>
+      <p><strong>Opción B — phpMyAdmin</strong> (visual): entrá a <a href="http://localhost:8080">localhost:8080</a> (usuario <code class="inline">root</code> + tu clave) → pestaña <strong>Importar</strong> → elegí <code class="inline">database/schema.sql</code> → <strong>Continuar</strong>.</p>
+    </div></div>
+
+    <div class="step"><div class="step-n">9</div><div class="step-body">
+      <h3>Abrir la aplicación</h3>
+      <p>En el navegador entrá a <strong>http://localhost:8001</strong>. Como es la primera vez, hacé clic en <strong>"Crear cuenta"</strong>, registrate (usuario, contraseña y una pregunta de seguridad) e iniciá sesión. ¡Listo, ya estás adentro del inventario!</p>
+    </div></div>
+
+    <div class="note tip">
+      <span class="note-t">Atajo opcional (para después)</span>
+      <p>El proyecto también incluye un <code class="inline">docker-compose.yml</code>: una vez que entendés estos pasos, podés hacer los pasos 3 a 8 de un solo tiro con <code class="inline">docker compose up -d --build</code> (requiere un archivo <code class="inline">.env</code> con <code class="inline">DB_PASS</code>). Pero para aprender, mejor hacé los pasos de arriba a mano.</p>
     </div>
   </section>
 
@@ -326,7 +306,7 @@ cp .env.example .env</pre></div>
     <h2><span class="kicker">Control</span>Verificar que funcionó</h2>
     <div class="card">
       <ul class="check">
-        <li><code class="inline">docker compose ps</code> muestra 3 contenedores "running".</li>
+        <li><code class="inline">docker ps</code> muestra 3 contenedores corriendo: <code class="inline">mysql_global</code>, <code class="inline">pma_global</code> y <code class="inline">tarea_crud_web</code>.</li>
         <li><strong>localhost:8001</strong> abre la pantalla de login (fondo gris, barra azul marino).</li>
         <li>Al registrarte e ingresar, ves la tabla con 5 productos de prueba y las métricas arriba.</li>
         <li><strong>localhost:8080</strong> (phpMyAdmin) muestra la base <code class="inline">tarea_crud_db</code> con las tablas <code class="inline">productos</code> y <code class="inline">usuarios</code>.</li>
@@ -336,59 +316,46 @@ cp .env.example .env</pre></div>
 
   <section id="problemas">
     <h2><span class="kicker">Si algo falla</span>Problemas comunes</h2>
-
-    <div class="note bad">
-      <span class="note-t">"port is already allocated" / puerto ocupado</span>
-      <p>Algo ya usa el puerto 8001, 8080 o 3306. Cerrá ese programa, o cambiá el puerto en <code class="inline">docker-compose.yml</code> (por ejemplo <code class="inline">"8002:80"</code>) y volvé a correr <code class="inline">docker compose up -d</code>.</p>
-    </div>
-    <div class="note bad">
-      <span class="note-t">"docker compose: command not found"</span>
-      <p>Tenés una versión vieja de Docker. Probá con guion: <code class="inline">docker-compose up -d --build</code>, o actualizá Docker Desktop.</p>
-    </div>
-    <div class="note bad">
-      <span class="note-t">La página dice "Error de conexión a la base de datos"</span>
-      <p>MySQL todavía no terminó de arrancar: esperá 30 segundos y recargá. Si sigue, revisá los logs con <code class="inline">docker compose logs mysql_global</code> y confirmá que tu <code class="inline">.env</code> tiene <code class="inline">DB_PASS</code>.</p>
-    </div>
-    <div class="note bad">
-      <span class="note-t">Cambié schema.sql y no se reflejó</span>
-      <p>La base solo se importa la <em>primera</em> vez. Para recrearla desde cero: <code class="inline">docker compose down -v</code> y luego <code class="inline">docker compose up -d --build</code>. <strong>Ojo:</strong> <code class="inline">-v</code> borra los datos.</p>
-    </div>
+    <div class="note bad"><span class="note-t">"The container name is already in use"</span><p>Ya existe un contenedor con ese nombre. Borralo y volvé a crearlo: <code class="inline">docker rm -f mysql_global</code> (o el nombre que sea), y repetí el paso.</p></div>
+    <div class="note bad"><span class="note-t">"port is already allocated" / puerto ocupado</span><p>Algo ya usa el puerto 8001, 8080 o 3306. Cerrá ese programa, o cambiá el primer número del <code class="inline">-p</code> (por ejemplo <code class="inline">-p 8002:80</code>) y usá ese puerto.</p></div>
+    <div class="note bad"><span class="note-t">docker build: "requires 1 argument"</span><p>Te faltó el <code class="inline">.</code> al final. Corré <code class="inline">docker build -t tarea_crud_php:8.5 .</code> (con el punto).</p></div>
+    <div class="note bad"><span class="note-t">La página dice "Error de conexión a la base de datos"</span><p>Casi siempre es que la contraseña del <strong>Paso 4</strong> (MySQL) no coincide con la de <code class="inline">secrets.php</code> (Paso 2). Deben ser idénticas. También puede ser que MySQL todavía esté arrancando: esperá 30 segundos y recargá.</p></div>
+    <div class="note bad"><span class="note-t">Login o lista vacía / "table doesn't exist"</span><p>Faltó importar la base (Paso 8). Volvé a correr la Opción A o B de ese paso.</p></div>
   </section>
 
   <section id="estructura">
     <h2><span class="kicker">Mapa</span>Estructura del proyecto</h2>
     <table class="files">
-      <tr><td>docker-compose.yml</td><td>Levanta todos los contenedores de una sola vez.</td></tr>
-      <tr><td>Dockerfile</td><td>Receta de la imagen PHP (con los drivers de MySQL).</td></tr>
-      <tr><td>.env.example</td><td>Plantilla de la contraseña; cada quien crea su <code class="inline">.env</code>.</td></tr>
-      <tr><td>config.php</td><td>Conexión a la base con PDO.</td></tr>
       <tr><td>index.php</td><td>Lista de productos (pantalla principal del CRUD).</td></tr>
       <tr><td>crear · editar · eliminar.php</td><td>Alta, modificación y baja de productos.</td></tr>
       <tr><td>login · registro · recuperar · logout.php</td><td>Autenticación y recuperación por pregunta.</td></tr>
       <tr><td>auth.php</td><td>Protege las páginas privadas (exige sesión).</td></tr>
+      <tr><td>config.php</td><td>Conexión a la base con PDO.</td></tr>
+      <tr><td>secrets.example.php</td><td>Plantilla de credenciales; cada quien crea su <code class="inline">secrets.php</code>.</td></tr>
       <tr><td>database/schema.sql</td><td>Crea la base, las tablas y los datos de prueba.</td></tr>
       <tr><td>includes/</td><td>Encabezado y pie comunes a todas las páginas.</td></tr>
       <tr><td>assets/</td><td>Estilos propios, Bootstrap y fuentes (locales).</td></tr>
-      <tr><td>DOCUMENTACION_MD/</td><td>Contexto y decisiones del proyecto.</td></tr>
+      <tr><td>Dockerfile</td><td>Receta de la imagen PHP (con los drivers de MySQL).</td></tr>
+      <tr><td>docker-compose.yml</td><td>Atajo opcional para levantar todo de una vez.</td></tr>
     </table>
   </section>
 
   <section id="comandos">
     <h2><span class="kicker">Referencia</span>Comandos útiles</h2>
-    <div class="code"><button class="copy">Copiar</button><pre><span class="cm"># levantar todo (en segundo plano)</span>
-docker compose up -d
+    <div class="code"><button class="copy">Copiar</button><pre><span class="cm"># ver los contenedores corriendo</span>
+docker ps
 
-<span class="cm"># ver el estado de los contenedores</span>
-docker compose ps
+<span class="cm"># apagar los contenedores (NO borra nada)</span>
+docker stop tarea_crud_web pma_global mysql_global
 
-<span class="cm"># ver los logs (por ejemplo, de la base)</span>
-docker compose logs -f mysql_global
+<span class="cm"># volver a encenderlos</span>
+docker start mysql_global pma_global tarea_crud_web
 
-<span class="cm"># apagar todo (conserva los datos)</span>
-docker compose down
+<span class="cm"># ver los registros (por ejemplo, de la base)</span>
+docker logs -f mysql_global
 
-<span class="cm"># apagar y BORRAR la base para empezar de cero</span>
-docker compose down -v</pre></div>
+<span class="cm"># eliminar un contenedor (para recrearlo desde cero)</span>
+docker rm -f mysql_global</pre></div>
   </section>
 
 </main>
@@ -398,22 +365,17 @@ docker compose down -v</pre></div>
 </footer>
 
 <script>
-  // Pestañas por sistema operativo
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       var tab = btn.getAttribute('data-tab');
       btn.parentElement.querySelectorAll('.tab-btn').forEach(function(b){ b.setAttribute('aria-selected', b===btn ? 'true':'false'); });
-      document.querySelectorAll('.tab-panel').forEach(function(p){
-        p.classList.toggle('active', p.getAttribute('data-panel')===tab);
-      });
+      document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===tab); });
     });
   });
-  // Botón copiar en los bloques de código
   document.querySelectorAll('.copy').forEach(function(btn){
     btn.addEventListener('click', function(){
       var pre = btn.parentElement.querySelector('pre');
-      var text = pre.innerText;
-      navigator.clipboard.writeText(text).then(function(){
+      navigator.clipboard.writeText(pre.innerText).then(function(){
         var old = btn.textContent; btn.textContent = '¡Copiado!';
         setTimeout(function(){ btn.textContent = old; }, 1400);
       });
