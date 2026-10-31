@@ -8,9 +8,10 @@ por pregunta de seguridad.
 Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 
 > 📖 **Guía de instalación paso a paso** (con instrucciones separadas para
-> **Windows, macOS y Linux**): está en **`docs/guia-instalacion.html`**.
-> Ábrela en el navegador después de clonar el repo
-> (o en `http://localhost:8001/docs/guia-instalacion.html` con el proyecto corriendo).
+> **Windows, macOS y Linux**): abrí el archivo **`docs/guia-instalacion.html`**
+> directamente en tu navegador (doble clic). Es una página independiente que
+> **no necesita que el proyecto esté corriendo** — justamente te guía para montarlo
+> desde cero.
 
 ---
 
@@ -38,31 +39,66 @@ Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 
 ---
 
-## 🚀 Inicio rápido (desde cero)
+## 🚀 Puesta en marcha (paso a paso)
 
-> Requisitos: **Docker Desktop** y **Git** instalados.
-> Si es tu primera vez, seguí la **guía detallada** en
-> [`docs/guia-instalacion.html`](docs/guia-instalacion.html).
+**Requisitos previos:** tener instalados **Docker Desktop** y **Git**. Si no
+los tenés, abrí la guía **`docs/guia-instalacion.html`**, que explica cómo
+instalarlos según tu sistema operativo.
+
+> 💻 **Todos los comandos de abajo se escriben en una terminal:**
+> - **Windows:** usá **Git Bash** (se instala junto con Git).
+> - **macOS / Linux:** usá la app **Terminal**.
+
+### Paso 1 — Descargar el proyecto
+En la terminal, ubicate en la carpeta donde lo quieras guardar y cloná el repositorio:
 
 ```bash
-# 1. Clonar el proyecto
 git clone https://github.com/ra3gar/tarea_crud_php.git
 cd tarea_crud_php
-
-# 2. Crear tu archivo de credenciales local
-cp .env.example .env
-#    editá .env y poné tu propia clave:  DB_PASS=mi_clave_local
-
-# 3. Levantar todo (base + phpMyAdmin + app). La base se crea sola.
-docker compose up -d --build
-
-# 4. Abrir en el navegador:
-#    App:        http://localhost:8001   (crear cuenta e iniciar sesión)
-#    phpMyAdmin: http://localhost:8080   (usuario root, la clave de tu .env)
 ```
 
-Para apagar todo: `docker compose down` · Para reiniciar la base desde cero:
-`docker compose down -v` (borra los datos) y volver a levantar.
+### Paso 2 — Preparar las credenciales
+El proyecto trae una plantilla `.env.example`. Copiala como `.env` y poné tu propia clave local:
+
+```bash
+cp .env.example .env
+```
+
+Luego abrí el archivo `.env` (en un editor o en VSCode) y dejá tu contraseña:
+
+```
+DB_PASS=mi_clave_local
+```
+
+> El `.env` **no se sube a git**: tu contraseña queda solo en tu máquina.
+
+### Paso 3 — Levantar el entorno
+Un solo comando construye y enciende la base de datos, phpMyAdmin y la aplicación.
+La base de datos y sus tablas **se crean solas** la primera vez:
+
+```bash
+docker compose up -d --build
+```
+
+> ⏳ La primera vez puede tardar 1–3 minutos (descarga imágenes). Esperá unos
+> 30 segundos extra para que MySQL termine de arrancar.
+
+### Paso 4 — Abrir la aplicación
+En el navegador entrá a:
+
+- **Aplicación:** http://localhost:8001 → hacé clic en *"Crear cuenta"*, registrate e iniciá sesión.
+- **phpMyAdmin** (opcional, para ver la base): http://localhost:8080 → usuario `root`, la clave de tu `.env`.
+
+---
+
+### 🛑 Comandos útiles
+
+```bash
+docker compose down        # apagar todo (conserva los datos)
+docker compose down -v     # apagar y BORRAR la base (empezar de cero)
+docker compose ps          # ver el estado de los contenedores
+docker compose logs -f     # ver los registros en vivo
+```
 
 ---
 
