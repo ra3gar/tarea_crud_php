@@ -1,57 +1,119 @@
 # =====================================================================
-#  docker-compose.yml — Levanta todo el entorno de la tarea.
-#  Uso:  docker compose up -d   (desde esta carpeta)
-#  Requiere un archivo .env con la variable DB_PASS (ver .env.example).
+#  docker-compose.yml — Levanta TODO el entorno de la tarea con un comando.
+#
+#  Uso (desde esta carpeta):
+#      cp .env.example .env     # una sola vez: elegi tu clave local
+#      docker compose up -d --build
+#
+#  Despues de eso:
+#      La aplicacion ..... http://localhost:8001
+#      phpMyAdmin ........ http://localhost:8081   (usuario root, clave = DB_PASS)
+#
+#  Para apagarlo:        docker compose down       (los datos se conservan)
+#  Para empezar de cero: docker compose down -v    (BORRA la base y sus datos)
+#
+#  LOS TRES CONTENEDORES
+#      tarea_crud_mysql      -> la base: tablas productos y usuarios
+#      tarea_crud_php        -> Apache + PHP, ejecuta las paginas (backend)
+#      tarea_crud_phpmyadmin -> panel para mirar la base por el navegador
+#
+#  Ojo con un detalle de vocabulario: el "frontend" (el HTML y el CSS que
+#  llegan al navegador) no vive en ningun contenedor. Lo GENERA el de PHP
+#  y se ejecuta en la maquina de quien visita la pagina.
+#
+#  INDEPENDENCIA: todo lo que este archivo crea lleva el prefijo
+#  "tarea_crud_". No comparte contenedor, red ni volumen con ningun otro
+#  proyecto de la maquina, asi que se puede levantar y apagar sin tocar
+#  nada mas, y quien clone el repo no choca con lo que ya tenga corriendo.
 # =====================================================================
 services:
 
-  # --- Base de datos MySQL ---
-  mysql_global:
+  # -------------------------------------------------------------------
+  #  LA BASE DE DATOS. Aca viven las tablas productos y usuarios.
+  #
+  #  PHP la encuentra por su nombre, "tarea_crud_mysql": dentro de una red
+  #  de Docker los nombres de contenedor funcionan como nombres de host.
+  #  Por eso config.php se conecta a ese nombre y NO a "localhost" —
+  #  localhost, desde dentro del contenedor de PHP, seria el propio
+  #  contenedor de PHP, donde no hay ninguna base escuchando.
+  # -------------------------------------------------------------------
+  mysql:
     image: mysql:8.4
-    container_name: mysql_global
+    container_name: tarea_crud_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS:?falta DB_PASS; copia .env.example como .env}
       MYSQL_DATABASE: tarea_crud_db
-    ports:
-      - "3306:3306"
     volumes:
-      # Importa la base y la tabla automaticamente la PRIMERA vez que arranca:
+      # schema.sql se ejecuta SOLO la primera vez que se crea el volumen:
+      # ahi se crean las tablas y los datos de prueba. En los arranques
+      # siguientes Docker lo ignora, asi que no se pierde nada.
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-      - mysql_data:/var/lib/mysql
-    networks: [red_proyectos]
+      - tarea_crud_mysql_datos:/var/lib/mysql
+    # No se publica el puerto 3306 al exterior a proposito: la base solo
+    # se usa desde dentro de la red de este proyecto, y asi no choca con
+    # ningun otro MySQL que ya este corriendo en la maquina. Para mirarla
+    # esta phpMyAdmin.
+    healthcheck:
+      # PHP no debe arrancar antes de que la base acepte conexiones. Sin
+      # esto, el primer arranque muestra un error de conexion hasta que
+      # uno recarga a mano.
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${DB_PASS}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks: [tarea_crud_red]
 
-  # --- phpMyAdmin (administrar la base por el navegador) ---
-  pma_global:
+  # -------------------------------------------------------------------
+  #  PHPMYADMIN: panel web para administrar la base.
+  #  Es solo una interfaz: no guarda nada. Si se borra, la aplicacion
+  #  sigue funcionando igual. Esta para poder mirar y editar las tablas
+  #  sin instalar ningun programa.
+  # -------------------------------------------------------------------
+  phpmyadmin:
     image: phpmyadmin:latest
-    container_name: pma_global
+    container_name: tarea_crud_phpmyadmin
     restart: unless-stopped
     environment:
-      PMA_HOST: mysql_global
+      PMA_HOST: tarea_crud_mysql
     ports:
-      - "8080:80"
-    depends_on: [mysql_global]
-    networks: [red_proyectos]
+      - "8081:80"     # 8081 y no 8080, para no chocar con otro phpMyAdmin
+    depends_on:
+      mysql:
+        condition: service_started
+    networks: [tarea_crud_red]
 
-  # --- La aplicacion PHP (se construye desde el Dockerfile) ---
-  tarea_crud_web:
+  # -------------------------------------------------------------------
+  #  APACHE + PHP: el que ejecuta index.php, crear.php, login.php...
+  #  Es el unico que se CONSTRUYE desde el Dockerfile de esta carpeta,
+  #  porque la imagen oficial de PHP no trae los drivers de MySQL y hay
+  #  que agregarselos.
+  # -------------------------------------------------------------------
+  php:
     build: .
-    container_name: tarea_crud_web
+    container_name: tarea_crud_php
     restart: unless-stopped
     environment:
-      DB_HOST: mysql_global
+      # config.php lee estas cuatro variables. Al estar definidas, ignora
+      # secrets.php por completo: con compose no hace falta ese archivo.
+      DB_HOST: tarea_crud_mysql
       DB_NAME: tarea_crud_db
       DB_USER: root
-      DB_PASS: ${DB_PASS}
+      DB_PASS: ${DB_PASS:?falta DB_PASS; copia .env.example como .env}
     ports:
       - "8001:80"
     volumes:
+      # La carpeta del proyecto se monta como raiz web: editar un .php en
+      # el editor se ve en el navegador al recargar, sin reconstruir nada.
       - .:/var/www/html
-    depends_on: [mysql_global]
-    networks: [red_proyectos]
+    depends_on:
+      mysql:
+        condition: service_healthy   # espera a que la base responda
+    networks: [tarea_crud_red]
 
 volumes:
-  mysql_data:        # guarda los datos de MySQL entre reinicios
+  tarea_crud_mysql_datos:   # el disco de la base: sobrevive a borrar contenedores
 
 networks:
-  red_proyectos:
+  tarea_crud_red:           # red privada, solo de este proyecto

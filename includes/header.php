@@ -13,7 +13,12 @@ $navbar = $navbar ?? false;
   <!-- Todo local: no depende de internet -->
   <link href="assets/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/fonts/fuentes.css" rel="stylesheet">
-  <link href="assets/css/estilo.css" rel="stylesheet">
+  <!-- El ?v=... es la fecha de modificacion del archivo. Cambia sola cada
+       vez que se edita el CSS, asi el navegador se ve obligado a pedir la
+       version nueva en vez de usar la que tenia guardada. Sin esto, uno
+       edita los estilos, recarga, no ve ningun cambio, y cree que se
+       rompio algo. -->
+  <link href="assets/css/estilo.css?v=<?= filemtime(__DIR__ . '/../assets/css/estilo.css') ?>" rel="stylesheet">
 </head>
 <body>
 <?php if ($navbar): ?>

@@ -7,7 +7,7 @@
 // =====================================================================
 if (getenv('DB_PASS') !== false) {
     // --- Opcion 1: variables de entorno (docker-compose) ---
-    $DB_HOST = getenv('DB_HOST') ?: 'mysql_global';
+    $DB_HOST = getenv('DB_HOST') ?: 'tarea_crud_mysql';
     $DB_NAME = getenv('DB_NAME') ?: 'tarea_crud_db';
     $DB_USER = getenv('DB_USER') ?: 'root';
     $DB_PASS = getenv('DB_PASS');
