@@ -128,6 +128,7 @@
       <li><a href="#requisitos">Requisitos</a></li>
       <li><a href="#paso1">Paso 1: instalar según tu SO</a></li>
       <li><a href="#paso2">Paso 2: levantar el proyecto</a></li>
+      <li><a href="#acceso">Entrar al sistema (dirección y contraseña)</a></li>
       <li><a href="#por-dentro">Qué pasa por dentro</a></li>
       <li><a href="#verificar">Verificar que funcionó</a></li>
       <li><a href="#conectar-bd">Conectarse a la base de datos</a></li>
@@ -375,6 +376,32 @@ cd tarea_crud_php</pre></div>
       <div class="note tip"><span class="note-t">Cuenta de administrador por defecto</span><p>Usuario <code class="inline">admin</code> / contraseña <code class="inline">Inicio01a</code>. Es una credencial educativa; en un sistema real, lo primero sería cambiarla.</p></div>
       <div class="note tip"><span class="note-t">Si ves los 5 productos, terminaste</span><p>Esa lista es la mejor señal de que todo funcionó: significa que la aplicación corre, que se conectó a la base, y que la base se creó con sus tablas y sus datos.</p></div>
     </div></div>
+  </section>
+
+  <section id="acceso">
+    <h2><span class="kicker">Acceso</span>Entrar al sistema: dirección y contraseña</h2>
+    <p>Con los contenedores levantados, el sistema ya está funcionando en tu computadora. Esto es todo lo que necesitás para entrar:</p>
+    <table class="files">
+      <tr><td>Dirección del sistema</td><td><a href="http://localhost:8001">http://localhost:8001</a></td></tr>
+      <tr><td>Usuario administrador</td><td><code class="inline">admin</code></td></tr>
+      <tr><td>Contraseña</td><td><code class="inline">Inicio01a</code></td></tr>
+    </table>
+    <p>Ese administrador viene sembrado desde la creación de la base, así que existe apenas levantás el proyecto por primera vez: no hay que darlo de alta. Con él administrás productos, categorías y usuarios.</p>
+    <div class="note tip">
+      <span class="note-t">¿Preferís tu propia cuenta?</span>
+      <p>En la pantalla de login tenés <strong>&ldquo;Crear cuenta&rdquo;</strong>. La que crees ahí va a ser un usuario normal, no administrador, porque el sistema ya tiene uno. Si querés darle rol de administrador, entrá como <code class="inline">admin</code> y cambiáselo desde la pantalla <em>Usuarios</em>.</p>
+    </div>
+    <div class="note warn">
+      <span class="note-t">Es una credencial educativa</span>
+      <p>Está puesta a propósito en el proyecto para que cualquiera pueda probarlo sin configurar nada. En un sistema real, lo primero sería cambiarla.</p>
+    </div>
+
+    <h3>Las direcciones del proyecto, juntas</h3>
+    <table class="files">
+      <tr><td><a href="http://localhost:8001">localhost:8001</a></td><td>El sistema de inventario: es lo que vas a usar.</td></tr>
+      <tr><td><a href="http://localhost:8081">localhost:8081</a></td><td>phpMyAdmin, para mirar la base de datos. Usuario <code class="inline">root</code> y la contraseña que vos pusiste en el <code class="inline">.env</code>.</td></tr>
+    </table>
+    <p class="muted">Si alguna no abre, el proyecto no está levantado: revisá <a href="#problemas">Problemas comunes</a>.</p>
   </section>
 
   <section id="por-dentro">
