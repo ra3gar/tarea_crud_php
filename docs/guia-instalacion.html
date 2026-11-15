@@ -107,6 +107,7 @@
     <h2>En esta guía</h2>
     <ol>
       <li><a href="#que-es">Qué vas a instalar</a></li>
+      <li><a href="#glosario">Glosario rápido (si sos nuevo)</a></li>
       <li><a href="#requisitos">Requisitos</a></li>
       <li><a href="#paso1">Paso 1: instalar según tu SO</a></li>
       <li><a href="#paso2">Paso 2: levantar el proyecto</a></li>
@@ -133,6 +134,26 @@
       <tr><td>tarea_crud_phpmyadmin</td><td>Un panel para mirar la base desde el navegador. Es opcional, pero cómodo.</td></tr>
     </table>
     <p class="muted">Los nombres empiezan todos con <code class="inline">tarea_crud_</code> a propósito: así este proyecto no se mezcla con ningún otro que ya tengas en Docker.</p>
+  </section>
+
+  <section id="glosario">
+    <h2><span class="kicker">Si sos nuevo</span>Glosario rápido</h2>
+    <p>Si es tu primera vez con estas herramientas, acá está qué significa cada
+       palabra que vas a ver en la guía. No hace falta memorizarlas: volvé acá
+       cuando una te suene a chino.</p>
+    <table class="files">
+      <tr><td><strong>Término</strong></td><td><strong>Qué es</strong></td></tr>
+      <tr><td>Terminal</td><td>El programa donde escribís <em>comandos</em> (líneas de texto) en vez de hacer clics. En Windows usás <strong>Git Bash</strong>; en macOS o Linux, la app <strong>Terminal</strong>.</td></tr>
+      <tr><td>Comando</td><td>Una orden que le escribís a la terminal y ejecutás con <strong>Enter</strong> (por ejemplo <code class="inline">cd</code> para entrar a una carpeta).</td></tr>
+      <tr><td>GitHub</td><td>Un sitio web donde se guarda y comparte código. Este proyecto vive ahí.</td></tr>
+      <tr><td>Repositorio</td><td>La carpeta del proyecto guardada en GitHub (con todo su historial de cambios).</td></tr>
+      <tr><td>Clonar</td><td>Descargar tu propia copia del repositorio a tu computadora, con <code class="inline">git clone</code>.</td></tr>
+      <tr><td><code class="inline">.env</code></td><td>Un archivo de texto donde se guarda la <strong>configuración</strong> del proyecto (como la contraseña de la base). Se llama así, con un punto adelante. <strong>No es parte del código</strong>: es tu configuración personal, por eso cada uno pone la suya y no se sube a GitHub.</td></tr>
+      <tr><td><code class="inline">DB_PASS</code></td><td>La línea dentro del <code class="inline">.env</code> donde escribís la contraseña de la base de datos.</td></tr>
+      <tr><td>Docker</td><td>Un programa que arma <em>contenedores</em> para correr el proyecto con todo lo que necesita, igual en cualquier computadora.</td></tr>
+      <tr><td>Contenedor</td><td>Una "caja" aislada con un programa y todo lo que necesita adentro (acá hay tres: la base, PHP y phpMyAdmin).</td></tr>
+      <tr><td>phpMyAdmin</td><td>Un panel web para mirar y editar la base de datos desde el navegador.</td></tr>
+    </table>
   </section>
 
   <section id="requisitos">
@@ -207,7 +228,38 @@ sudo usermod -aG docker $USER</pre></div>
 
   <section id="paso2">
     <h2><span class="kicker">Paso 2</span>Levantar el proyecto</h2>
-    <p>Son tres cosas: bajar el proyecto, elegir una contraseña, y un comando. Todo se escribe en una <strong>terminal</strong> (Git Bash en Windows; Terminal en macOS o Linux): escribí o pegá la línea y presioná <strong>Enter</strong>.</p>
+    <p>Son <strong>cuatro pasos</strong>, todos escritos en una <strong>terminal</strong> (Git Bash en Windows; Terminal en macOS o Linux): te parás dentro de la carpeta del proyecto, escribís o pegás cada línea y presionás <strong>Enter</strong>. Este es el recorrido completo de un vistazo:</p>
+    <svg viewBox="0 0 720 474" width="100%" style="max-width:720px; margin:6px 0 4px;" role="img" aria-label="Los cuatro pasos: 1 descargar de GitHub con git clone, 2 editar el archivo .env y poner tu clave en DB_PASS, 3 levantar los contenedores con docker compose up, 4 abrir localhost:8001 en el navegador.">
+      <title>Los 4 pasos: descargar, editar el .env, levantar y abrir</title>
+      <defs><marker id="flw" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M1,1 L9,5 L1,9" fill="none" stroke="#888780" stroke-width="1.6"/></marker></defs>
+      <!-- 1 -->
+      <rect x="10" y="10" width="700" height="88" rx="10" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
+      <circle cx="50" cy="54" r="19" fill="#2f5fe0"/><text x="50" y="61" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">1</text>
+      <text x="86" y="40" font-size="14" font-weight="600" fill="#1f3252">Descargar el proyecto de GitHub</text>
+      <text x="86" y="64" font-size="12" fill="#152238" font-family="monospace">git clone &#8230;  &#8594;  cd tarea_crud_php</text>
+      <text x="86" y="84" font-size="11" fill="#6b7890">En la terminal, parado donde quieras guardarlo (ej. el Escritorio).</text>
+      <line x1="50" y1="98" x2="50" y2="120" stroke="#888780" stroke-width="1.6" marker-end="url(#flw)"/>
+      <!-- 2 (resaltado: el .env) -->
+      <rect x="10" y="124" width="700" height="88" rx="10" fill="#fbeeda" stroke="#9a6212" stroke-width="2"/>
+      <circle cx="50" cy="168" r="19" fill="#9a6212"/><text x="50" y="175" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">2</text>
+      <text x="86" y="154" font-size="14" font-weight="600" fill="#5a3a08">Editar el archivo .env (OBLIGATORIO)</text>
+      <text x="86" y="178" font-size="12" fill="#152238" font-family="monospace">cp .env.example .env  &#8594;  abrir .env y poner tu clave en DB_PASS</text>
+      <text x="86" y="198" font-size="11" fill="#5a3a08">Si no lo editás, el Paso 3 falla pidiendo DB_PASS. Se hace una sola vez.</text>
+      <line x1="50" y1="212" x2="50" y2="234" stroke="#888780" stroke-width="1.6" marker-end="url(#flw)"/>
+      <!-- 3 -->
+      <rect x="10" y="238" width="700" height="88" rx="10" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
+      <circle cx="50" cy="282" r="19" fill="#2f5fe0"/><text x="50" y="289" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">3</text>
+      <text x="86" y="268" font-size="14" font-weight="600" fill="#1f3252">Levantar los contenedores</text>
+      <text x="86" y="292" font-size="12" fill="#152238" font-family="monospace">docker compose up -d --build</text>
+      <text x="86" y="312" font-size="11" fill="#6b7890">Con Docker Desktop abierto. La primera vez tarda unos minutos.</text>
+      <line x1="50" y1="326" x2="50" y2="348" stroke="#888780" stroke-width="1.6" marker-end="url(#flw)"/>
+      <!-- 4 -->
+      <rect x="10" y="352" width="700" height="88" rx="10" fill="#ffffff" stroke="#157f52" stroke-width="1.5"/>
+      <circle cx="50" cy="396" r="19" fill="#157f52"/><text x="50" y="403" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">4</text>
+      <text x="86" y="382" font-size="14" font-weight="600" fill="#0f5e3c">Abrir en el navegador</text>
+      <text x="86" y="406" font-size="12" fill="#152238" font-family="monospace">http://localhost:8001</text>
+      <text x="86" y="426" font-size="11" fill="#6b7890">Entrás con admin / Inicio01a, o creás tu cuenta.</text>
+    </svg>
 
     <div class="note tip">
       <span class="note-t">Dos cosas que conviene entender antes de empezar</span>
