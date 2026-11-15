@@ -174,7 +174,9 @@ class ProductoController extends Controller
             ':descripcion' => $d['descripcion'],
             ':precio'      => $d['precio'],
             ':stock'       => $d['stock'],
-            ':categoria'   => $d['categoria'],
+            // Sin categoria se guarda como NULL (no como ''), para respetar la
+            // clave foranea hacia categorias.nombre: '' no existe en esa tabla.
+            ':categoria'   => $d['categoria'] === '' ? null : $d['categoria'],
         ];
     }
 }

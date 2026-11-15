@@ -79,6 +79,21 @@ INSERT INTO usuarios (usuario, nombre, apellido, rol, password_hash, pregunta, r
    '$2y$10$JDadpe4fzjoGPrKjj26eYut0Of3r99cWKK6MtSN.qCl3MzbutSKgq');
 
 -- =====================================================================
+--  RELACION FORMAL productos -> categorias (clave foranea / foreign key)
+--  Cada producto puede pertenecer a UNA categoria de la tabla categorias.
+--  La FK va de productos.categoria hacia categorias.nombre (que es UNIQUE),
+--  asi la relacion existe de verdad y los gestores (DBeaver, phpMyAdmin) la
+--  dibujan. Se agrega al final, cuando ambas tablas ya existen y tienen datos.
+--    ON UPDATE CASCADE : si se renombra una categoria, los productos la siguen.
+--    ON DELETE SET NULL: si se borra una categoria, sus productos quedan sin
+--                        categoria (NULL) en vez de dar error.
+-- =====================================================================
+ALTER TABLE productos
+  ADD CONSTRAINT fk_producto_categoria
+  FOREIGN KEY (categoria) REFERENCES categorias(nombre)
+  ON UPDATE CASCADE ON DELETE SET NULL;
+
+-- =====================================================================
 --  COMO EJECUTARLO (elegir UNA opcion):
 --  A) phpMyAdmin (visual): pestana "Importar" -> elegir este archivo -> Continuar.
 --  B) phpMyAdmin (pegar):  pestana "SQL" -> pegar todo este texto -> Continuar.

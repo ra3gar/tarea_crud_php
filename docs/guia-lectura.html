@@ -309,7 +309,6 @@
   <p class="lead">Lo que este proyecto no resuelve, dicho de frente. Es un trabajo educativo: señalar
      un límite y explicar por qué está ahí enseña más que disimularlo.</p>
   <ul>
-    <li>La relación productos–categorías es por <em>nombre</em>, no una clave foránea formal (más simple de leer para la tarea).</li>
     <li>No hay tokens CSRF en los formularios: queda fuera del alcance de este trabajo educativo.</li>
     <li>La recuperación de contraseña es por pregunta de seguridad, no por correo.</li>
     <li>Los roles son dos y fijos (admin / usuario); no hay permisos finos.</li>
@@ -348,7 +347,7 @@
     <text x="36" y="114" font-size="11" fill="#1f2a3d">descripcion</text>
     <text x="36" y="135" font-size="11" fill="#1f2a3d">precio</text>
     <text x="36" y="156" font-size="11" fill="#1f2a3d">stock</text>
-    <text x="36" y="177" font-size="11" fill="#b23b3b">categoria &#8226;&#8226;&#8226;&#8226;</text>
+    <text x="36" y="177" font-size="11" fill="#157f52">categoria (FK)</text>
     <text x="36" y="198" font-size="11" fill="#1f2a3d">fecha_creacion</text>
     <!-- categorias -->
     <rect x="510" y="40" width="230" height="120" rx="8" fill="#ffffff" stroke="#157f52" stroke-width="1.5"/>
@@ -370,8 +369,8 @@
     <text x="36" y="378" font-size="11" fill="#1f2a3d">pregunta · respuesta_hash</text>
     <text x="36" y="397" font-size="11" fill="#1f2a3d">fecha_creacion</text>
     <!-- relacion productos.categoria -- categorias.nombre -->
-    <path d="M250 172 H400 V110 H508" fill="none" stroke="#b23b3b" stroke-width="1.5" stroke-dasharray="4 3"/>
-    <text x="360" y="100" text-anchor="middle" font-size="10" fill="#b23b3b">categoria = nombre (por texto)</text>
+    <path d="M250 172 H400 V110 H508" fill="none" stroke="#157f52" stroke-width="2"/>
+    <text x="360" y="100" text-anchor="middle" font-size="10" fill="#157f52">clave foranea: categoria &#8594; nombre</text>
   </svg>
   <h3>Entidades, atributos y relaciones</h3>
   <ul>
@@ -379,10 +378,14 @@
     <li><strong>categorias</strong>: id (PK), nombre (UNIQUE, no se repite), fecha_creacion.</li>
     <li><strong>usuarios</strong>: id (PK), usuario (UNIQUE), nombre, apellido, rol (admin/usuario), password_hash, pregunta, respuesta_hash, fecha_creacion.</li>
   </ul>
-  <p><strong>Relación:</strong> <code class="inline">productos.categoria</code> apunta a
-     <code class="inline">categorias.nombre</code> <em>por el texto del nombre</em> (no es una
-     clave foránea formal; se eligió así por simplicidad). <code class="inline">usuarios</code>
-     es independiente de las otras dos.</p>
+  <p><strong>Relación:</strong> <code class="inline">productos.categoria</code> es una
+     <strong>clave foránea (foreign key)</strong> hacia <code class="inline">categorias.nombre</code>:
+     cada producto puede pertenecer a una categoría de la tabla, o a ninguna (valor
+     <code class="inline">NULL</code>). Por eso DBeaver y phpMyAdmin dibujan la línea de
+     relación entre las dos tablas. La regla es <code class="inline">ON UPDATE CASCADE</code>
+     (si se renombra la categoría, los productos la siguen) y <code class="inline">ON DELETE
+     SET NULL</code> (si se borra, sus productos quedan sin categoría).
+     <code class="inline">usuarios</code> es independiente de las otras dos.</p>
 </section>
 
 </div>
