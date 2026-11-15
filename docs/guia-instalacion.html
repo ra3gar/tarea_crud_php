@@ -278,9 +278,38 @@ sudo usermod -aG docker $USER</pre></div>
       <p><strong>2) Primero se baja el proyecto, después se levantan los contenedores.</strong> Nunca al revés. La aplicación PHP se <em>arma</em> con los archivos del repositorio, así que sin tenerlos no habría con qué armarla.</p>
     </div>
 
+    <h3 style="margin-top:28px;">Antes de clonar: ¿dónde va a vivir el proyecto?</h3>
+    <p>Antes del Paso 1 conviene decidir <strong>en qué carpeta</strong> vas a guardar el proyecto. Buena noticia: <strong>no</strong> tenés que crear la carpeta del proyecto a mano. El comando <code class="inline">git clone</code> crea una carpeta nueva llamada <code class="inline">tarea_crud_php</code> con todo adentro. Vos solo elegís (o creás) la <strong>carpeta "madre"</strong> que la va a contener, por ejemplo una carpeta <code class="inline">Proyectos</code> en el Escritorio:</p>
+    <div class="code"><pre>Escritorio/
+&#9492;&#9472;&#9472; Proyectos/            <span class="cm">&#8592; la carpeta "madre": la elegis o la creas vos</span>
+    &#9492;&#9472;&#9472; tarea_crud_php/   <span class="cm">&#8592; esta la crea git clone, con el proyecto adentro</span></pre></div>
+    <div class="note warn"><span class="note-t">Error común</span><p>No crees una carpeta llamada <code class="inline">tarea_crud_php</code> y clones adentro: te quedaría <code class="inline">tarea_crud_php/tarea_crud_php</code> (una dentro de otra). Creá solo la carpeta madre y cloná ahí.</p></div>
+
+    <p>Hay <strong>dos formas</strong> de bajar el proyecto a esa carpeta. Terminan igual; elegí la que te resulte más cómoda:</p>
+
+    <div class="card" style="margin:12px 0;">
+      <h3 style="margin-top:0;">Opción A · Con la terminal</h3>
+      <p><strong>1)</strong> Creá la carpeta madre. Podés hacerlo con el explorador de archivos (clic derecho &#8594; <em>Nueva carpeta</em>), o por terminal:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>cd Desktop
+mkdir Proyectos
+cd Proyectos</pre></div>
+      <p><strong>2)</strong> Ya parado dentro de <code class="inline">Proyectos</code>, seguí con el <code class="inline">git clone</code> del Paso 1 de abajo.</p>
+    </div>
+
+    <div class="card" style="margin:12px 0;">
+      <h3 style="margin-top:0;">Opción B · Con VSCode (u otro IDE)</h3>
+      <p>VSCode puede clonar el repositorio por vos y abrirlo enseguida (usa el Git que ya instalaste en el Paso 1):</p>
+      <p><strong>1)</strong> Abrí VSCode y la <strong>paleta de comandos</strong> con <code class="inline">Ctrl+Shift+P</code> (Windows/Linux) o <code class="inline">Cmd+Shift+P</code> (macOS). Escribí <strong>"Git: Clone"</strong> y presioná Enter.</p>
+      <p><strong>2)</strong> Pegá la URL del repositorio y Enter:</p>
+      <div class="code"><button class="copy">Copiar</button><pre>https://github.com/ra3gar/tarea_crud_php.git</pre></div>
+      <p><strong>3)</strong> Elegí la carpeta madre (ej. <code class="inline">Proyectos</code>). VSCode descarga el proyecto y te pregunta si querés <strong>abrirlo</strong>: decile que sí.</p>
+      <p><strong>4)</strong> Abrí la <strong>terminal integrada</strong> (menú <em>Terminal &#8594; New Terminal</em>). Queda parada dentro del proyecto, lista para el resto de los pasos.</p>
+      <div class="note tip"><span class="note-t">Si clonaste así</span><p>Ya tenés el proyecto descargado: en el Paso 1 <strong>saltá</strong> el <code class="inline">git clone</code> y seguí desde la terminal integrada (que ya está dentro de <code class="inline">tarea_crud_php</code>). Cualquier otro editor con terminal sirve igual; VSCode es solo el ejemplo.</p></div>
+    </div>
+
     <div class="step"><div class="step-n">1</div><div class="step-body">
       <h3>Bajar el proyecto</h3>
-      <p>Ubicate donde quieras guardarlo (por ejemplo el Escritorio, con <code class="inline">cd Desktop</code>). El comando <code class="inline">git clone</code> crea una carpeta nueva con todo adentro, y <code class="inline">cd</code> entra en ella:</p>
+      <p>Ubicate dentro de la carpeta "madre" que elegiste arriba (por ejemplo <code class="inline">cd Proyectos</code>). El comando <code class="inline">git clone</code> crea la carpeta <code class="inline">tarea_crud_php</code> con todo adentro, y <code class="inline">cd</code> entra en ella:</p>
       <div class="code"><button class="copy">Copiar</button><pre>git clone https://github.com/ra3gar/tarea_crud_php.git
 cd tarea_crud_php</pre></div>
       <p>A partir de acá la terminal queda "parada" dentro de la carpeta del proyecto. No la cierres: los comandos que siguen se corren desde ahí.</p>
