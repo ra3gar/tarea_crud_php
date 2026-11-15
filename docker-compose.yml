@@ -50,10 +50,13 @@ services:
       # siguientes Docker lo ignora, asi que no se pierde nada.
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - tarea_crud_mysql_datos:/var/lib/mysql
-    # No se publica el puerto 3306 al exterior a proposito: la base solo
-    # se usa desde dentro de la red de este proyecto, y asi no choca con
-    # ningun otro MySQL que ya este corriendo en la maquina. Para mirarla
-    # esta phpMyAdmin.
+    # Publicamos la base en el puerto 3307 del host (no el 3306 estandar) para
+    # poder conectarse con un gestor externo como DBeaver SIN chocar con otro
+    # MySQL que ya use el 3306 en la maquina. Dentro de Docker la base sigue
+    # escuchando en 3306; "3307:3306" significa host:contenedor. Para mirarla
+    # desde el navegador tambien esta phpMyAdmin (puerto 8081).
+    ports:
+      - "3307:3306"
     healthcheck:
       # PHP no debe arrancar antes de que la base acepte conexiones. Sin
       # esto, el primer arranque muestra un error de conexion hasta que

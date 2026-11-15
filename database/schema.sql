@@ -64,8 +64,19 @@ CREATE TABLE usuarios (
   respuesta_hash VARCHAR(255) NOT NULL,          -- hash de la respuesta (tambien secreta)
   fecha_creacion TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
--- Nota: los usuarios se crean desde la pagina de REGISTRO en PHP,
---       porque el hash se genera con password_hash() en el codigo.
+
+-- Usuario ADMINISTRADOR inicial, sembrado desde el arranque del sistema
+-- (asi toda instalacion nueva nace ya con un administrador).
+--   Login:       admin
+--   Contrasena:  Inicio01a   (abajo va su hash bcrypt; la clave NUNCA va en texto)
+--   Pregunta de seguridad: "En que ciudad naciste?"   Respuesta: admin
+-- Los hashes se generaron con password_hash() de PHP. El resto de los usuarios
+-- se crean desde la pagina de REGISTRO o desde el panel de Usuarios.
+INSERT INTO usuarios (usuario, nombre, apellido, rol, password_hash, pregunta, respuesta_hash) VALUES
+  ('admin', 'Administrador', 'del Sistema', 'admin',
+   '$2y$10$FXnM2IUhle6MT4U3TFTUAO8PLVStqPLmAE1ObFCMwrMR27YigOX92',
+   'En que ciudad naciste?',
+   '$2y$10$JDadpe4fzjoGPrKjj26eYut0Of3r99cWKK6MtSN.qCl3MzbutSKgq');
 
 -- =====================================================================
 --  COMO EJECUTARLO (elegir UNA opcion):

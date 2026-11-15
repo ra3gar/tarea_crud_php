@@ -19,3 +19,12 @@ UPDATE usuarios SET nombre = usuario WHERE nombre = '';
 
 -- Garantiza al menos un administrador: el usuario mas antiguo (menor id).
 UPDATE usuarios SET rol = 'admin' ORDER BY id LIMIT 1;
+
+-- Usuario ADMINISTRADOR inicial (mismo que siembra schema.sql).
+-- INSERT IGNORE: si ya existe un usuario 'admin', no hace nada (no falla).
+--   Login: admin   Contrasena: Inicio01a   (hash bcrypt; la clave no va en texto)
+INSERT IGNORE INTO usuarios (usuario, nombre, apellido, rol, password_hash, pregunta, respuesta_hash) VALUES
+  ('admin', 'Administrador', 'del Sistema', 'admin',
+   '$2y$10$FXnM2IUhle6MT4U3TFTUAO8PLVStqPLmAE1ObFCMwrMR27YigOX92',
+   'En que ciudad naciste?',
+   '$2y$10$JDadpe4fzjoGPrKjj26eYut0Of3r99cWKK6MtSN.qCl3MzbutSKgq');
