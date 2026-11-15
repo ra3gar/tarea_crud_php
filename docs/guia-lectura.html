@@ -76,9 +76,82 @@
     <li><a href="#glosario">Glosario de PHP</a></li>
     <li><a href="#invariantes">Las 5 invariantes y dónde se cumplen</a></li>
     <li><a href="#limites-conocidos">Límites conocidos</a></li>
+    <li><a href="#tecnologias">Tecnologías del proyecto (y qué significan las siglas)</a></li>
+    <li><a href="#esquema-bd">Esquema de la base de datos (diagrama)</a></li>
     <li><a href="#estructura-carpetas">Dónde está cada cosa</a></li>
   </ol>
 </nav>
+
+<section id="tecnologias">
+  <h2>Tecnologías del proyecto (y qué significan las siglas)</h2>
+  <p class="lead">Cada herramienta, qué es (con la sigla explicada) y para qué se usa acá.</p>
+
+  <h3>El diagrama de cómo se comunica todo</h3>
+  <p>El <strong>usuario</strong> usa el <strong>navegador</strong> (el frontend: lo que se ve).
+     El <strong>backend</strong> (el servidor: Apache + PHP) recibe el pedido, le pregunta a la
+     <strong>base de datos</strong> (MySQL) y devuelve el HTML ya armado.</p>
+  <svg viewBox="0 0 760 210" width="100%" style="max-width:760px" role="img" aria-label="El navegador del usuario pide por HTTP al backend Apache + PHP, que consulta la base de datos MySQL con SQL y devuelve el HTML.">
+    <title>Comunicación entre el usuario, el backend y la base de datos</title>
+    <defs>
+      <marker id="arb" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f5fe0"/></marker>
+      <marker id="arg" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#157f52"/></marker>
+    </defs>
+    <rect x="12" y="55" width="180" height="110" rx="12" fill="#ffffff" stroke="#2f5fe0" stroke-width="2"/>
+    <text x="102" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1f3252">Usuario</text>
+    <text x="102" y="110" text-anchor="middle" font-size="12" fill="#6b7890">Navegador</text>
+    <text x="102" y="132" text-anchor="middle" font-size="11" fill="#6b7890">frontend: HTML + CSS</text>
+    <rect x="285" y="35" width="195" height="150" rx="12" fill="#ffffff" stroke="#2f5fe0" stroke-width="2"/>
+    <text x="382" y="66" text-anchor="middle" font-size="15" font-weight="600" fill="#1f3252">Backend</text>
+    <text x="382" y="88" text-anchor="middle" font-size="12" fill="#6b7890">Apache + PHP</text>
+    <text x="382" y="112" text-anchor="middle" font-size="11" fill="#6b7890">front controller</text>
+    <text x="382" y="130" text-anchor="middle" font-size="11" fill="#6b7890">router &#8594; controlador</text>
+    <text x="382" y="148" text-anchor="middle" font-size="11" fill="#6b7890">&#8594; modelo (PDO)</text>
+    <rect x="575" y="55" width="175" height="110" rx="12" fill="#ffffff" stroke="#157f52" stroke-width="2"/>
+    <text x="662" y="86" text-anchor="middle" font-size="15" font-weight="600" fill="#157f52">Base de datos</text>
+    <text x="662" y="108" text-anchor="middle" font-size="12" fill="#6b7890">MySQL</text>
+    <text x="662" y="130" text-anchor="middle" font-size="11" fill="#6b7890">productos · categorias</text>
+    <text x="662" y="146" text-anchor="middle" font-size="11" fill="#6b7890">usuarios</text>
+    <line x1="192" y1="95" x2="283" y2="95" stroke="#2f5fe0" stroke-width="2" marker-end="url(#arb)"/>
+    <text x="237" y="88" text-anchor="middle" font-size="10" fill="#6b7890">pide (HTTP)</text>
+    <line x1="283" y1="128" x2="192" y2="128" stroke="#2f5fe0" stroke-width="2" marker-end="url(#arb)"/>
+    <text x="237" y="143" text-anchor="middle" font-size="10" fill="#6b7890">HTML de vuelta</text>
+    <line x1="480" y1="95" x2="573" y2="95" stroke="#157f52" stroke-width="2" marker-end="url(#arg)"/>
+    <text x="527" y="88" text-anchor="middle" font-size="10" fill="#6b7890">consulta (SQL)</text>
+    <line x1="573" y1="128" x2="480" y2="128" stroke="#157f52" stroke-width="2" marker-end="url(#arg)"/>
+    <text x="527" y="143" text-anchor="middle" font-size="10" fill="#6b7890">filas (datos)</text>
+  </svg>
+
+  <h3>Las tecnologías, una por una</h3>
+  <ul>
+    <li><strong>PHP</strong> (Hypertext Preprocessor): el lenguaje del backend. Corre en el servidor y arma el HTML que se manda al navegador.</li>
+    <li><strong>MySQL</strong>: el motor de base de datos (BD) donde se guardan productos, categorías y usuarios.</li>
+    <li><strong>PDO</strong> (PHP Data Objects): la "puerta" de PHP para hablar con MySQL. Se usa siempre con <em>prepared statements</em> (consultas preparadas) para evitar inyección SQL.</li>
+    <li><strong>SQL</strong> (Structured Query Language): el idioma para pedirle y guardarle datos a la base (SELECT, INSERT, UPDATE, DELETE).</li>
+    <li><strong>Apache</strong>: el servidor web que recibe las peticiones HTTP (HyperText Transfer Protocol) y ejecuta PHP.</li>
+    <li><strong>Docker</strong>: empaqueta todo el entorno (PHP, MySQL, phpMyAdmin) en contenedores, para levantarlo con un comando y que a todos les funcione igual.</li>
+    <li><strong>phpMyAdmin</strong>: un panel web para mirar y editar la base a mano, sin instalar nada.</li>
+    <li><strong>HTML</strong> (HyperText Markup Language): la estructura de las páginas, lo que arman las vistas.</li>
+    <li><strong>CSS</strong> (Cascading Style Sheets / hojas de estilo en cascada): el aspecto visual (colores, tamaños, posiciones).</li>
+  </ul>
+
+  <h3>¿Se usa Bootstrap? Sí. ¿Y cómo interactúa el CSS?</h3>
+  <p>El estilo se arma en <strong>dos capas</strong> que trabajan juntas:</p>
+  <ul>
+    <li><strong>Bootstrap 5</strong> (framework de CSS) — está en <code class="inline">public/assets/css/bootstrap.min.css</code>, servido localmente (sin CDN / sin depender de internet). Aporta la base: la grilla, botones, formularios, alertas y utilidades (clases como <code class="inline">btn</code>, <code class="inline">row</code>, <code class="inline">form-control</code>).</li>
+    <li><strong>El tema propio</strong> (<code class="inline">public/assets/css/estilo.css</code>) — se carga <em>después</em> de Bootstrap, así que lo "pisa" donde hace falta: define los colores de la marca, la barra superior, las tarjetas del tablero, los gráficos y el menú. Encima de la base de Bootstrap, le da la cara propia al proyecto.</li>
+  </ul>
+  <p>En resumen: Bootstrap pone los cimientos del estilo y <code class="inline">estilo.css</code> los personaliza.</p>
+
+  <h3>¿Qué "APIs" se usan?</h3>
+  <p>Una API (Application Programming Interface / interfaz de programación) es un conjunto de
+     funciones que una herramienta ofrece para que otro código la use. Acá no se consumen APIs
+     externas por internet; las que se usan son las que trae PHP:</p>
+  <ul>
+    <li>La <strong>API de PDO</strong> para hablar con MySQL (preparar y ejecutar consultas).</li>
+    <li>La <strong>API de contraseñas</strong> de PHP: <code class="inline">password_hash()</code> y <code class="inline">password_verify()</code>, para guardar y comparar contraseñas sin verlas en texto.</li>
+    <li>La <strong>API de sesiones</strong> (<code class="inline">$_SESSION</code>) para recordar quién inició sesión entre páginas.</li>
+  </ul>
+</section>
 
 <section id="mapa-archivos">
   <h2>1. Mapa de archivos</h2>
@@ -257,6 +330,59 @@
   <p>El criterio clave: el código sensible (<code class="inline">app/</code>, <code class="inline">config/</code>, <code class="inline">secrets.php</code>)
      vive <strong>fuera</strong> de <code class="inline">public/</code>, así el navegador físicamente no lo alcanza — no por una
      regla que lo prohíbe, sino porque no está en la carpeta servida.</p>
+</section>
+
+<section id="esquema-bd">
+  <h2>Esquema de la base de datos (diagrama)</h2>
+  <p class="lead">Las tres tablas, sus atributos y cómo se relacionan. PK = Primary Key
+     (clave primaria, el identificador único de cada fila).</p>
+  <svg viewBox="0 0 760 430" width="100%" style="max-width:760px" role="img" aria-label="Diagrama entidad-relación: tablas productos, categorias y usuarios con sus atributos; productos.categoria se relaciona por nombre con categorias.nombre.">
+    <title>Esquema entidad-relación de la base de datos</title>
+    <!-- productos -->
+    <rect x="20" y="20" width="230" height="200" rx="8" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
+    <rect x="20" y="20" width="230" height="30" rx="8" fill="#2f5fe0"/>
+    <rect x="20" y="40" width="230" height="10" fill="#2f5fe0"/>
+    <text x="135" y="40" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">productos</text>
+    <text x="36" y="72" font-size="11" fill="#1f3252" font-weight="600">PK  id</text>
+    <text x="36" y="93" font-size="11" fill="#1f2a3d">nombre</text>
+    <text x="36" y="114" font-size="11" fill="#1f2a3d">descripcion</text>
+    <text x="36" y="135" font-size="11" fill="#1f2a3d">precio</text>
+    <text x="36" y="156" font-size="11" fill="#1f2a3d">stock</text>
+    <text x="36" y="177" font-size="11" fill="#b23b3b">categoria &#8226;&#8226;&#8226;&#8226;</text>
+    <text x="36" y="198" font-size="11" fill="#1f2a3d">fecha_creacion</text>
+    <!-- categorias -->
+    <rect x="510" y="40" width="230" height="120" rx="8" fill="#ffffff" stroke="#157f52" stroke-width="1.5"/>
+    <rect x="510" y="40" width="230" height="30" rx="8" fill="#157f52"/>
+    <rect x="510" y="60" width="230" height="10" fill="#157f52"/>
+    <text x="625" y="60" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">categorias</text>
+    <text x="526" y="92" font-size="11" fill="#1f3252" font-weight="600">PK  id</text>
+    <text x="526" y="113" font-size="11" fill="#b23b3b">nombre (UNIQUE)</text>
+    <text x="526" y="134" font-size="11" fill="#1f2a3d">fecha_creacion</text>
+    <!-- usuarios -->
+    <rect x="20" y="250" width="230" height="165" rx="8" fill="#ffffff" stroke="#9a6212" stroke-width="1.5"/>
+    <rect x="20" y="250" width="230" height="30" rx="8" fill="#9a6212"/>
+    <rect x="20" y="270" width="230" height="10" fill="#9a6212"/>
+    <text x="135" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">usuarios</text>
+    <text x="36" y="302" font-size="11" fill="#1f3252" font-weight="600">PK  id</text>
+    <text x="36" y="321" font-size="11" fill="#1f2a3d">usuario (UNIQUE) · nombre · apellido</text>
+    <text x="36" y="340" font-size="11" fill="#1f2a3d">rol (admin / usuario)</text>
+    <text x="36" y="359" font-size="11" fill="#1f2a3d">password_hash</text>
+    <text x="36" y="378" font-size="11" fill="#1f2a3d">pregunta · respuesta_hash</text>
+    <text x="36" y="397" font-size="11" fill="#1f2a3d">fecha_creacion</text>
+    <!-- relacion productos.categoria -- categorias.nombre -->
+    <path d="M250 172 H400 V110 H508" fill="none" stroke="#b23b3b" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="360" y="100" text-anchor="middle" font-size="10" fill="#b23b3b">categoria = nombre (por texto)</text>
+  </svg>
+  <h3>Entidades, atributos y relaciones</h3>
+  <ul>
+    <li><strong>productos</strong>: id (PK), nombre, descripcion, precio, stock, categoria, fecha_creacion.</li>
+    <li><strong>categorias</strong>: id (PK), nombre (UNIQUE, no se repite), fecha_creacion.</li>
+    <li><strong>usuarios</strong>: id (PK), usuario (UNIQUE), nombre, apellido, rol (admin/usuario), password_hash, pregunta, respuesta_hash, fecha_creacion.</li>
+  </ul>
+  <p><strong>Relación:</strong> <code class="inline">productos.categoria</code> apunta a
+     <code class="inline">categorias.nombre</code> <em>por el texto del nombre</em> (no es una
+     clave foránea formal; se eligió así por simplicidad). <code class="inline">usuarios</code>
+     es independiente de las otras dos.</p>
 </section>
 
 </div>

@@ -7,13 +7,27 @@ categorías, gestionar usuarios, y trae un tablero con gráficos.
 
 Proyecto de la materia **Desarrollo de Aplicaciones Multiplataforma**.
 
-> 📖 **Dos guías**, las dos se abren con doble clic en el navegador y no
-> necesitan que el proyecto esté corriendo:
->
-> - **`docs/guia-instalacion.html`** — cómo montarlo de cero (Windows, macOS,
->   Linux) y qué hace Docker por dentro.
-> - **`docs/guia-lectura.html`** — cómo está organizado el código MVC: qué es
->   cada carpeta y cómo viaja una petición desde el navegador hasta la base.
+## 📖 Archivos de ayuda (dónde están y cómo abrirlos)
+
+Las guías viven dentro de la **carpeta `docs/`** del proyecto (una vez que lo
+clonaste o descargaste de GitHub). Son archivos `.html`: para abrirlos, entrá a
+esa carpeta y **hacé doble clic** en el archivo — se abren en el navegador y
+**no** necesitan que el proyecto esté corriendo ni Docker encendido.
+
+```
+tarea_crud_php/
+└── docs/
+    ├── guia-instalacion.html   ← empezá por esta
+    └── guia-lectura.html
+```
+
+- **`docs/guia-instalacion.html`** — cómo montarlo de cero (Windows, macOS,
+  Linux), cuándo configurar el `.env`, el rol de Docker, cómo conectarse a la
+  base de datos (phpMyAdmin y DBeaver) y el desglose de carpetas por capa
+  (frontend / backend / base de datos).
+- **`docs/guia-lectura.html`** — cómo está organizado el código MVC: qué es cada
+  carpeta, cómo viaja una petición desde el navegador hasta la base, las
+  tecnologías usadas y los diagramas (comunicación y esquema de la base).
 
 ---
 
@@ -69,9 +83,18 @@ docker compose up -d --build
 La primera vez tarda unos minutos (descarga MySQL y phpMyAdmin y construye la
 imagen de PHP); después arranca en segundos.
 
-La base se crea sola con las tablas y **5 productos de prueba**, pero sin
-usuarios: el primero lo creás vos desde "Crear cuenta", y **ese primer usuario
-queda como administrador**.
+La base se crea sola con las tablas, **5 productos de prueba** y un **usuario
+administrador inicial** (sembrado desde `schema.sql`):
+
+| Rol | Usuario | Contraseña |
+|---|---|---|
+| Administrador | `admin` | `Inicio01a` |
+
+Podés entrar con ese `admin` para gestionar usuarios, o crear tu propia cuenta
+desde "Crear cuenta" (será un usuario normal, porque ya existe un admin).
+
+> Es una credencial por defecto para fines educativos; en un sistema real lo
+> primero sería cambiarla.
 
 > 🔑 **La contraseña la inventás vos** y va en un solo lugar: la línea `DB_PASS`
 > del archivo `.env`, que está en el `.gitignore` y nunca llega a GitHub.
@@ -99,6 +122,13 @@ docker exec -i tarea_crud_mysql mysql -u root -p tarea_crud_db < database/migrac
 Más la red privada `tarea_crud_red` y el volumen `tarea_crud_mysql_datos`.
 Todo lleva el prefijo `tarea_crud_` a propósito: el proyecto no comparte
 contenedor, red ni volumen con nada más.
+
+### 🔌 Conectarse a la base de datos
+
+Dos formas de mirar o consultar la base:
+
+- **Navegador (phpMyAdmin):** `http://localhost:8081` → usuario `root`, contraseña = tu `DB_PASS` del `.env`. El servidor ya viene configurado.
+- **Gestor externo (DBeaver, MySQL Workbench…):** conexión MySQL con host `localhost`, **puerto `3307`**, base `tarea_crud_db`, usuario `root`, contraseña = tu `DB_PASS`. (El puerto `3307` lo publica `docker-compose.yml`; si venías de antes, corré `docker compose up -d` una vez para aplicarlo.)
 
 ### 🛠️ Comandos útiles
 

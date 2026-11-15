@@ -112,6 +112,7 @@
       <li><a href="#paso2">Paso 2: levantar el proyecto</a></li>
       <li><a href="#por-dentro">Qué pasa por dentro</a></li>
       <li><a href="#verificar">Verificar que funcionó</a></li>
+      <li><a href="#conectar-bd">Conectarse a la base de datos</a></li>
       <li><a href="#problemas">Problemas comunes</a></li>
       <li><a href="#estructura">Estructura del proyecto</a></li>
       <li><a href="#comandos">Comandos útiles</a></li>
@@ -229,11 +230,12 @@ cd tarea_crud_php</pre></div>
       <p>Ahora abrí ese <code class="inline">.env</code> con un editor de texto. Lo más cómodo es <strong>VSCode</strong>: <em>Archivo → Abrir carpeta…</em> y elegís la carpeta del proyecto. Dentro vas a encontrar una línea así, y le cambiás el valor por una clave inventada por vos:</p>
       <div class="code"><button class="copy">Copiar</button><pre>DB_PASS=mi_clave_local</pre></div>
       <div class="note tip"><span class="note-t">¿Por qué en un archivo y no en el comando?</span><p>Porque las contraseñas no se suben a GitHub. El <code class="inline">.env</code> figura en el <code class="inline">.gitignore</code>, así que tu clave se queda en tu computadora y nunca viaja al repositorio. La base de datos y la aplicación van a usar las dos esa misma clave, pero vos la escribís una sola vez y en un solo lugar.</p></div>
+      <div class="note tip"><span class="note-t">¿En qué momento se hace esto?</span><p>Justo acá: <strong>después de clonar</strong> el proyecto (Paso 1) y <strong>antes de levantar los contenedores</strong> (Paso 3). El orden importa porque Docker <strong>lee el <code class="inline">.env</code> al arrancar</strong>: si todavía no existe, el comando del Paso 3 falla con un aviso de que falta <code class="inline">DB_PASS</code>. Se hace <strong>una sola vez</strong>; en los arranques siguientes el <code class="inline">.env</code> ya está y no hay que tocarlo.</p></div>
     </div></div>
 
     <div class="step"><div class="step-n">3</div><div class="step-body">
       <h3>El comando</h3>
-      <p>Antes de correrlo, asegurate de que <strong>Docker Desktop esté abierto</strong> — el ícono de la ballena, y que diga <em>"Engine running"</em>. Después:</p>
+      <p>Antes de correrlo, asegurate de dos cosas: que el archivo <code class="inline">.env</code> <strong>ya exista</strong> (Paso 2) y que <strong>Docker Desktop esté abierto</strong> — el ícono de la ballena, que diga <em>"Engine running"</em>. Después:</p>
       <div class="code"><button class="copy">Copiar</button><pre>docker compose up -d --build</pre></div>
       <p>La primera vez tarda unos minutos: tiene que descargar MySQL y phpMyAdmin, y armar la imagen de la aplicación. Vas a ver mucho texto pasando por la pantalla; es normal y no hay que leerlo. Las veces siguientes arranca en segundos.</p>
       <div class="note tip"><span class="note-t">¿Qué significan esas letras?</span><p><code class="inline">up</code> quiere decir "levantá todo". <code class="inline">-d</code> es "dejalo corriendo en el fondo y devolveme la terminal". <code class="inline">--build</code> es "armá primero la imagen de la aplicación". La primera vez hacen falta las tres; después basta con <code class="inline">docker compose up -d</code>.</p></div>
@@ -242,7 +244,8 @@ cd tarea_crud_php</pre></div>
     <div class="step"><div class="step-n">4</div><div class="step-body">
       <h3>Abrir la aplicación</h3>
       <p>Andá a <a href="http://localhost:8001">http://localhost:8001</a>. Te va a recibir la pantalla de login.</p>
-      <p>La base arranca <strong>sin ningún usuario</strong>, así que hacé clic en <strong>"Crear cuenta"</strong>, poné tu nombre y apellido (campos separados), un usuario y una contraseña, y entrá. Como sos el primero, tu cuenta queda como <strong>administrador</strong> (vas a ver la sección "Usuarios" para gestionar cuentas). Adentro vas a ver la lista con <strong>5 productos de prueba</strong> que el proyecto trae cargados.</p>
+      <p>La base arranca con un <strong>usuario administrador ya cargado</strong>: usuario <code class="inline">admin</code>, contraseña <code class="inline">Inicio01a</code>. Podés entrar con ese para gestionar todo, o hacer clic en <strong>"Crear cuenta"</strong> y registrarte con tu nombre y apellido (campos separados), un usuario y una contraseña (esa cuenta será un usuario normal, porque ya existe un administrador). Adentro vas a ver la lista con <strong>5 productos de prueba</strong> que el proyecto trae cargados.</p>
+      <div class="note tip"><span class="note-t">Cuenta de administrador por defecto</span><p>Usuario <code class="inline">admin</code> / contraseña <code class="inline">Inicio01a</code>. Es una credencial educativa; en un sistema real, lo primero sería cambiarla.</p></div>
       <div class="note tip"><span class="note-t">Si ves los 5 productos, terminaste</span><p>Esa lista es la mejor señal de que todo funcionó: significa que la aplicación corre, que se conectó a la base, y que la base se creó con sus tablas y sus datos.</p></div>
     </div></div>
   </section>
@@ -250,6 +253,10 @@ cd tarea_crud_php</pre></div>
   <section id="por-dentro">
     <h2><span class="kicker">Para entender</span>Qué pasa por dentro</h2>
     <p>Ese comando no es magia, y vale la pena saber qué hizo — sobre todo el día que algo falle. Levantó los tres contenedores, les armó una red privada para que se hablen entre ellos, y le dio a la base un lugar aparte donde guardar lo que escribe.</p>
+
+    <h3>El rol de Docker: qué problema resuelve</h3>
+    <p>Antes de Docker, para correr este proyecto había que instalar a mano PHP, MySQL y Apache en cada computadora, con la versión correcta de cada uno, y cruzar los dedos para que no chocaran con algo ya instalado. Es el clásico <em>"en mi máquina funciona"</em>.</p>
+    <p><strong>Docker</strong> (plataforma de contenedores) es la solución a eso: empaqueta el proyecto con todo lo que necesita —PHP, MySQL, phpMyAdmin y sus versiones exactas— en <em>contenedores</em> (cajas aisladas). Así corre <strong>igual en cualquier computadora</strong> con un solo comando, sin instalar nada a mano y sin pisar otros programas. Ese es su papel acá: que montar el sistema sea reproducible y no dependa de lo que cada uno tenga instalado.</p>
 
     <h3>Por qué tres cajas y no una sola</h3>
     <p>Por la misma razón por la que la cocina y el baño no son la misma habitación: cada pieza hace una cosa, y así se pueden tocar por separado. Si querés rearmar la aplicación, la base no se entera. Si la aplicación se rompe, los datos siguen intactos. Y si algún día cambiás la versión de MySQL, cambiás una línea y lo demás sigue igual.</p>
@@ -287,6 +294,31 @@ cd tarea_crud_php</pre></div>
     </div>
   </section>
 
+  <section id="conectar-bd">
+    <h2><span class="kicker">Base de datos</span>Conectarse a la base de datos</h2>
+    <p>Hay dos formas de mirar y consultar la base de datos (BD): desde el navegador con <strong>phpMyAdmin</strong> (ya incluido, no hay que instalar nada) o con un <strong>gestor de bases de datos externo</strong> como DBeaver.</p>
+
+    <h3>Desde el navegador: phpMyAdmin</h3>
+    <p>Es la forma más rápida. Con el proyecto levantado, andá a <a href="http://localhost:8081">http://localhost:8081</a> e iniciá sesión con:</p>
+    <table class="files">
+      <tr><td>Usuario</td><td><code class="inline">root</code></td></tr>
+      <tr><td>Contraseña</td><td>la que pusiste en <code class="inline">.env</code> (la línea <code class="inline">DB_PASS</code>)</td></tr>
+    </table>
+    <p>El servidor ya viene configurado por dentro (apunta al contenedor <code class="inline">tarea_crud_mysql</code>), así que no hace falta indicar host ni puerto. Adentro vas a ver la base <code class="inline">tarea_crud_db</code> con sus tablas (<code class="inline">productos</code>, <code class="inline">categorias</code>, <code class="inline">usuarios</code>).</p>
+
+    <h3>Desde un gestor externo (DBeaver, MySQL Workbench, etc.)</h3>
+    <p>Para conectarte con un programa de escritorio, la base se publica en el puerto <code class="inline">3307</code> de tu computadora (se eligió 3307 en vez del 3306 estándar para no chocar con otro MySQL que ya tengas instalado). Creá una conexión nueva de tipo <strong>MySQL</strong> con estos datos:</p>
+    <table class="files">
+      <tr><td>Host / Servidor</td><td><code class="inline">localhost</code> (o <code class="inline">127.0.0.1</code>)</td></tr>
+      <tr><td>Puerto</td><td><code class="inline">3307</code></td></tr>
+      <tr><td>Base de datos</td><td><code class="inline">tarea_crud_db</code></td></tr>
+      <tr><td>Usuario</td><td><code class="inline">root</code></td></tr>
+      <tr><td>Contraseña</td><td>la de tu <code class="inline">.env</code> (<code class="inline">DB_PASS</code>)</td></tr>
+    </table>
+    <div class="note tip"><span class="note-t">Si venías de una versión anterior</span><p>El puerto <code class="inline">3307</code> lo publica <code class="inline">docker-compose.yml</code> con la línea <code class="inline">"3307:3306"</code> (host:contenedor). Si ya tenías el proyecto levantado de antes, corré una vez <code class="inline">docker compose up -d</code> para que el cambio tome efecto (recrea el contenedor de la base). Dentro de Docker la base sigue escuchando en el 3306; el 3307 es solo la puerta hacia afuera.</p></div>
+    <div class="note bad"><span class="note-t">¿"Connection refused" o no conecta?</span><p>Verificá que Docker esté corriendo y la base levantada (<code class="inline">docker compose ps</code>), que uses el puerto <code class="inline">3307</code> (no el 3306), y que la contraseña sea exactamente la de tu <code class="inline">.env</code>.</p></div>
+  </section>
+
   <section id="problemas">
     <h2><span class="kicker">Si algo falla</span>Problemas comunes</h2>
     <p>Casi todo lo que sale mal la primera vez está en esta lista.</p>
@@ -301,22 +333,29 @@ cd tarea_crud_php</pre></div>
 
   <section id="estructura">
     <h2><span class="kicker">Mapa</span>Estructura del proyecto</h2>
-    <p>Para orientarte cuando abras la carpeta por primera vez.</p>
+    <p>Para orientarte cuando abras la carpeta por primera vez. La columna <strong>Capa</strong>
+       dice a qué parte pertenece cada cosa: <strong>frontend</strong> (lo que ve el usuario),
+       <strong>backend</strong> (el servidor), <strong>base de datos</strong>, y las capas de apoyo
+       (configuración, documentación e infraestructura).</p>
     <table class="files">
-      <tr><td>public/</td><td>La raíz web: lo único que el navegador abre directo. Adentro, <code class="inline">index.php</code> (la puerta de entrada) y <code class="inline">assets/</code> (estilos y fuentes).</td></tr>
-      <tr><td>app/Core/</td><td>El motor: autoloader, helpers, conexión a la base, router y controlador base.</td></tr>
-      <tr><td>app/Controllers/</td><td>Reciben el pedido y eligen la vista (Producto, Categoria, Auth, Usuario).</td></tr>
-      <tr><td>app/Models/</td><td>Hablan con la base de datos: acá viven las consultas.</td></tr>
-      <tr><td>app/Middleware/</td><td>Los porteros: <code class="inline">Auth</code> (exige sesión) y <code class="inline">Admin</code> (exige rol admin).</td></tr>
-      <tr><td>app/Views/</td><td>Las plantillas que arman el HTML (una carpeta por área).</td></tr>
-      <tr><td>routes/web.php</td><td>La tabla de rutas: qué dirección va a qué controlador.</td></tr>
-      <tr><td>config/config.php</td><td>De dónde salen las credenciales de la base. Vive fuera de <code class="inline">public/</code>.</td></tr>
-      <tr><td>database/schema.sql</td><td>Crea la base, las tablas y los 5 productos de prueba.</td></tr>
-      <tr><td>docs/</td><td>Esta guía, y la guía de lectura del código.</td></tr>
-      <tr><td>.env.example</td><td>Plantilla de la contraseña. Vos creás tu <code class="inline">.env</code> a partir de ella.</td></tr>
-      <tr><td>Dockerfile</td><td>La receta de la imagen de PHP, con los drivers de MySQL agregados.</td></tr>
-      <tr><td>docker-compose.yml</td><td>El archivo que define los tres contenedores. Es el que hace posible el comando único.</td></tr>
-      <tr><td>secrets.example.php</td><td>Plantilla alternativa, para montar el proyecto a mano sin Docker Compose.</td></tr>
+      <tr><td><strong>Carpeta / archivo</strong></td><td><strong>Capa</strong></td><td><strong>Qué contiene</strong></td></tr>
+      <tr><td>public/</td><td>Frontend (la cara)</td><td>Lo único que el navegador abre directo: <code class="inline">index.php</code> (la puerta de entrada) y <code class="inline">assets/</code>.</td></tr>
+      <tr><td>public/assets/</td><td>Frontend</td><td>Lo visual: <code class="inline">estilo.css</code> (tema propio), Bootstrap y las fuentes, todo local (sin internet).</td></tr>
+      <tr><td>app/Core/</td><td>Backend (el motor)</td><td>Autoloader, helpers, <code class="inline">Database</code> (conexión), <code class="inline">Router</code> y <code class="inline">Controller</code> base.</td></tr>
+      <tr><td>app/Controllers/</td><td>Backend</td><td>Reciben el pedido y eligen la vista: Producto, Categoria, Auth, Usuario.</td></tr>
+      <tr><td>app/Models/</td><td>Backend (habla con la BD)</td><td>Donde viven las consultas SQL: Producto, Categoria, Usuario.</td></tr>
+      <tr><td>app/Middleware/</td><td>Backend</td><td>Los porteros: <code class="inline">Auth</code> (exige sesión) y <code class="inline">Admin</code> (exige rol admin).</td></tr>
+      <tr><td>app/Views/</td><td>Backend &#8594; arma el Frontend</td><td>Plantillas que generan el HTML: layouts, productos, categorias, usuarios, auth.</td></tr>
+      <tr><td>routes/web.php</td><td>Backend</td><td>La tabla de rutas: qué dirección va a qué controlador.</td></tr>
+      <tr><td>config/config.php</td><td>Configuración</td><td>De dónde salen las credenciales de la base. Vive fuera de <code class="inline">public/</code>.</td></tr>
+      <tr><td>database/</td><td>Base de datos</td><td><code class="inline">schema.sql</code> (tablas + 5 productos de prueba), migraciones y seeds.</td></tr>
+      <tr><td>docs/</td><td>Documentación</td><td>Esta guía y la guía de lectura del código.</td></tr>
+      <tr><td>Dockerfile</td><td>Infraestructura (Docker)</td><td>La receta de la imagen de PHP con los drivers de MySQL.</td></tr>
+      <tr><td>docker-compose.yml</td><td>Infraestructura (Docker)</td><td>Define y levanta los tres contenedores (el comando único).</td></tr>
+      <tr><td>docker/</td><td>Infraestructura (Docker)</td><td>Config de Apache (raíz web en <code class="inline">public/</code>).</td></tr>
+      <tr><td>apache-deny.conf</td><td>Infraestructura (Docker)</td><td>Impide servir archivos sensibles (<code class="inline">.env</code>, <code class="inline">secrets.php</code>, <code class="inline">.sql</code>, <code class="inline">.md</code>).</td></tr>
+      <tr><td>.env.example</td><td>Configuración</td><td>Plantilla de la contraseña; vos creás tu <code class="inline">.env</code> a partir de ella.</td></tr>
+      <tr><td>secrets.example.php</td><td>Configuración</td><td>Plantilla alternativa, para montar a mano sin Docker Compose.</td></tr>
     </table>
     <div class="note tip"><span class="note-t">¿Querés entender el código, no solo instalarlo?</span><p>Abrí <code class="inline">docs/guia-lectura.html</code>. Explica qué hace cada archivo, cómo viaja una petición desde el navegador hasta la base, y los conceptos de PHP que se repiten en todo el proyecto.</p></div>
   </section>
