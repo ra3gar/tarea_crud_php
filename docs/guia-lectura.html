@@ -176,15 +176,60 @@
      JavaScript del repositorio está <em>dentro de estas guías</em> (<code class="inline">docs/*.html</code>),
      para las pestañas y los botones de copiar — no es parte del sitio.</p>
 
-  <h3>¿Qué "APIs" se usan?</h3>
-  <p>Una API (Application Programming Interface / interfaz de programación) es un conjunto de
-     funciones que una herramienta ofrece para que otro código la use. Acá no se consumen APIs
-     externas por internet; las que se usan son las que trae PHP:</p>
+  <h3>¿Qué es una "API" y cuáles usa este proyecto?</h3>
+  <p>Una <strong>API</strong> (Application Programming Interface, o "interfaz de programación") es
+     simplemente un conjunto de herramientas —funciones, clases— que alguien ya escribió para que
+     vos las uses sin tener que reinventar la rueda. Pensalo como el volante de un auto: no
+     necesitás entender cómo funciona la dirección hidráulica por dentro para saber que si girás
+     el volante el auto dobla. Este proyecto no consume APIs externas por internet; usa tres que
+     vienen incluidas en PHP:</p>
+
+  <h3>PDO: el "intérprete" entre PHP y MySQL</h3>
+  <p>PHP y MySQL son dos programas distintos que no hablan el mismo idioma directamente.
+     <strong>PDO</strong> (PHP Data Objects) es el intermediario: le dice a PHP cómo conectarse a
+     MySQL, cómo mandarle preguntas (consultas SQL) y cómo recibir las respuestas (filas de datos).</p>
+  <p>Lo más importante de PDO en este proyecto es que usa <strong>consultas preparadas</strong>:
+     en vez de pegar directamente lo que escribió el usuario dentro del SQL (lo que abriría la
+     puerta a inyecciones maliciosas), el texto del SQL y los datos viajan por separado. MySQL
+     recibe primero la plantilla de la consulta y después los valores, y así no puede confundirlos.
+     Es la protección principal contra inyección SQL.</p>
+  <p>Dónde se usa: <code class="inline">app/Core/Database.php</code> abre la conexión; todos los
+     métodos en <code class="inline">app/Models/</code> usan PDO para hacer sus consultas.</p>
+
+  <h3>La API de contraseñas: guardar sin ver</h3>
+  <p>Guardar una contraseña en texto plano en la base de datos es peligroso: si alguien accede a
+     la base, ve todas las contraseñas. PHP ofrece dos funciones para evitar eso:</p>
   <ul>
-    <li>La <strong>API de PDO</strong> para hablar con MySQL (preparar y ejecutar consultas).</li>
-    <li>La <strong>API de contraseñas</strong> de PHP: <code class="inline">password_hash()</code> y <code class="inline">password_verify()</code>, para guardar y comparar contraseñas sin verlas en texto.</li>
-    <li>La <strong>API de sesiones</strong> (<code class="inline">$_SESSION</code>) para recordar quién inició sesión entre páginas.</li>
+    <li><code class="inline">password_hash()</code> — convierte la contraseña en una <em>huella</em>
+        irreversible (un "hash"): una cadena de letras y números que no se puede revertir a la
+        contraseña original. Eso es lo que se guarda en la base. Aunque alguien robe la base,
+        no obtiene las contraseñas reales.</li>
+    <li><code class="inline">password_verify()</code> — cuando el usuario intenta entrar, compara
+        lo que escribió contra la huella guardada. No "descifra" nada: vuelve a calcular la huella
+        de lo escrito y comprueba si coincide. Si sí → acceso; si no → rechaza.</li>
   </ul>
+  <p>Dónde se usa: <code class="inline">app/Controllers/AuthController.php</code> al registrar
+     (hash) y al hacer login (verify). La respuesta de seguridad de recuperación de contraseña
+     se guarda con el mismo mecanismo.</p>
+
+  <h3>Las sesiones: recordar quién sos entre páginas</h3>
+  <p>El protocolo HTTP no tiene memoria: cada vez que pedís una página, el servidor no sabe quién
+     sos. Las <strong>sesiones</strong> resuelven eso: PHP guarda un pequeño archivo en el servidor
+     (identificado por un código secreto que viaja en una cookie) donde anota datos del usuario
+     entre una página y la siguiente.</p>
+  <ul>
+    <li><code class="inline">session_start()</code> — abre (o retoma) la sesión al principio de
+        cada petición. Lo hace <code class="inline">public/index.php</code>.</li>
+    <li><code class="inline">$_SESSION['usuario_id']</code> — al entrar correctamente, el
+        controlador guarda el id del usuario acá. Mientras ese valor exista, el guardia
+        <code class="inline">Auth</code> sabe que hay alguien con sesión abierta.</li>
+    <li><code class="inline">session_regenerate_id()</code> — al iniciar sesión, PHP cambia el
+        código secreto de la sesión para evitar que alguien que robó una cookie vieja pueda
+        usarla.</li>
+  </ul>
+  <p>Dónde se usa: <code class="inline">app/Middleware/Auth.php</code> revisa la sesión en cada
+     petición protegida; <code class="inline">app/Controllers/AuthController.php</code> la crea
+     al entrar y la destruye al salir.</p>
 </section>
 
 <section id="mapa-archivos">
