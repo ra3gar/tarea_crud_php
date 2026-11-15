@@ -238,9 +238,23 @@
   <p>El proyecto usa un <strong>MVC (Modelo-Vista-Controlador) hecho a mano</strong>, sin framework. En palabras simples:
      el <strong>backend</strong> (el código PHP del servidor) recibe el pedido, busca los datos en la
      <strong>base de datos</strong>, y arma el <strong>frontend</strong> (el HTML que ve el navegador).</p>
+  <div class="note tip">
+    <span class="note-t">¿Qué es MVC, en simple? (con una analogía de restaurante)</span>
+    <p>Las tres letras son tres <strong>roles</strong> del código. Imaginá un restaurante:</p>
+    <ul>
+      <li><strong>Modelo</strong> = la <strong>cocina</strong>: sabe dónde están los ingredientes (los datos) y los trae de la base de datos. No decora ni atiende mesas.</li>
+      <li><strong>Vista</strong> = el <strong>plato ya emplatado</strong>: es el HTML que ves en pantalla. Solo presenta; no cocina ni decide nada.</li>
+      <li><strong>Controlador</strong> = el <strong>mesero</strong>: toma tu pedido (la <em>petición</em>), se lo pasa a la cocina (el modelo) y lleva el plato (la vista) a tu mesa. Coordina, pero no cocina.</li>
+    </ul>
+    <p>Con eso, dos expresiones que vas a leer seguido en esta guía:</p>
+    <ul>
+      <li><strong>&ldquo;una variable del controlador&rdquo;</strong> es simplemente un <strong>dato que el controlador le entrega a la vista para que lo muestre</strong> — por ejemplo, la lista de productos. La vista la recibe ya lista y solo la &ldquo;pinta&rdquo; en el HTML.</li>
+      <li><strong>&ldquo;lógica de negocio&rdquo;</strong> son las <strong>decisiones y reglas</strong> del sistema (por ejemplo, &ldquo;no se puede quedar sin ningún administrador&rdquo;). Vive en los controladores y los modelos, nunca en las vistas.</li>
+    </ul>
+  </div>
   <h3>La cara visible (<code class="inline">public/</code>)</h3>
   <ul>
-    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada del sitio. Arranca la sesión, carga el autoloader y los helpers, crea el Router y delega.</li>
+    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada del sitio. Arranca la sesión, carga el <em>autoloader</em> (lo que trae cada clase automáticamente cuando se la usa, sin tener que incluir archivos a mano) y los <em>helpers</em> (funciones de ayuda globales), crea el Router y delega.</li>
     <li><code class="inline">public/assets/css/bootstrap.min.css</code> — Bootstrap 5 completo, servido localmente (sin CDN).</li>
     <li><code class="inline">public/assets/css/estilo.css</code> — el tema propio: variables de color, barra de navegación, tarjetas, gráficos. Se carga último para pisar lo de Bootstrap.</li>
     <li><code class="inline">public/assets/fonts/fuentes.css</code> — declara las dos tipografías del proyecto (<em>Inter</em> y <em>Space Grotesk</em>) como fuentes locales con <code class="inline">@font-face</code>.</li>
@@ -252,9 +266,9 @@
   <h3>El núcleo del framework (<code class="inline">app/Core/</code>)</h3>
   <ul>
     <li><code class="inline">app/Core/autoload.php</code> — registra el autoloader PSR-4: traduce <code class="inline">App\Controllers\ProductoController</code> → <code class="inline">app/Controllers/ProductoController.php</code> y carga el archivo solo cuando la clase se usa por primera vez.</li>
-    <li><code class="inline">app/Core/Router.php</code> — compara la URL pedida contra las rutas de <code class="inline">routes/web.php</code>, corre los middlewares correspondientes, instancia el controlador y llama al método.</li>
+    <li><code class="inline">app/Core/Router.php</code> — compara la URL pedida contra las rutas de <code class="inline">routes/web.php</code>, corre los middlewares correspondientes, crea el controlador (lo &ldquo;instancia&rdquo;: arma un objeto de esa clase) y llama al método.</li>
     <li><code class="inline">app/Core/Controller.php</code> — clase base que heredan todos los controladores. Tiene el método <code class="inline">view()</code> para cargar una vista con variables.</li>
-    <li><code class="inline">app/Core/Database.php</code> — Singleton PDO: abre una sola conexión a MySQL por petición. Todos los modelos la piden acá.</li>
+    <li><code class="inline">app/Core/Database.php</code> — Singleton PDO (patrón de &ldquo;una sola instancia&rdquo;): abre una sola conexión a MySQL por petición y la reutiliza. Todos los modelos la piden acá.</li>
     <li><code class="inline">app/Core/helpers.php</code> — funciones globales que se usan en todo el proyecto: <code class="inline">e()</code> (escapa HTML), <code class="inline">base_path()</code> (arma rutas relativas correctas), <code class="inline">redirect()</code> y <code class="inline">flash()</code> (mensajes de sesión de un solo uso).</li>
   </ul>
 
@@ -279,11 +293,11 @@
   <p>El Router los corre antes de pasarle la petición al controlador.</p>
   <ul>
     <li><code class="inline">app/Middleware/Auth.php</code> — comprueba que haya una sesión activa (<code class="inline">$_SESSION['usuario_id']</code>). Si no la hay, redirige al login. Protege todas las rutas que no son públicas.</li>
-    <li><code class="inline">app/Middleware/Admin.php</code> — además de exigir sesión, comprueba que el rol sea <code class="inline">admin</code>. Si no, devuelve 403. Protege la gestión de usuarios y categorías.</li>
+    <li><code class="inline">app/Middleware/Admin.php</code> — además de exigir sesión, comprueba que el rol sea <code class="inline">admin</code>. Si no, devuelve un error <strong>403</strong> (&ldquo;prohibido&rdquo;). Protege la gestión de usuarios y categorías.</li>
   </ul>
 
   <h3>Las vistas (<code class="inline">app/Views/</code>)</h3>
-  <p>Solo arman HTML. No hacen consultas ni lógica de negocio; reciben variables del controlador.</p>
+  <p>Solo arman el HTML que se ve. No consultan la base de datos ni toman decisiones (nada de <em>lógica de negocio</em>): reciben del controlador las <strong>variables</strong> con los datos ya listos —por ejemplo, la lista de productos a mostrar— y se limitan a pintarlos.</p>
   <ul>
     <li><code class="inline">app/Views/layouts/header.php</code> — encabezado compartido: <code class="inline">&lt;head&gt;</code>, las tres hojas de CSS y la barra de navegación con el menú.</li>
     <li><code class="inline">app/Views/layouts/footer.php</code> — cierre de página: etiquetas <code class="inline">&lt;/body&gt;&lt;/html&gt;</code> y el bloque para mostrar los avisos flash.</li>
