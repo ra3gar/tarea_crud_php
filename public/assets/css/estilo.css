@@ -2,17 +2,22 @@
    estilo.css — Tema propio para el Inventario (CRUD PHP)
    Se carga DESPUES de Bootstrap para sobrescribir su look.
    ===================================================================== */
+/* Paleta del tema en variables CSS (custom properties). Se definen una vez
+   aca y se usan en todo el archivo con var(--nombre); cambiar un color aca
+   lo cambia en todo el sitio. */
 :root{
-  --ink:#152238; --ink-2:#1f3252;
-  --bg:#eceff4; --surface:#ffffff;
-  --line:#dde3ec; --text:#1f2a3d; --muted:#6b7890;
-  --brand:#2f5fe0; --brand-strong:#2449b8;
-  --ok:#157f52;  --ok-bg:#e4f5ec;
-  --warn:#9a6212; --warn-bg:#fbeeda;
-  --bad:#b23b3b; --bad-bg:#fbe6e6;
-  --radius:10px;
+  --ink:#152238; --ink-2:#1f3252;        /* azules oscuros: barra superior y titulos */
+  --bg:#eceff4; --surface:#ffffff;       /* fondo de pagina y fondo de tarjetas */
+  --line:#dde3ec; --text:#1f2a3d; --muted:#6b7890;  /* bordes, texto normal y texto apagado */
+  --brand:#2f5fe0; --brand-strong:#2449b8;          /* color de marca (botones, enlaces) y su tono fuerte */
+  --ok:#157f52;  --ok-bg:#e4f5ec;        /* verde: estado correcto / stock ok */
+  --warn:#9a6212; --warn-bg:#fbeeda;     /* ambar: advertencia / stock bajo */
+  --bad:#b23b3b; --bad-bg:#fbe6e6;       /* rojo: error / sin stock */
+  --radius:10px;                         /* redondeo estandar de esquinas */
 }
 
+/* Reset minimo: que el padding y el borde no agranden el ancho de los
+   elementos (facilita calcular tamanos). */
 *{ box-sizing:border-box; }
 body{
   background:var(--bg);

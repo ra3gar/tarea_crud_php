@@ -1,7 +1,22 @@
-/* Fuentes locales (sin depender de internet) */
-@font-face{ font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('inter-400.woff2') format('woff2'); }
-@font-face{ font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('inter-500.woff2') format('woff2'); }
-@font-face{ font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('inter-600.woff2') format('woff2'); }
-@font-face{ font-family:'Space Grotesk'; font-style:normal; font-weight:500; font-display:swap; src:url('space-grotesk-500.woff2') format('woff2'); }
-@font-face{ font-family:'Space Grotesk'; font-style:normal; font-weight:600; font-display:swap; src:url('space-grotesk-600.woff2') format('woff2'); }
-@font-face{ font-family:'Space Grotesk'; font-style:normal; font-weight:700; font-display:swap; src:url('space-grotesk-700.woff2') format('woff2'); }
+/* =====================================================================
+   fuentes.css — Carga las tipografias del proyecto desde archivos LOCALES
+   (no desde internet / sin CDN), fiel al criterio del proyecto.
+
+   Cada regla @font-face registra UNA variante (familia + grosor) y le dice
+   al navegador en que archivo .woff2 encontrarla.
+     - woff2            = formato de fuente web, comprimido y liviano.
+     - font-weight      = el grosor (400 normal, 500 medio, 600/700 negrita).
+     - font-display:swap = mientras baja la fuente propia, muestra el texto
+                           con una de respaldo; asi la pagina nunca queda en
+                           blanco esperando.
+   ===================================================================== */
+
+/* Inter: tipografia del texto general, en tres grosores. */
+@font-face{ font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('inter-400.woff2') format('woff2'); } /* normal */
+@font-face{ font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('inter-500.woff2') format('woff2'); } /* medio */
+@font-face{ font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('inter-600.woff2') format('woff2'); } /* negrita */
+
+/* Space Grotesk: tipografia de titulos y de la marca, en tres grosores. */
+@font-face{ font-family:'Space Grotesk'; font-style:normal; font-weight:500; font-display:swap; src:url('space-grotesk-500.woff2') format('woff2'); } /* medio */
+@font-face{ font-family:'Space Grotesk'; font-style:normal; font-weight:600; font-display:swap; src:url('space-grotesk-600.woff2') format('woff2'); } /* negrita */
+@font-face{ font-family:'Space Grotesk'; font-style:normal; font-weight:700; font-display:swap; src:url('space-grotesk-700.woff2') format('woff2'); } /* mas negrita (titulos grandes) */
