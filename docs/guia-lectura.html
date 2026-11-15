@@ -145,13 +145,30 @@
     <li><strong>CSS</strong> (Cascading Style Sheets / hojas de estilo en cascada): el aspecto visual (colores, tamaños, posiciones).</li>
   </ul>
 
-  <h3>¿Se usa Bootstrap? Sí. ¿Y cómo interactúa el CSS?</h3>
-  <p>El estilo se arma en <strong>dos capas</strong> que trabajan juntas:</p>
+  <h3>El CSS: tres archivos y el orden en que se cargan</h3>
+  <p>Todo el estilo entra por <strong>tres hojas de CSS</strong>, enlazadas en el encabezado de
+     las páginas — el archivo real es <code class="inline">app/Views/layouts/header.php</code> — y
+     se cargan <strong>en este orden</strong>, que es justamente lo que hace que todo funcione:</p>
+  <ol>
+    <li><strong>Bootstrap 5</strong> (framework de CSS) — <code class="inline">public/assets/css/bootstrap.min.css</code>, servido <strong>localmente</strong> (sin CDN, sin depender de internet). Aporta la base ya hecha: botones, tarjetas, alertas y la grilla (las clases que vas a ver en las vistas son <code class="inline">btn</code>, <code class="inline">card</code>, <code class="inline">alert</code> y <code class="inline">row</code>).</li>
+    <li><strong>Las fuentes</strong> — <code class="inline">public/assets/fonts/fuentes.css</code>, que define las tipografías (también locales, sin internet).</li>
+    <li><strong>El tema propio</strong> — <code class="inline">public/assets/css/estilo.css</code>. Va <strong>último a propósito</strong>: como en CSS el que se carga después gana, acá se "pisa" el look de Bootstrap y se define lo que Bootstrap no trae — los colores de la marca (con variables CSS), la barra superior, el menú, las tarjetas del tablero y los gráficos.</li>
+  </ol>
+  <div class="note tip"><span class="note-t">El truco del orden</span><p><strong>Bootstrap pone los cimientos del estilo y <code class="inline">estilo.css</code> los personaliza</strong>; por eso el tema propio se enlaza al final. Además lleva un <code class="inline">?v=…</code> con la fecha del archivo (mirá <code class="inline">header.php</code>): obliga al navegador a volver a bajar el CSS cuando cambia, en vez de mostrar una versión vieja guardada en caché.</p></div>
+
+  <h3>¿Y el JavaScript? El sitio no usa</h3>
+  <p>Puede sorprender, pero <strong>la aplicación no tiene JavaScript</strong>: no hay ningún archivo
+     <code class="inline">.js</code> propio y <strong>tampoco se carga el JS de Bootstrap</strong> (solo su
+     CSS). Todo lo que ves lo arma el servidor en PHP y lo viste el CSS:</p>
   <ul>
-    <li><strong>Bootstrap 5</strong> (framework de CSS) — está en <code class="inline">public/assets/css/bootstrap.min.css</code>, servido localmente (sin CDN / sin depender de internet). Aporta la base: la grilla, botones, formularios, alertas y utilidades (clases como <code class="inline">btn</code>, <code class="inline">row</code>, <code class="inline">form-control</code>).</li>
-    <li><strong>El tema propio</strong> (<code class="inline">public/assets/css/estilo.css</code>) — se carga <em>después</em> de Bootstrap, así que lo "pisa" donde hace falta: define los colores de la marca, la barra superior, las tarjetas del tablero, los gráficos y el menú. Encima de la base de Bootstrap, le da la cara propia al proyecto.</li>
+    <li>Los <strong>gráficos del tablero</strong> son CSS puro (las barras con anchos; el pastel con <code class="inline">conic-gradient</code>).</li>
+    <li>El <strong>menú</strong>, los formularios y los avisos son HTML + CSS; la validación y la lógica corren en el <strong>backend</strong>.</li>
+    <li>Cada pantalla es una página completa que devuelve el servidor: no hay carga dinámica por JavaScript.</li>
   </ul>
-  <p>En resumen: Bootstrap pone los cimientos del estilo y <code class="inline">estilo.css</code> los personaliza.</p>
+  <p>Es una decisión del proyecto: así es más simple, <strong>funciona aunque el navegador no ejecute
+     JavaScript</strong>, y no hace falta ningún paso de compilación (<em>build</em>). El único
+     JavaScript del repositorio está <em>dentro de estas guías</em> (<code class="inline">docs/*.html</code>),
+     para las pestañas y los botones de copiar — no es parte del sitio.</p>
 
   <h3>¿Qué "APIs" se usan?</h3>
   <p>Una API (Application Programming Interface / interfaz de programación) es un conjunto de
