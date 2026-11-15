@@ -193,6 +193,29 @@
      puerta a inyecciones maliciosas), el texto del SQL y los datos viajan por separado. MySQL
      recibe primero la plantilla de la consulta y después los valores, y así no puede confundirlos.
      Es la protección principal contra inyección SQL.</p>
+  <svg viewBox="0 0 740 258" width="100%" style="max-width:740px; margin:12px 0;" role="img" aria-label="Comparacion: armar la consulta pegando el texto del usuario deja que ese texto cambie la orden, y es peligroso; en cambio la consulta preparada deja un casillero con un signo de interrogacion donde el dato entra como dato y nunca como codigo.">
+    <title>Consulta armada a mano frente a consulta preparada</title>
+    <defs><marker id="sql-ok" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#157f52"/></marker></defs>
+
+    <rect x="18" y="14" width="704" height="100" rx="11" fill="#ffffff" stroke="#b23b3b" stroke-width="1.8"/>
+    <text x="40" y="42" font-size="12.5" font-weight="600" fill="#b23b3b">Pegando el texto dentro de la orden</text>
+    <text x="40" y="72" font-size="12.5" font-family="ui-monospace,monospace" fill="#152238">&#8230; WHERE nombre = &#39;<tspan fill="#b23b3b" font-weight="700">texto del usuario</tspan>&#39;</text>
+    <text x="40" y="96" font-size="11" fill="#6b7890">Si ese texto trae una comilla, deja de ser un dato y pasa a formar parte de la orden.</text>
+    <circle cx="684" cy="42" r="15" fill="#fbe6e6" stroke="#b23b3b" stroke-width="1.8"/>
+    <path d="M678,36 l12,12 M690,36 l-12,12" stroke="#b23b3b" stroke-width="2.4" stroke-linecap="round"/>
+
+    <rect x="18" y="130" width="704" height="112" rx="11" fill="#ffffff" stroke="#157f52" stroke-width="1.8"/>
+    <text x="40" y="158" font-size="12.5" font-weight="600" fill="#0f5e3c">Consulta preparada: un casillero fijo</text>
+    <text x="40" y="190" font-size="12.5" font-family="ui-monospace,monospace" fill="#152238">&#8230; WHERE nombre =</text>
+    <rect x="186" y="176" width="30" height="20" rx="5" fill="#e4f5ec" stroke="#157f52" stroke-width="1.8"/>
+    <text x="201" y="191" text-anchor="middle" font-size="13" font-family="ui-monospace,monospace" font-weight="700" fill="#0f5e3c">?</text>
+    <rect x="40" y="208" width="132" height="22" rx="11" fill="#eaf0ff" stroke="#2f5fe0" stroke-width="1.5"/>
+    <text x="106" y="223" text-anchor="middle" font-size="10.5" fill="#2449b8">dato del usuario</text>
+    <path d="M176,215 q30,0 25,-14" fill="none" stroke="#157f52" stroke-width="1.8" marker-end="url(#sql-ok)"/>
+    <text x="250" y="223" font-size="11" fill="#6b7890">El dato entra en el casillero: viaja aparte y nunca puede cambiar la orden.</text>
+    <circle cx="684" cy="158" r="15" fill="#e4f5ec" stroke="#157f52" stroke-width="1.8"/>
+    <path d="M677,158 l5,5 10,-11" fill="none" stroke="#157f52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
   <p>Dónde se usa: <code class="inline">app/Core/Database.php</code> abre la conexión; todos los
      métodos en <code class="inline">app/Models/</code> usan PDO para hacer sus consultas.</p>
 
@@ -217,6 +240,35 @@
      sos. Las <strong>sesiones</strong> resuelven eso: PHP guarda un pequeño archivo en el servidor
      (identificado por un código secreto que viaja en una cookie) donde anota datos del usuario
      entre una página y la siguiente.</p>
+  <svg viewBox="0 0 740 210" width="100%" style="max-width:740px; margin:12px 0;" role="img" aria-label="La sesion explicada como una pulsera: primero iniciás sesión una vez con usuario y contraseña; el servidor te entrega una pulsera, que es una cookie con un código secreto; y en cada página el guardia, el middleware Auth, mira esa pulsera para dejarte pasar.">
+    <title>La sesión, explicada como una pulsera</title>
+    <defs><marker id="ses-a" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6b7890"/></marker></defs>
+
+    <rect x="78" y="48" width="104" height="96" rx="10" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.8"/>
+    <rect x="94" y="64" width="48" height="7" rx="3.5" fill="#c9d8f7"/>
+    <rect x="94" y="82" width="72" height="14" rx="4" fill="#ffffff" stroke="#b9c2d6" stroke-width="1.3"/>
+    <rect x="94" y="102" width="72" height="14" rx="4" fill="#ffffff" stroke="#b9c2d6" stroke-width="1.3"/>
+    <rect x="94" y="122" width="44" height="12" rx="6" fill="#2f5fe0"/>
+    <text x="130" y="168" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f3252">Iniciás sesión una vez</text>
+    <text x="130" y="186" text-anchor="middle" font-size="11" fill="#6b7890">usuario y contraseña</text>
+
+    <line x1="196" y1="96" x2="294" y2="96" stroke="#6b7890" stroke-width="1.6" stroke-linecap="round" marker-end="url(#ses-a)"/>
+
+    <ellipse cx="370" cy="96" rx="44" ry="30" fill="none" stroke="#9a6212" stroke-width="9"/>
+    <rect x="350" y="86" width="40" height="21" rx="5" fill="#fbeeda" stroke="#9a6212" stroke-width="1.5"/>
+    <text x="370" y="101" text-anchor="middle" font-size="10" font-family="ui-monospace,monospace" fill="#9a6212">a7f3&#8230;</text>
+    <text x="370" y="168" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f3252">El servidor te da una pulsera</text>
+    <text x="370" y="186" text-anchor="middle" font-size="11" fill="#6b7890">una cookie con un código secreto</text>
+
+    <line x1="436" y1="96" x2="534" y2="96" stroke="#6b7890" stroke-width="1.6" stroke-linecap="round" marker-end="url(#ses-a)"/>
+
+    <path d="M578,144 v-44 a32,32 0 0 1 64,0 v44 z" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.8"/>
+    <circle cx="630" cy="78" r="4" fill="#2f5fe0"/>
+    <circle cx="662" cy="126" r="15" fill="#e4f5ec" stroke="#157f52" stroke-width="1.8"/>
+    <path d="M655,126 l5,5 10,-11" fill="none" stroke="#157f52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="610" y="168" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1f3252">En cada página la miran</text>
+    <text x="610" y="186" text-anchor="middle" font-size="11" fill="#6b7890">el guardia: el middleware Auth</text>
+  </svg>
   <ul>
     <li><code class="inline">session_start()</code> — abre (o retoma) la sesión al principio de
         cada petición. Lo hace <code class="inline">public/index.php</code>.</li>
