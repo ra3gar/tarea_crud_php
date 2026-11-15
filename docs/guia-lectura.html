@@ -86,7 +86,7 @@
 <nav class="toc">
   <h2>Contenido</h2>
   <ol>
-    <li><a href="#mapa-archivos">Mapa de archivos</a></li>
+    <li><a href="#mapa-archivos">Mapa de archivos (todos los archivos del proyecto)</a></li>
     <li><a href="#ciclo-peticion">Cómo viaja una petición</a></li>
     <li><a href="#caso-completo">Un caso completo de punta a punta</a></li>
     <li><a href="#patrones-compartidos">Patrones compartidos</a></li>
@@ -193,24 +193,112 @@
   <p>El proyecto usa un <strong>MVC (Modelo-Vista-Controlador) hecho a mano</strong>, sin framework. En palabras simples:
      el <strong>backend</strong> (el código PHP del servidor) recibe el pedido, busca los datos en la
      <strong>base de datos</strong>, y arma el <strong>frontend</strong> (el HTML que ve el navegador).</p>
-  <h3>La cara visible</h3>
+  <h3>La cara visible (<code class="inline">public/</code>)</h3>
   <ul>
-    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada. Toda petición pasa por acá.</li>
-    <li><code class="inline">public/assets/</code> — estilos, Bootstrap y fuentes (lo visual que descarga el navegador).</li>
+    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada del sitio. Arranca la sesión, carga el autoloader y los helpers, crea el Router y delega.</li>
+    <li><code class="inline">public/assets/css/bootstrap.min.css</code> — Bootstrap 5 completo, servido localmente (sin CDN).</li>
+    <li><code class="inline">public/assets/css/estilo.css</code> — el tema propio: variables de color, barra de navegación, tarjetas, gráficos. Se carga último para pisar lo de Bootstrap.</li>
+    <li><code class="inline">public/assets/fonts/fuentes.css</code> — declara las dos tipografías del proyecto (<em>Inter</em> y <em>Space Grotesk</em>) como fuentes locales con <code class="inline">@font-face</code>.</li>
+    <li><code class="inline">public/assets/fonts/inter-400.woff2</code>, <code class="inline">inter-500.woff2</code>, <code class="inline">inter-600.woff2</code> — pesos de la fuente Inter (cuerpo de texto).</li>
+    <li><code class="inline">public/assets/fonts/space-grotesk-500.woff2</code>, <code class="inline">space-grotesk-600.woff2</code>, <code class="inline">space-grotesk-700.woff2</code> — pesos de Space Grotesk (títulos y encabezados).</li>
+    <li><code class="inline">public/.htaccess</code> — le dice a Apache que reescriba todas las URLs hacia <code class="inline">index.php</code>, activando las rutas limpias del MVC.</li>
   </ul>
-  <h3>El servidor (backend, carpeta <code class="inline">app/</code>)</h3>
+
+  <h3>El núcleo del framework (<code class="inline">app/Core/</code>)</h3>
   <ul>
-    <li><code class="inline">app/Core/</code> — el motor: autoloader, helpers, conexión a la base, router y controlador base.</li>
-    <li><code class="inline">app/Controllers/</code> — reciben el pedido y deciden qué hacer (Producto, Categoria, Auth, Usuario).</li>
-    <li><code class="inline">app/Models/</code> — hablan con la base de datos (las consultas viven acá).</li>
-    <li><code class="inline">app/Middleware/</code> — los guardias: <code class="inline">Auth</code> (exige sesión) y <code class="inline">Admin</code> (exige rol admin).</li>
-    <li><code class="inline">app/Views/</code> — las plantillas que arman el HTML. Son "la cara", pero las genera el servidor.</li>
+    <li><code class="inline">app/Core/autoload.php</code> — registra el autoloader PSR-4: traduce <code class="inline">App\Controllers\ProductoController</code> → <code class="inline">app/Controllers/ProductoController.php</code> y carga el archivo solo cuando la clase se usa por primera vez.</li>
+    <li><code class="inline">app/Core/Router.php</code> — compara la URL pedida contra las rutas de <code class="inline">routes/web.php</code>, corre los middlewares correspondientes, instancia el controlador y llama al método.</li>
+    <li><code class="inline">app/Core/Controller.php</code> — clase base que heredan todos los controladores. Tiene el método <code class="inline">view()</code> para cargar una vista con variables.</li>
+    <li><code class="inline">app/Core/Database.php</code> — Singleton PDO: abre una sola conexión a MySQL por petición. Todos los modelos la piden acá.</li>
+    <li><code class="inline">app/Core/helpers.php</code> — funciones globales que se usan en todo el proyecto: <code class="inline">e()</code> (escapa HTML), <code class="inline">base_path()</code> (arma rutas relativas correctas), <code class="inline">redirect()</code> y <code class="inline">flash()</code> (mensajes de sesión de un solo uso).</li>
   </ul>
-  <h3>La base de datos y la configuración</h3>
+
+  <h3>Los controladores (<code class="inline">app/Controllers/</code>)</h3>
+  <p>Cada controlador recibe una petición del Router, le pide datos al modelo y elige la vista a mostrar.</p>
   <ul>
-    <li><code class="inline">database/schema.sql</code> — crea las tablas y los datos de prueba.</li>
-    <li><code class="inline">routes/web.php</code> — la tabla de rutas: qué URL va a qué controlador, y si es privada.</li>
-    <li><code class="inline">config/config.php</code> — de dónde salen las credenciales de la base (vive fuera de <code class="inline">public/</code>).</li>
+    <li><code class="inline">app/Controllers/ProductoController.php</code> — gestiona el CRUD completo de productos: listar con filtro/búsqueda, mostrar formulario de alta (<code class="inline">crear</code>), procesar el formulario (<code class="inline">guardar</code>), editar, actualizar y eliminar.</li>
+    <li><code class="inline">app/Controllers/CategoriaController.php</code> — gestiona la lista de categorías; solo visible para admin.</li>
+    <li><code class="inline">app/Controllers/UsuarioController.php</code> — gestiona el CRUD de usuarios (solo admin): listar, crear, editar, actualizar y eliminar. Tiene la lógica que impide quedar sin ningún administrador.</li>
+    <li><code class="inline">app/Controllers/AuthController.php</code> — maneja el ciclo de autenticación: mostrar y procesar el formulario de login, el registro de nuevos usuarios, la recuperación de contraseña por pregunta de seguridad y el logout.</li>
+  </ul>
+
+  <h3>Los modelos (<code class="inline">app/Models/</code>)</h3>
+  <p>Solo hablan con la base de datos. Todas las consultas usan <em>prepared statements</em>; los modelos no saben nada de HTTP ni de HTML.</p>
+  <ul>
+    <li><code class="inline">app/Models/Producto.php</code> — consultas de productos: listar con filtros opcionales, obtener uno por id, crear, actualizar, eliminar y validar datos del formulario.</li>
+    <li><code class="inline">app/Models/Categoria.php</code> — consultas de categorías: listar todas, crear, eliminar.</li>
+    <li><code class="inline">app/Models/Usuario.php</code> — consultas de usuarios: listar, buscar por nombre de usuario (login), crear, actualizar, eliminar y contar admins (para el candado que evita quedar sin administrador).</li>
+  </ul>
+
+  <h3>Los middlewares (<code class="inline">app/Middleware/</code>)</h3>
+  <p>El Router los corre antes de pasarle la petición al controlador.</p>
+  <ul>
+    <li><code class="inline">app/Middleware/Auth.php</code> — comprueba que haya una sesión activa (<code class="inline">$_SESSION['usuario_id']</code>). Si no la hay, redirige al login. Protege todas las rutas que no son públicas.</li>
+    <li><code class="inline">app/Middleware/Admin.php</code> — además de exigir sesión, comprueba que el rol sea <code class="inline">admin</code>. Si no, devuelve 403. Protege la gestión de usuarios y categorías.</li>
+  </ul>
+
+  <h3>Las vistas (<code class="inline">app/Views/</code>)</h3>
+  <p>Solo arman HTML. No hacen consultas ni lógica de negocio; reciben variables del controlador.</p>
+  <ul>
+    <li><code class="inline">app/Views/layouts/header.php</code> — encabezado compartido: <code class="inline">&lt;head&gt;</code>, las tres hojas de CSS y la barra de navegación con el menú.</li>
+    <li><code class="inline">app/Views/layouts/footer.php</code> — cierre de página: etiquetas <code class="inline">&lt;/body&gt;&lt;/html&gt;</code> y el bloque para mostrar los avisos flash.</li>
+    <li><code class="inline">app/Views/productos/index.php</code> — tablero con gráficos + tabla de productos con búsqueda y filtro por categoría.</li>
+    <li><code class="inline">app/Views/productos/crear.php</code> — formulario de alta de producto. Incluye <code class="inline">_campos.php</code>.</li>
+    <li><code class="inline">app/Views/productos/editar.php</code> — formulario de edición. También incluye <code class="inline">_campos.php</code> con los valores ya cargados.</li>
+    <li><code class="inline">app/Views/productos/eliminar.php</code> — pantalla de confirmación antes de borrar un producto.</li>
+    <li><code class="inline">app/Views/productos/_campos.php</code> — fragmento reutilizable con los campos del formulario de producto (nombre, descripción, precio, stock, categoría). Lo incluyen tanto <code class="inline">crear.php</code> como <code class="inline">editar.php</code> para no duplicar el HTML.</li>
+    <li><code class="inline">app/Views/categorias/index.php</code> — lista de categorías con opción de alta y eliminación (solo admin).</li>
+    <li><code class="inline">app/Views/usuarios/index.php</code> — lista de usuarios con sus roles (solo admin).</li>
+    <li><code class="inline">app/Views/usuarios/crear.php</code> — formulario para que un admin cree un nuevo usuario.</li>
+    <li><code class="inline">app/Views/usuarios/editar.php</code> — formulario para editar datos y rol de un usuario existente.</li>
+    <li><code class="inline">app/Views/auth/login.php</code> — formulario de inicio de sesión.</li>
+    <li><code class="inline">app/Views/auth/registro.php</code> — formulario de registro de cuenta nueva.</li>
+    <li><code class="inline">app/Views/auth/recuperar.php</code> — formulario de recuperación de contraseña por pregunta de seguridad.</li>
+  </ul>
+
+  <h3>Las rutas (<code class="inline">routes/web.php</code>)</h3>
+  <ul>
+    <li><code class="inline">routes/web.php</code> — define el mapa completo de URLs: método HTTP, patrón de ruta, controlador, método y middlewares que aplican. Es el único lugar donde se declara si una ruta es pública o privada.</li>
+  </ul>
+
+  <h3>La base de datos (<code class="inline">database/</code>)</h3>
+  <ul>
+    <li><code class="inline">database/schema.sql</code> — crea las tres tablas (<code class="inline">productos</code>, <code class="inline">categorias</code>, <code class="inline">usuarios</code>), define claves primarias, foráneas y datos de prueba iniciales. Es la base de un entorno limpio.</li>
+    <li><code class="inline">database/seed-categorias.sql</code> — inserta las cuatro categorías de ejemplo (Electrónica, Ropa, Alimentos, Herramientas). Se corre después de <code class="inline">schema.sql</code>.</li>
+    <li><code class="inline">database/migracion-01-usuarios-roles.sql</code> — agrega la columna <code class="inline">rol</code> a la tabla <code class="inline">usuarios</code> en bases ya existentes que no tenían esa columna.</li>
+    <li><code class="inline">database/migracion-02-fk-categoria.sql</code> — normaliza valores de categoría vacíos o inexistentes a <code class="inline">NULL</code> y agrega la clave foránea <code class="inline">fk_producto_categoria</code> en bases existentes.</li>
+  </ul>
+
+  <h3>La configuración (<code class="inline">config/</code> y archivos raíz)</h3>
+  <ul>
+    <li><code class="inline">config/config.php</code> — lee las credenciales de la base de datos desde <code class="inline">secrets.php</code> (o las variables de entorno en Docker). Vive fuera de <code class="inline">public/</code>: el navegador no puede alcanzarlo.</li>
+    <li><code class="inline">secrets.php</code> — credenciales reales (host, puerto, usuario, contraseña, nombre de BD). Está en <code class="inline">.gitignore</code>: nunca se sube al repositorio.</li>
+    <li><code class="inline">secrets.example.php</code> — copia de <code class="inline">secrets.php</code> con valores de ejemplo. Sí está en el repositorio: sirve como plantilla para quien clone el proyecto.</li>
+    <li><code class="inline">.env</code> — variables de entorno para el stack Docker (contraseñas, nombre de BD, puertos). No se versiona.</li>
+    <li><code class="inline">.env.example</code> — copia con valores de ejemplo. Sí está en el repositorio.</li>
+    <li><code class="inline">.gitignore</code> — lista los archivos que Git debe ignorar: <code class="inline">secrets.php</code>, <code class="inline">.env</code>, <code class="inline">DOCUMENTACION_MD/</code> y directorios generados.</li>
+    <li><code class="inline">apache-deny.conf</code> — reglas de Apache que bloquean el acceso directo a rutas sensibles (ej. <code class="inline">/config</code>, <code class="inline">/app</code>, <code class="inline">/database</code>). Se copia dentro del contenedor Docker.</li>
+  </ul>
+
+  <h3>Docker y el entorno de desarrollo (<code class="inline">docker/</code>)</h3>
+  <ul>
+    <li><code class="inline">docker-compose.yml</code> — orquesta tres contenedores: <code class="inline">php</code> (Apache + PHP en el puerto 8001), <code class="inline">mysql</code> (base de datos en el puerto 3307) y <code class="inline">phpmyadmin</code> (panel web en el puerto 8081). Define la red interna y los volúmenes.</li>
+    <li><code class="inline">Dockerfile</code> — construye la imagen PHP del proyecto: parte de <code class="inline">php:8.5-apache</code>, instala las extensiones necesarias (<code class="inline">pdo_mysql</code>, <code class="inline">mysqli</code>), activa <code class="inline">mod_rewrite</code> y copia <code class="inline">docker/apache.conf</code> y <code class="inline">apache-deny.conf</code>.</li>
+    <li><code class="inline">docker/apache.conf</code> — configuración del VirtualHost de Apache dentro del contenedor: define <code class="inline">public/</code> como la raíz web (<code class="inline">DocumentRoot</code>) y habilita el <code class="inline">AllowOverride All</code> necesario para que funcione el <code class="inline">.htaccess</code>.</li>
+  </ul>
+
+  <h3>Las guías y el README (<code class="inline">docs/</code>)</h3>
+  <ul>
+    <li><code class="inline">docs/guia-lectura.html</code> — este mismo archivo: el mapa del proyecto.</li>
+    <li><code class="inline">docs/guia-instalacion.html</code> — paso a paso para clonar el repositorio y levantar el stack Docker desde cero.</li>
+    <li><code class="inline">README.md</code> — índice del repositorio en GitHub: qué es el proyecto, tecnologías, estructura y cómo arrancar.</li>
+  </ul>
+
+  <h3>Carpeta legacy (<code class="inline">includes/</code>)</h3>
+  <p>Estos archivos son el layout de la versión anterior al MVC. Se mantienen en el repositorio como referencia histórica pero el MVC <strong>no los usa</strong>; el layout activo está en <code class="inline">app/Views/layouts/</code>.</p>
+  <ul>
+    <li><code class="inline">includes/header.php</code> — encabezado del sitio original (antes del refactor MVC).</li>
+    <li><code class="inline">includes/footer.php</code> — pie de página del sitio original.</li>
   </ul>
 </section>
 
