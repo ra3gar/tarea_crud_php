@@ -167,6 +167,45 @@
   </ol>
   <div class="note tip"><span class="note-t">El truco del orden</span><p><strong>Bootstrap pone los cimientos del estilo y <code class="inline">estilo.css</code> los personaliza</strong>; por eso el tema propio se enlaza al final. Además lleva un <code class="inline">?v=…</code> con la fecha del archivo (mirá <code class="inline">header.php</code>): obliga al navegador a volver a bajar el CSS cuando cambia, en vez de mostrar una versión vieja guardada en caché.</p></div>
 
+  <h3>Qué hace exactamente el tema propio (<code class="inline">estilo.css</code>)</h3>
+  <p>Son unas 200 líneas ordenadas por zona de la pantalla. Conviene saber qué resuelve cada bloque,
+     porque es el archivo que vas a tocar si querés cambiar el aspecto:</p>
+  <table class="files">
+    <tr><td>La paleta</td><td>Define los colores <strong>una sola vez</strong> como variables CSS (<code class="inline">--ink</code>, <code class="inline">--brand</code>, <code class="inline">--ok</code>, <code class="inline">--warn</code>, <code class="inline">--bad</code>…). Cambiás un color acá y cambia en todo el sitio.</td></tr>
+    <tr><td>Barra superior</td><td>El menú, el tamaño de los íconos y el resaltado del ítem de la página en la que estás.</td></tr>
+    <tr><td>Contenedor y encabezados</td><td>El ancho de la página y el título de cada pantalla.</td></tr>
+    <tr><td>Franja de métricas</td><td>Las tarjetas de valor del inventario, productos, unidades y stock bajo.</td></tr>
+    <tr><td>Tarjetas y tablas</td><td>El panel blanco y la tabla de productos.</td></tr>
+    <tr><td>Pastilla de stock</td><td>El indicador de color que avisa cuando el stock está bajo.</td></tr>
+    <tr><td>Botones, formularios y alertas</td><td>Acá es donde se sobrescribe a Bootstrap (ver abajo).</td></tr>
+    <tr><td>Pantallas de sesión</td><td>El layout centrado de login, registro y recuperación de contraseña.</td></tr>
+    <tr><td>Gráficos del tablero</td><td>Las barras y el pastel, sin ninguna librería.</td></tr>
+    <tr><td>Responsive y accesibilidad</td><td>Cinco <code class="inline">@media</code> para pantallas chicas y reglas de foco visible.</td></tr>
+  </table>
+
+  <h3>Cómo se sobrescribe a Bootstrap sin pelearse con él</h3>
+  <p>Este es el detalle que explica todo lo demás. Las vistas usan los <strong>nombres de clase de
+     Bootstrap</strong> (<code class="inline">btn</code>, <code class="inline">btn-primary</code>,
+     <code class="inline">card</code>, <code class="inline">alert</code>,
+     <code class="inline">form-control</code>, <code class="inline">row</code>), pero
+     <code class="inline">estilo.css</code> <strong>vuelve a definir esas mismas clases</strong> con la
+     paleta del proyecto. Como se carga después, gana.</p>
+  <p>El resultado práctico: el HTML queda con nombres estándar que cualquiera reconoce, y el aspecto es
+     propio. Si borraras <code class="inline">estilo.css</code>, el sitio seguiría funcionando — se vería
+     como un Bootstrap de fábrica.</p>
+  <p>De Bootstrap se aprovechan sobre todo tres cosas: la <strong>normalización</strong> (que todo arranque
+     parejo en cualquier navegador), la <strong>grilla</strong> (<code class="inline">row</code>) y la
+     <strong>base de componentes</strong> que después se repinta. Se carga el archivo completo (unos 230 KB)
+     aunque se use una parte: es la contracara de no tener un paso de compilación que recorte lo que no se usa.</p>
+
+  <h3>Los gráficos del tablero: CSS haciendo trabajo de librería</h3>
+  <p>Es el mejor ejemplo de hasta dónde llega el CSS en este proyecto, porque no hay ninguna librería de gráficos:</p>
+  <ul>
+    <li><strong>El gráfico de barras</strong> son <code class="inline">div</code> comunes. PHP calcula el porcentaje y lo escribe como ancho en el atributo <code class="inline">style</code>; el CSS pone el color, el riel de fondo y la etiqueta.</li>
+    <li><strong>El pastel</strong> es un solo círculo cuyo fondo es un <code class="inline">conic-gradient</code>: PHP arma la lista de tramos (color y porcentaje) y el navegador dibuja las porciones. El agujero que lo convierte en dona es un <code class="inline">::after</code>, otro círculo del color del fondo puesto encima.</li>
+    <li>Los dos gráficos van en una fila que <strong>se apila sola</strong> en pantallas chicas, sin JavaScript.</li>
+  </ul>
+
   <h3>¿Y el JavaScript? El sitio no usa</h3>
   <p>Puede sorprender, pero <strong>la aplicación no tiene JavaScript</strong>: no hay ningún archivo
      <code class="inline">.js</code> propio y <strong>tampoco se carga el JS de Bootstrap</strong> (solo su
