@@ -83,19 +83,56 @@
 <section id="mapa-archivos">
   <h2>1. Mapa de archivos</h2>
   <p class="lead">Qué es cada archivo, a qué capa pertenece y si exige sesión iniciada.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>El proyecto usa un <strong>MVC (Modelo-Vista-Controlador) hecho a mano</strong>, sin framework. En palabras simples:
+     el <strong>backend</strong> (el código PHP del servidor) recibe el pedido, busca los datos en la
+     <strong>base de datos</strong>, y arma el <strong>frontend</strong> (el HTML que ve el navegador).</p>
+  <h3>La cara visible</h3>
+  <ul>
+    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada. Toda petición pasa por acá.</li>
+    <li><code class="inline">public/assets/</code> — estilos, Bootstrap y fuentes (lo visual que descarga el navegador).</li>
+  </ul>
+  <h3>El servidor (backend, carpeta <code class="inline">app/</code>)</h3>
+  <ul>
+    <li><code class="inline">app/Core/</code> — el motor: autoloader, helpers, conexión a la base, router y controlador base.</li>
+    <li><code class="inline">app/Controllers/</code> — reciben el pedido y deciden qué hacer (Producto, Categoria, Auth, Usuario).</li>
+    <li><code class="inline">app/Models/</code> — hablan con la base de datos (las consultas viven acá).</li>
+    <li><code class="inline">app/Middleware/</code> — los guardias: <code class="inline">Auth</code> (exige sesión) y <code class="inline">Admin</code> (exige rol admin).</li>
+    <li><code class="inline">app/Views/</code> — las plantillas que arman el HTML. Son "la cara", pero las genera el servidor.</li>
+  </ul>
+  <h3>La base de datos y la configuración</h3>
+  <ul>
+    <li><code class="inline">database/schema.sql</code> — crea las tablas y los datos de prueba.</li>
+    <li><code class="inline">routes/web.php</code> — la tabla de rutas: qué URL va a qué controlador, y si es privada.</li>
+    <li><code class="inline">config/config.php</code> — de dónde salen las credenciales de la base (vive fuera de <code class="inline">public/</code>).</li>
+  </ul>
 </section>
 
 <section id="ciclo-peticion">
   <h2>2. Cómo viaja una petición</h2>
   <p class="lead">Del navegador a Apache, de Apache a PHP, de PHP a MySQL, y el HTML de vuelta.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <ol>
+    <li>El <strong>navegador</strong> pide una dirección, por ejemplo <code class="inline">/index.php/productos</code>.</li>
+    <li><strong>Apache</strong> sirve <code class="inline">public/index.php</code> (la raíz web es <code class="inline">public/</code>).</li>
+    <li>El <strong>front controller</strong> arranca la sesión, carga el autoloader y los helpers, crea el <em>Router</em> y le pasa las rutas de <code class="inline">routes/web.php</code>.</li>
+    <li>El <strong>Router</strong> busca la ruta que coincide con la dirección. Si es privada, primero corre el guardia <code class="inline">Auth</code>; si no hay sesión, manda al login.</li>
+    <li>El Router crea el <strong>controlador</strong> y llama a su método (ej. <code class="inline">ProductoController::index</code>).</li>
+    <li>El controlador le pide los datos al <strong>modelo</strong>, que consulta la <strong>base de datos</strong> con una consulta preparada.</li>
+    <li>El controlador elige una <strong>vista</strong>, que arma el <strong>HTML</strong>. Eso es lo que vuelve al navegador.</li>
+  </ol>
+  <p>Resumen: <em>frontend (navegador) → backend (PHP) → base de datos → backend arma el frontend → navegador</em>.</p>
 </section>
 
 <section id="caso-completo">
   <h2>3. Un caso completo de punta a punta</h2>
   <p class="lead">Dar de alta un producto, siguiendo el recorrido real por los archivos.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <ol>
+    <li><strong>GET <code class="inline">/productos/crear</code></strong> → el Router llama a <code class="inline">ProductoController::crear()</code>, que muestra la vista <code class="inline">productos/crear.php</code> (los campos están en <code class="inline">_campos.php</code>, compartidos con editar).</li>
+    <li>Completás el formulario y apretás "Guardar". El formulario manda <strong>POST <code class="inline">/productos</code></strong>.</li>
+    <li>El Router llama a <code class="inline">ProductoController::guardar()</code>. Junta los datos del formulario y llama a <code class="inline">Producto::validar()</code>.</li>
+    <li>Si hay errores, vuelve a mostrar el formulario con los mensajes y lo ya escrito. Si está todo bien, llama a <code class="inline">Producto::crear()</code>, que hace el <code class="inline">INSERT</code> con una consulta preparada.</li>
+    <li>Guarda un aviso ("Producto creado") en la sesión y redirige a <code class="inline">/productos</code>.</li>
+    <li>Esa nueva petición muestra el listado; el aviso aparece una sola vez y se borra.</li>
+  </ol>
 </section>
 
 <section id="patrones-compartidos">
@@ -104,25 +141,39 @@
      duplicadas en cada archivo.</p>
 
   <h3 id="patrones-get-post">Una página, dos modos: GET muestra, POST procesa</h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>Cada formulario tiene dos momentos: <strong>GET</strong> muestra el formulario vacío (o cargado), y
+     <strong>POST</strong> procesa lo que mandaste. En el MVC eso son dos métodos distintos del controlador
+     (ej. <code class="inline">crear()</code> muestra, <code class="inline">guardar()</code> procesa), conectados por el Router.</p>
 
   <h3 id="patron-validacion-producto">La validación de producto, compartida por crear y editar</h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>Crear y editar comparten los mismos campos (<code class="inline">_campos.php</code>) y la misma validación
+     (<code class="inline">Producto::validar()</code>): el nombre no puede estar vacío, y precio y stock deben ser
+     números mayores o iguales a cero. Una sola definición, usada por las dos acciones.</p>
 
   <h3 id="patron-busqueda-filtro">Buscar y filtrar sin abrir la puerta a una inyección</h3>
   <p class="lead">Cómo <code class="inline">index.php</code> arma las condiciones del <code class="inline">WHERE</code>
      en PHP y deja que los valores viajen aparte — y por qué eso no es lo mismo que "armar la consulta a mano".</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>El método <code class="inline">Producto::filtro()</code> decide EN PHP qué condiciones entran al
+     <code class="inline">WHERE</code>, pero lo que vos escribiste NUNCA se pega dentro del texto del SQL: viaja
+     aparte, como parámetro de una consulta preparada. Por eso no se puede "inyectar" SQL: el valor siempre se
+     trata como dato, nunca como código.</p>
 
   <h3 id="patron-mensajes-sesion">Avisos que se muestran una sola vez</h3>
   <p class="lead">Por qué el "Producto creado" viaja en la sesión y no en la dirección, y qué hace
      que no reaparezca al recargar.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>Los avisos ("Producto creado", "Usuario eliminado") viajan en <code class="inline">$_SESSION['mensaje']</code>.
+     El layout los muestra y los borra en el acto, así no reaparecen al recargar. Van en la sesión y no en la
+     dirección para que la URL quede limpia.</p>
 
   <h3 id="grafico-sin-libreria">Un gráfico de barras sin ninguna librería</h3>
   <p class="lead">Cómo una consulta agrupada se convierte en el ancho de un <code class="inline">div</code>,
      y por qué el proyecto no necesita descargar nada para dibujarlo.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>El tablero tiene dos gráficos y <strong>ninguna librería ni JavaScript</strong>:</p>
+  <ul>
+    <li><strong>Barras</strong> (valor por categoría): una consulta agrupada devuelve el valor de cada categoría, y PHP convierte ese número en el <em>ancho</em> de un <code class="inline">div</code>.</li>
+    <li><strong>Pastel/dona</strong> (unidades por categoría): PHP calcula el porcentaje de cada categoría y arma un <code class="inline">conic-gradient</code> de CSS. El agujero del centro es otro círculo encima.</li>
+  </ul>
+  <p>Los dos respetan el filtro activo: si filtrás por una categoría, los gráficos se recalculan.</p>
 </section>
 
 <section id="glosario">
@@ -131,45 +182,81 @@
      de este mismo código.</p>
 
   <h3 id="glosario-superglobales">Las superglobales: <code class="inline">$_POST</code>, <code class="inline">$_GET</code>, <code class="inline">$_SERVER</code></h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p><code class="inline">$_POST</code> trae lo que se envía por un formulario; <code class="inline">$_GET</code>, lo que viaja en la
+     dirección (ej. <code class="inline">?buscar=cable</code>); <code class="inline">$_SERVER</code>, datos del servidor (lo usa
+     <code class="inline">base_path()</code> para que los enlaces funcionen en cualquier carpeta).</p>
 
   <h3 id="glosario-operadores">Los operadores <code class="inline">??</code> y <code class="inline">?:</code></h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p><code class="inline">$_POST['x'] ?? ''</code> dice "si no existe, usá vacío" (evita avisos de PHP).
+     <code class="inline">$a ?: $b</code> dice "si $a es falso/vacío, usá $b". Se ven por todo el código para poner
+     valores por defecto en una línea.</p>
 
   <h3 id="glosario-funciones-texto">Funciones de texto: <code class="inline">trim()</code>, <code class="inline">htmlspecialchars()</code>, <code class="inline">number_format()</code></h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p><code class="inline">trim()</code> saca espacios de los bordes; <code class="inline">htmlspecialchars()</code> (envuelta en el
+     helper <code class="inline">e()</code>) escapa el texto para que el navegador no interprete HTML metido por un usuario
+     (anti-XSS); <code class="inline">number_format()</code> da formato a los precios.</p>
 
   <h3 id="glosario-includes"><code class="inline">require</code>, <code class="inline">require_once</code> y el orden de inclusión</h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>El front controller usa <code class="inline">require</code> para cargar el autoloader y los helpers una sola vez.
+     Las clases NO se incluyen a mano: el <strong>autoloader</strong> (<code class="inline">app/Core/autoload.php</code>) las
+     carga solas cuando se usan, traduciendo el namespace <code class="inline">App\</code> a la carpeta <code class="inline">app/</code>.</p>
 
   <h3 id="glosario-pdo">PDO y las consultas preparadas</h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>PDO es la forma de hablar con MySQL desde PHP. "Preparada" significa que el SQL y los valores van por
+     separado: primero se manda la consulta con marcadores (<code class="inline">:id</code>), después los valores. Así un
+     valor nunca puede cambiar la consulta. Es la regla 1 de seguridad.</p>
 
   <h3 id="glosario-hashing"><code class="inline">password_hash()</code> y <code class="inline">password_verify()</code></h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>La contraseña nunca se guarda en texto: se guarda su <em>hash</em> (una huella irreversible) con
+     <code class="inline">password_hash()</code>. Al iniciar sesión, <code class="inline">password_verify()</code> compara lo que
+     escribiste contra esa huella. La respuesta de seguridad se guarda igual.</p>
 
   <h3 id="glosario-sesiones">Sesiones: <code class="inline">session_start()</code>, <code class="inline">$_SESSION</code>, <code class="inline">session_regenerate_id()</code></h3>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>La sesión recuerda quién sos entre páginas. El front controller hace <code class="inline">session_start()</code>;
+     al entrar bien, se guarda <code class="inline">$_SESSION['usuario_id']</code>, el <code class="inline">nombre</code> (para el saludo)
+     y el <code class="inline">rol</code> (para el guardia de admin). <code class="inline">session_regenerate_id()</code> cambia el id
+     al iniciar sesión, para evitar el robo de sesión.</p>
 </section>
 
 <section id="invariantes">
   <h2>6. Las 5 invariantes y dónde se cumplen</h2>
   <p class="lead">Las cinco reglas que el proyecto no rompe nunca, cada una con el archivo y el bloque
      que la implementa.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <ol>
+    <li><strong>Sin inyección SQL:</strong> todas las consultas usan <em>prepared statements</em> en los modelos (<code class="inline">app/Models/</code>).</li>
+    <li><strong>Control de sesión:</strong> el guardia <code class="inline">Auth</code> protege las rutas privadas; el login guarda el usuario en la sesión.</li>
+    <li><strong>Sin XSS:</strong> todo lo que se muestra pasa por <code class="inline">e()</code> en las vistas.</li>
+    <li><strong>Roles:</strong> el guardia <code class="inline">Admin</code> cierra la sección Usuarios a quien no sea admin; hay candados para no quedar sin administrador.</li>
+    <li><strong>Sin JavaScript:</strong> los gráficos del tablero son CSS puro; toda la lógica corre en el servidor.</li>
+  </ol>
 </section>
 
 <section id="limites-conocidos">
   <h2>7. Límites conocidos</h2>
   <p class="lead">Lo que este proyecto no resuelve, dicho de frente. Es un trabajo educativo: señalar
      un límite y explicar por qué está ahí enseña más que disimularlo.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <ul>
+    <li>La relación productos–categorías es por <em>nombre</em>, no una clave foránea formal (más simple de leer para la tarea).</li>
+    <li>No hay tokens CSRF en los formularios: queda fuera del alcance de este trabajo educativo.</li>
+    <li>La recuperación de contraseña es por pregunta de seguridad, no por correo.</li>
+    <li>Los roles son dos y fijos (admin / usuario); no hay permisos finos.</li>
+    <li>Las URLs limpias (sin <code class="inline">index.php/</code>) dependen de cómo se sirva el sitio; por eso se usa el patrón con <code class="inline">index.php/</code>, que funciona en cualquier lado.</li>
+  </ul>
 </section>
 
 <section id="estructura-carpetas">
   <h2>8. Dónde está cada cosa</h2>
   <p class="lead">La estructura de carpetas y el criterio detrás de ella.</p>
-  <p><span class="pendiente">pendiente</span></p>
+  <p>La idea es que un recién llegado distinga de un vistazo <strong>qué es cada cosa</strong>:</p>
+  <ul>
+    <li><code class="inline">public/</code> — la cara visible: lo único que el navegador abre directo.</li>
+    <li><code class="inline">app/</code> — el servidor (backend): el código PHP, con el MVC adentro.</li>
+    <li><code class="inline">database/</code> — la base de datos (tablas, migraciones, datos de prueba).</li>
+    <li><code class="inline">docs/</code> — las guías.</li>
+  </ul>
+  <p>El criterio clave: el código sensible (<code class="inline">app/</code>, <code class="inline">config/</code>, <code class="inline">secrets.php</code>)
+     vive <strong>fuera</strong> de <code class="inline">public/</code>, así el navegador físicamente no lo alcanza — no por una
+     regla que lo prohíbe, sino porque no está en la carpeta servida.</p>
 </section>
 
 </div>

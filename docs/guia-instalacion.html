@@ -242,7 +242,7 @@ cd tarea_crud_php</pre></div>
     <div class="step"><div class="step-n">4</div><div class="step-body">
       <h3>Abrir la aplicación</h3>
       <p>Andá a <a href="http://localhost:8001">http://localhost:8001</a>. Te va a recibir la pantalla de login.</p>
-      <p>La base arranca <strong>sin ningún usuario</strong>, así que hacé clic en <strong>"Crear cuenta"</strong>, registrate con el usuario y la contraseña que quieras, y entrá. Adentro vas a ver la lista con <strong>5 productos de prueba</strong> que el proyecto trae cargados.</p>
+      <p>La base arranca <strong>sin ningún usuario</strong>, así que hacé clic en <strong>"Crear cuenta"</strong>, poné tu nombre y apellido (campos separados), un usuario y una contraseña, y entrá. Como sos el primero, tu cuenta queda como <strong>administrador</strong> (vas a ver la sección "Usuarios" para gestionar cuentas). Adentro vas a ver la lista con <strong>5 productos de prueba</strong> que el proyecto trae cargados.</p>
       <div class="note tip"><span class="note-t">Si ves los 5 productos, terminaste</span><p>Esa lista es la mejor señal de que todo funcionó: significa que la aplicación corre, que se conectó a la base, y que la base se creó con sus tablas y sus datos.</p></div>
     </div></div>
   </section>
@@ -296,21 +296,22 @@ cd tarea_crud_php</pre></div>
     <div class="note bad"><span class="note-t">"The container name is already in use"</span><p>Quedó un contenedor viejo del proyecto dando vueltas. Corré <code class="inline">docker compose down --remove-orphans</code> y volvé a levantarlo.</p></div>
     <div class="note bad"><span class="note-t">La página dice "Error de conexión a la base de datos"</span><p>Lo más probable es que MySQL todavía esté arrancando: esperá medio minuto y recargá. Si sigue igual, mirá qué está diciendo la aplicación con <code class="inline">docker compose logs php</code>.</p></div>
     <div class="note bad"><span class="note-t">Entré pero la lista de productos sale vacía</span><p>La base se creó, pero el archivo que arma las tablas no se ejecutó. Ese archivo corre <strong>una sola vez</strong>, cuando el volumen se crea por primera vez, así que hay que arrancar de cero: <code class="inline">docker compose down -v</code> y después <code class="inline">docker compose up -d --build</code>. Ojo que eso borra lo que hubieras cargado, usuario incluido.</p></div>
-    <div class="note bad"><span class="note-t">La página se ve sin estilos, todo blanco y negro</span><p>Los archivos de <code class="inline">assets/</code> no están llegando. Verificá que clonaste el repositorio completo y que la carpeta <code class="inline">assets</code> existe con <code class="inline">css</code> y <code class="inline">fonts</code> adentro.</p></div>
+    <div class="note bad"><span class="note-t">La página se ve sin estilos, todo blanco y negro</span><p>Los archivos de <code class="inline">public/assets/</code> no están llegando. Verificá que clonaste el repositorio completo y que la carpeta <code class="inline">public/assets</code> existe con <code class="inline">css</code> y <code class="inline">fonts</code> adentro.</p></div>
   </section>
 
   <section id="estructura">
     <h2><span class="kicker">Mapa</span>Estructura del proyecto</h2>
     <p>Para orientarte cuando abras la carpeta por primera vez.</p>
     <table class="files">
-      <tr><td>index.php</td><td>Lista de productos. Es la pantalla principal del sistema.</td></tr>
-      <tr><td>crear · editar · eliminar.php</td><td>Alta, modificación y baja de productos.</td></tr>
-      <tr><td>login · registro · recuperar · logout.php</td><td>Todo lo de cuentas: entrar, crear cuenta, recuperar contraseña y salir.</td></tr>
-      <tr><td>auth.php</td><td>El portero: si no iniciaste sesión, te manda al login.</td></tr>
-      <tr><td>config.php</td><td>La conexión a la base de datos.</td></tr>
+      <tr><td>public/</td><td>La raíz web: lo único que el navegador abre directo. Adentro, <code class="inline">index.php</code> (la puerta de entrada) y <code class="inline">assets/</code> (estilos y fuentes).</td></tr>
+      <tr><td>app/Core/</td><td>El motor: autoloader, helpers, conexión a la base, router y controlador base.</td></tr>
+      <tr><td>app/Controllers/</td><td>Reciben el pedido y eligen la vista (Producto, Categoria, Auth, Usuario).</td></tr>
+      <tr><td>app/Models/</td><td>Hablan con la base de datos: acá viven las consultas.</td></tr>
+      <tr><td>app/Middleware/</td><td>Los porteros: <code class="inline">Auth</code> (exige sesión) y <code class="inline">Admin</code> (exige rol admin).</td></tr>
+      <tr><td>app/Views/</td><td>Las plantillas que arman el HTML (una carpeta por área).</td></tr>
+      <tr><td>routes/web.php</td><td>La tabla de rutas: qué dirección va a qué controlador.</td></tr>
+      <tr><td>config/config.php</td><td>De dónde salen las credenciales de la base. Vive fuera de <code class="inline">public/</code>.</td></tr>
       <tr><td>database/schema.sql</td><td>Crea la base, las tablas y los 5 productos de prueba.</td></tr>
-      <tr><td>includes/</td><td>El encabezado y el pie que comparten todas las páginas.</td></tr>
-      <tr><td>assets/</td><td>Los estilos, Bootstrap y las fuentes. Todo local, sin depender de internet.</td></tr>
       <tr><td>docs/</td><td>Esta guía, y la guía de lectura del código.</td></tr>
       <tr><td>.env.example</td><td>Plantilla de la contraseña. Vos creás tu <code class="inline">.env</code> a partir de ella.</td></tr>
       <tr><td>Dockerfile</td><td>La receta de la imagen de PHP, con los drivers de MySQL agregados.</td></tr>
