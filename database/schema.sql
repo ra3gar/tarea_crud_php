@@ -34,13 +34,31 @@ INSERT INTO productos (nombre, descripcion, precio, stock, categoria) VALUES
   ('Audifonos',          'Con microfono y cancelacion de ruido', 39.90, 20, 'Audio');
 
 -- =====================================================================
---  TABLA 2: usuarios  (login + recuperacion por pregunta de seguridad)
+--  TABLA 2: categorias  (lista de categorias que se eligen en los productos)
+--  Antes la categoria era texto libre y se ensuciaba (Perifericos,
+--  perifericos, Periferico...). Ahora es una tabla: se elige de una lista.
+-- =====================================================================
+DROP TABLE IF EXISTS categorias;
+CREATE TABLE categorias (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  nombre         VARCHAR(50) NOT NULL UNIQUE,   -- no se puede repetir
+  fecha_creacion TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO categorias (nombre) VALUES
+  ('Almacenamiento'), ('Audio'), ('Monitores'), ('Perifericos');
+
+-- =====================================================================
+--  TABLA 3: usuarios  (login + recuperacion por pregunta de seguridad)
 --  SEGURIDAD: se guardan HASHES, nunca la contrasena ni la respuesta en texto.
 -- =====================================================================
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
   id             INT AUTO_INCREMENT PRIMARY KEY,
-  usuario        VARCHAR(50)  NOT NULL UNIQUE,   -- no se puede repetir
+  usuario        VARCHAR(50)  NOT NULL UNIQUE,   -- login, no se puede repetir
+  nombre         VARCHAR(50)  NOT NULL,          -- nombre real (separado del login)
+  apellido       VARCHAR(50)  NOT NULL,          -- apellido real
+  rol            ENUM('admin','usuario') NOT NULL DEFAULT 'usuario',  -- admin gestiona usuarios
   password_hash  VARCHAR(255) NOT NULL,          -- hash bcrypt de la contrasena
   pregunta       VARCHAR(255) NOT NULL,          -- pregunta de seguridad elegida
   respuesta_hash VARCHAR(255) NOT NULL,          -- hash de la respuesta (tambien secreta)
@@ -53,5 +71,5 @@ CREATE TABLE usuarios (
 --  COMO EJECUTARLO (elegir UNA opcion):
 --  A) phpMyAdmin (visual): pestana "Importar" -> elegir este archivo -> Continuar.
 --  B) phpMyAdmin (pegar):  pestana "SQL" -> pegar todo este texto -> Continuar.
---  C) Terminal (Docker):   docker exec -i mysql_global mysql -u root -p < database/schema.sql
+--  C) Terminal (Docker):   docker exec -i tarea_crud_mysql mysql -u root -p < database/schema.sql
 -- =====================================================================

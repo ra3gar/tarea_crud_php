@@ -85,10 +85,11 @@ services:
     networks: [tarea_crud_red]
 
   # -------------------------------------------------------------------
-  #  APACHE + PHP: el que ejecuta index.php, crear.php, login.php...
-  #  Es el unico que se CONSTRUYE desde el Dockerfile de esta carpeta,
-  #  porque la imagen oficial de PHP no trae los drivers de MySQL y hay
-  #  que agregarselos.
+  #  APACHE + PHP: el que ejecuta la aplicacion. Toda peticion entra por
+  #  el front controller public/index.php, que arma el router y despacha.
+  #  Es el unico contenedor que se CONSTRUYE desde el Dockerfile de esta
+  #  carpeta, porque la imagen oficial de PHP no trae los drivers de MySQL
+  #  y hay que agregarselos.
   # -------------------------------------------------------------------
   php:
     build: .
