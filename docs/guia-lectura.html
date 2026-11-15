@@ -22,8 +22,18 @@
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
+  /* Capa de fondo: un degradado suave detras del contenido, mas amable
+     para leer que un gris plano. Es puramente decorativa (aria-hidden) y
+     va fija al viewport, por detras de todo (z-index:-1). */
+  html{ background:#eef1f6; }
+  .bg-capa{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(1100px 560px at 50% 240px, rgba(47,95,224,.06), transparent 60%),
+      linear-gradient(180deg, #f7f9fc 0%, #eceff5 55%, #e9edf4 100%);
+  }
   body{
-    margin:0; background:var(--bg); color:var(--text);
+    margin:0; background:transparent; color:var(--text);
     font-family:"Inter",system-ui,-apple-system,sans-serif;
     font-size:16px; line-height:1.6;
   }
@@ -53,6 +63,7 @@
 </style>
 </head>
 <body>
+<div class="bg-capa" aria-hidden="true"></div>
 
 <div class="hero">
   <div class="hero-in">
