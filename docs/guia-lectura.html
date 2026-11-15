@@ -44,7 +44,12 @@
   .hero h1{ margin:.2em 0 .3em; font-size:2rem; }
   .hero p{ margin:0; color:#c8d2e4; max-width:62ch; }
   .brand{ font-weight:600; opacity:.85; font-size:.9rem; text-transform:uppercase; letter-spacing:.08em; }
-  .wrap{ max-width:900px; margin:0 auto; padding:32px 24px 80px; }
+  .wrap{
+    max-width:900px; margin:26px auto 56px; padding:30px 36px 52px;
+    background:#faf9fd; border:1px solid #e4e2f0; border-radius:18px;
+    box-shadow:0 14px 38px rgba(31,42,61,.08);
+  }
+  @media (max-width:560px){ .wrap{ padding:20px 16px 40px; margin:14px auto 40px; border-radius:12px; } }
   nav.toc{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 24px; margin-bottom:36px; }
   nav.toc h2{ margin:0 0 .6em; font-size:1rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
   nav.toc ol{ margin:0; padding-left:1.3em; }
