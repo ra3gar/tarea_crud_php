@@ -1,0 +1,24 @@
+// Diagrama 3 - Comunicacion entre capas y sentido de las dependencias
+digraph capas {
+  rankdir=TB; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, ranksep=0.5];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", width=4.2, color="#c9d1da"];
+  edge  [fontname="Helvetica", fontsize=9, color="#5a6b86"];
+
+  l1 [label="Capa 1 — ENTRADA\npublic/index.php  ·  public/.htaccess", fillcolor="#eef2f8", color="#2f5fe0"];
+  l2 [label="Capa 2 — INFRAESTRUCTURA\napp/Core/ (autoload · helpers · Router · Controller · Database)", fillcolor="#f7f9fc"];
+  l3 [label="Capa 3 — GUARDIAS\napp/Middleware/ (Auth · Admin)", fillcolor="#fdf0f0", color="#b23b3b"];
+  l4 [label="Capa 4 — COORDINACION\napp/Controllers/", fillcolor="#eef2f8", color="#2f5fe0"];
+  l5 [label="Capa 5 — DATOS\napp/Models/  ->  PDO", fillcolor="#f4f9f6", color="#157f52"];
+  l6 [label="Capa 6 — PRESENTACION\napp/Views/  ->  HTML", fillcolor="#fdf7ef", color="#9a6212"];
+  db [label="MySQL  tarea_crud_db", shape=cylinder, fillcolor="#f4f9f6", color="#157f52", width=2.6];
+
+  l1 -> l2 [label="require"];
+  l2 -> l3 [label="Router corre Auth si la ruta es privada"];
+  l3 -> l4 [label="deja pasar"];
+  l4 -> l5 [label="pide datos"];
+  l4 -> l6 [label="elige vista + pasa datos"];
+  l5 -> db [label="prepare / execute", color="#157f52"];
+  l6 -> l1 [label="HTML de vuelta al navegador", style=dashed, constraint=false];
+  l5 -> l4 [label="arreglos de filas", style=dashed, constraint=false];
+}

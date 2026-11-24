@@ -1,0 +1,23 @@
+// Diagrama 5 - Organizacion de los modulos funcionales
+digraph modulos {
+  rankdir=TB; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, compound=true, ranksep=0.55, nodesep=0.4];
+  node  [fontname="Helvetica", fontsize=9, shape=box, style="rounded,filled", fillcolor="#ffffff", color="#c9d1da"];
+  edge  [fontname="Helvetica", fontsize=8, color="#5a6b86"];
+
+  subgraph cluster_pub { label="PUBLICO  (sin sesion)"; labeljust=l; style="rounded,filled"; fillcolor="#f7f9fc"; color="#9aa7b8"; fontsize=10;
+    m_auth [label="Modulo AUTENTICACION\n/login · /registro · /recuperar · /logout\nAuthController + Usuario + Views/auth", color="#2f5fe0"];
+  }
+  subgraph cluster_priv { label="PRIVADO  (Auth::proteger)"; labeljust=l; style="rounded,filled"; fillcolor="#eef2f8"; color="#2f5fe0"; fontsize=10;
+    m_prod [label="Modulo INVENTARIO + TABLERO\n/ · /productos · crear · editar · eliminar\nProductoController + Producto + Views/productos", color="#2f5fe0"];
+    m_cat  [label="Modulo CATEGORIAS\n/categorias · guardar · eliminar\nCategoriaController + Categoria + Views/categorias", color="#157f52"];
+  }
+  subgraph cluster_admin { label="PRIVADO + SOLO ADMIN  (Admin::proteger)"; labeljust=l; style="rounded,filled"; fillcolor="#fdf0f0"; color="#b23b3b"; fontsize=10;
+    m_usr [label="Modulo GESTION DE USUARIOS\n/usuarios · crear · editar · password · eliminar\nUsuarioController + Usuario + Views/usuarios", color="#b23b3b"];
+  }
+
+  m_auth -> m_prod [label="al entrar, redirige a /productos"];
+  m_cat  -> m_prod [label="provee la lista de categorias\n(Categoria::nombres)", color="#157f52"];
+  m_auth -> m_usr  [label="el primer usuario registrado queda admin", style=dashed];
+  m_usr  -> m_auth [label="comparte la lista PREGUNTAS\n(constante duplicada)", style=dotted, color="#b23b3b"];
+}

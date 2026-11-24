@@ -1,0 +1,46 @@
+// Diagrama 11 - Mapa de dependencias verificadas en el codigo
+digraph dependencias {
+  rankdir=LR; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, nodesep=0.18, ranksep=0.9];
+  node  [fontname="Courier", fontsize=8, shape=box, style="rounded,filled", fillcolor="#ffffff", color="#c9d1da", height=0.3];
+  edge  [fontname="Helvetica", fontsize=7, color="#9aa7b8", arrowsize=0.7];
+
+  idx [label="public/index.php", fillcolor="#eef2f8", color="#2f5fe0"];
+  au  [label="Core/autoload.php", fillcolor="#f7f9fc"];
+  he  [label="Core/helpers.php", fillcolor="#f7f9fc"];
+  ro  [label="routes/web.php", fillcolor="#f7f9fc"];
+  rt  [label="Core/Router.php", fillcolor="#f7f9fc", color="#2f5fe0"];
+  ct  [label="Core/Controller.php", fillcolor="#f7f9fc"];
+  da  [label="Core/Database.php", fillcolor="#f7f9fc", color="#157f52"];
+  cf  [label="config/config.php", fillcolor="#fdf7ef", color="#9a6212"];
+  mAu [label="Middleware/Auth.php", fillcolor="#fdf0f0", color="#b23b3b"];
+  mAd [label="Middleware/Admin.php", fillcolor="#fdf0f0", color="#b23b3b"];
+  cP [label="ProductoController",  fillcolor="#eef2f8", color="#2f5fe0"];
+  cC [label="CategoriaController", fillcolor="#eef2f8", color="#2f5fe0"];
+  cA [label="AuthController",      fillcolor="#eef2f8", color="#2f5fe0"];
+  cU [label="UsuarioController",   fillcolor="#eef2f8", color="#2f5fe0"];
+  oP [label="Models/Producto",  fillcolor="#f4f9f6", color="#157f52"];
+  oC [label="Models/Categoria", fillcolor="#f4f9f6", color="#157f52"];
+  oU [label="Models/Usuario",   fillcolor="#f4f9f6", color="#157f52"];
+  vh [label="Views/layouts/header.php", fillcolor="#fdf7ef", color="#9a6212"];
+  vf [label="Views/layouts/footer.php", fillcolor="#fdf7ef", color="#9a6212"];
+  vk [label="Views/productos/_campos.php", fillcolor="#fdf7ef", color="#9a6212"];
+  vP [label="Views/productos/*",  fillcolor="#fdf7ef", color="#9a6212"];
+  vC [label="Views/categorias/*", fillcolor="#fdf7ef", color="#9a6212"];
+  vA [label="Views/auth/*",       fillcolor="#fdf7ef", color="#9a6212"];
+  vU [label="Views/usuarios/*",   fillcolor="#fdf7ef", color="#9a6212"];
+
+  idx -> au [label="require"]; idx -> he [label="require"]; idx -> ro [label="require"]; idx -> rt [label="new"];
+  ro -> cP [label="::class"]; ro -> cC; ro -> cA; ro -> cU;
+  rt -> mAu [label="use + ::proteger"];
+  cU -> mAd [label="use + constructor"];
+  cP -> ct [label="extends"]; cC -> ct; cA -> ct; cU -> ct;
+  cP -> oP [label="use"]; cP -> oC [label="use"]; cC -> oC; cA -> oU; cU -> oU;
+  oP -> da [label="use"]; oC -> da; oU -> da;
+  da -> cf [label="require"];
+  ct -> vP [label="require (vista)"]; ct -> vC; ct -> vA; ct -> vU;
+  vP -> vh [label="require"]; vP -> vf; vP -> vk [label="require (crear/editar)"];
+  vC -> vh; vC -> vf; vA -> vh; vA -> vf; vU -> vh; vU -> vf;
+  ct -> he [label="url()", style=dotted]; vh -> he [label="asset() url() e()", style=dotted];
+  mAu -> he [label="url()", style=dotted]; mAd -> he [label="url()", style=dotted];
+}

@@ -1,0 +1,38 @@
+// Diagrama 2 - Patron MVC con los archivos reales del proyecto
+digraph mvc_proyecto {
+  rankdir=LR; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, compound=true, nodesep=0.3, ranksep=0.85];
+  node  [fontname="Helvetica", fontsize=9, shape=box, style="rounded,filled", fillcolor="#ffffff", color="#c9d1da"];
+  edge  [fontname="Helvetica", fontsize=9, color="#5a6b86"];
+
+  subgraph cluster_c {
+    label="CONTROLADOR  ·  app/Controllers/"; labeljust=l;
+    style="rounded,filled"; fillcolor="#eef2f8"; color="#2f5fe0"; fontsize=10; fontcolor="#2f5fe0";
+    pc [label="ProductoController"]; cc [label="CategoriaController"];
+    ac [label="AuthController"];     uc [label="UsuarioController"];
+  }
+  subgraph cluster_m {
+    label="MODELO  ·  app/Models/"; labeljust=l;
+    style="rounded,filled"; fillcolor="#f4f9f6"; color="#157f52"; fontsize=10; fontcolor="#157f52";
+    mp [label="Producto\ntodos · porId · metricas\nvalorPorCategoria · crear\nactualizar · eliminar · validar"];
+    mc [label="Categoria\ntodas · nombres · existe\ncrear · enUso · eliminar"];
+    mu [label="Usuario\nporUsuario · existe\ndatosRecuperacion · todos\nporId · crear · actualizar\neliminar · contarAdmins"];
+  }
+  subgraph cluster_v {
+    label="VISTA  ·  app/Views/"; labeljust=l;
+    style="rounded,filled"; fillcolor="#fdf7ef"; color="#9a6212"; fontsize=10; fontcolor="#9a6212";
+    vp [label="productos/\nindex · crear · editar\neliminar · _campos"];
+    vc [label="categorias/index"];
+    va [label="auth/\nlogin · registro · recuperar"];
+    vu [label="usuarios/\nindex · crear · editar"];
+    vl [label="layouts/\nheader · footer", color="#9a6212"];
+  }
+  subgraph cluster_db { label=""; style=invis;
+    bd [label="MySQL  tarea_crud_db", shape=cylinder, fillcolor="#f4f9f6", color="#157f52"];
+  }
+
+  pc -> mp; pc -> mc; cc -> mc; ac -> mu; uc -> mu;
+  pc -> vp [style=dashed]; cc -> vc [style=dashed]; ac -> va [style=dashed]; uc -> vu [style=dashed];
+  mp -> bd [color="#157f52"]; mc -> bd [color="#157f52"]; mu -> bd [color="#157f52"];
+  vp -> vl [style=dotted, label="require"]; vc -> vl [style=dotted]; va -> vl [style=dotted]; vu -> vl [style=dotted];
+}

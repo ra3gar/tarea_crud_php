@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libxml2-dev \
         libgmp-dev \
+        libonig-dev \
+        libicu-dev \
         unzip \
         git \
     && rm -rf /var/lib/apt/lists/*
@@ -29,7 +31,6 @@ RUN docker-php-ext-install \
         gd \
         gmp \
         xml \
-        dom \
         mbstring \
         intl \
         exif

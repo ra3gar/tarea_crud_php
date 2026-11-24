@@ -1,0 +1,52 @@
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant NAV as Navegador
+    participant IDX as public/index.php
+    participant RT as Core\Router
+    participant MW as Middleware\Auth
+    participant PC as ProductoController
+    participant MP as Models\Producto
+    participant MC as Models\Categoria
+    participant DB as Core\Database (PDO)
+    participant SQL as MySQL productos
+    participant V as Views/productos
+
+    U->>NAV: clic en "+ Nuevo producto"
+    NAV->>IDX: GET /index.php/productos/crear
+    IDX->>RT: despachar("GET", "/productos/crear")
+    RT->>MW: proteger() -- ruta privada
+    MW-->>RT: hay sesion, sigue
+    RT->>PC: crear()
+    PC->>MC: nombres()
+    MC->>DB: query SELECT nombre FROM categorias
+    DB->>SQL: SELECT
+    SQL-->>DB: filas
+    DB-->>MC: FETCH_COLUMN
+    MC-->>PC: array de nombres
+    PC->>V: vista("productos/crear", datos vacios + categorias)
+    V-->>NAV: HTML del formulario (_campos.php)
+    U->>NAV: completa y envia el formulario
+    NAV->>IDX: POST /index.php/productos
+    IDX->>RT: despachar("POST", "/productos")
+    RT->>MW: proteger()
+    MW-->>RT: ok
+    RT->>PC: guardar()
+    PC->>PC: datosDelFormulario() -- trim de los 5 campos
+    PC->>MP: validar(datos)
+    alt hay errores de validacion
+        MP-->>PC: lista de errores
+        PC->>V: vista("productos/crear", datos + errores)
+        V-->>NAV: formulario con los errores y lo ya escrito
+    else datos validos
+        MP-->>PC: lista vacia
+        PC->>PC: paraGuardar() -- categoria "" se convierte en NULL
+        PC->>MP: crear(marcadores)
+        MP->>DB: prepare INSERT INTO productos
+        DB->>SQL: execute con parametros aparte
+        SQL-->>DB: fila insertada
+        PC->>PC: SESSION mensaje = "Producto creado."
+        PC-->>NAV: redirigir("productos") -- header Location + exit
+        NAV->>IDX: GET /index.php/productos
+        IDX-->>NAV: listado + tablero con el aviso verde
+    end

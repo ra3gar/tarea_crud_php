@@ -1,0 +1,40 @@
+// Diagrama 1 - Arquitectura general de despliegue (Docker Compose)
+digraph arquitectura_general {
+  rankdir=TB; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, compound=true, nodesep=0.45, ranksep=0.6];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", color="#c9d1da", penwidth=1.2];
+  edge  [fontname="Helvetica", fontsize=9, color="#5a6b86"];
+
+  navegador [label="Navegador del usuario\n(HTML + CSS, sin JavaScript)", fillcolor="#eef2f8", color="#2f5fe0"];
+
+  subgraph cluster_docker {
+    label="Maquina anfitriona  ·  red privada  tarea_crud_red"; labeljust=l;
+    style="rounded,dashed"; color="#9aa7b8"; fontsize=10; fontcolor="#5a6b86";
+
+    subgraph cluster_php {
+      label="tarea_crud_php  ·  puerto 8001:80  ·  imagen propia (Dockerfile)"; labeljust=l;
+      style="rounded,filled"; fillcolor="#f7f9fc"; color="#2f5fe0"; fontsize=9; fontcolor="#2f5fe0";
+      apache [label="Apache 2\nDocumentRoot = /var/www/html/public", fillcolor="#ffffff"];
+      php    [label="PHP 8.5\npublic/index.php (front controller)\n+ app/ (MVC)", fillcolor="#ffffff", color="#2f5fe0"];
+      apache -> php [label="PATH_INFO"];
+    }
+    subgraph cluster_mysql {
+      label="tarea_crud_mysql  ·  puerto 3307:3306  ·  mysql:8.4"; labeljust=l;
+      style="rounded,filled"; fillcolor="#f4f9f6"; color="#157f52"; fontsize=9; fontcolor="#157f52";
+      mysql [label="Base  tarea_crud_db\nproductos · categorias · usuarios", fillcolor="#ffffff", color="#157f52"];
+      vol   [label="Volumen\ntarea_crud_mysql_datos", shape=cylinder, style=filled, fillcolor="#ffffff", color="#157f52"];
+      mysql -> vol [label="persiste", style=dashed];
+    }
+    subgraph cluster_pma {
+      label="tarea_crud_phpmyadmin  ·  puerto 8081:80"; labeljust=l;
+      style="rounded,filled"; fillcolor="#fdf7ef"; color="#9a6212"; fontsize=9; fontcolor="#9a6212";
+      pma [label="phpMyAdmin\n(solo administracion)", fillcolor="#ffffff", color="#9a6212"];
+    }
+  }
+
+  navegador -> apache [label="HTTP  localhost:8001"];
+  navegador -> pma    [label="HTTP  localhost:8081", style=dotted];
+  php   -> mysql [label="PDO  ·  prepared statements\nhost = tarea_crud_mysql:3306", color="#157f52"];
+  pma   -> mysql [label="PMA_HOST", style=dotted, color="#9a6212"];
+  apache -> navegador [label="HTML armado por las Vistas", style=dashed, constraint=false];
+}

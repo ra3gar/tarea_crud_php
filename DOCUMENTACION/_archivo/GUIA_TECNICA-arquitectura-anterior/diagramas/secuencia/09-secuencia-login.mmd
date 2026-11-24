@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant NAV as Navegador
+    participant IDX as public/index.php
+    participant RT as Core\Router
+    participant AC as AuthController
+    participant MU as Models\Usuario
+    participant DB as Core\Database (PDO)
+    participant SQL as MySQL usuarios
+
+    U->>NAV: abre /index.php/login
+    NAV->>IDX: GET /login  (ruta publica: sin Auth)
+    IDX->>RT: despachar("GET", "/login")
+    RT->>AC: login()
+    AC-->>NAV: HTML del formulario
+    U->>NAV: usuario + contrasena
+    NAV->>IDX: POST /login
+    IDX->>RT: despachar("POST", "/login")
+    RT->>AC: autenticar()
+    alt usuario o contrasena vacios
+        AC-->>NAV: formulario con "Completa usuario y contrasena."
+    else con datos
+        AC->>MU: porUsuario(usuario)
+        MU->>DB: prepare SELECT ... WHERE usuario = :u
+        DB->>SQL: execute
+        SQL-->>DB: fila o nada
+        DB-->>MU: fila
+        MU-->>AC: fila o null
+        alt password_verify(pass, password_hash) correcto
+            AC->>AC: session_regenerate_id(true)
+            Note over AC: evita fijacion de sesion
+            AC->>AC: SESSION usuario_id, usuario, nombre, rol
+            AC-->>NAV: redirigir("productos")
+        else credenciales incorrectas
+            AC-->>NAV: formulario con "Usuario o contrasena incorrectos."
+            Note over AC,NAV: el mismo mensaje para usuario inexistente<br/>y para clave mala: no revela cual de los dos fallo
+        end
+    end

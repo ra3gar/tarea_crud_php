@@ -1,0 +1,25 @@
+// Diagrama 6 - Comunicacion con la base de datos
+digraph comunicacion_bd {
+  rankdir=LR; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, ranksep=0.7, nodesep=0.35];
+  node  [fontname="Helvetica", fontsize=9, shape=box, style="rounded,filled", fillcolor="#ffffff", color="#c9d1da"];
+  edge  [fontname="Helvetica", fontsize=8, color="#5a6b86"];
+
+  ctrl [label="Controladores\n(no escriben SQL)", fillcolor="#eef2f8", color="#2f5fe0"];
+  mp [label="Producto",  fillcolor="#f4f9f6", color="#157f52"];
+  mc [label="Categoria", fillcolor="#f4f9f6", color="#157f52"];
+  mu [label="Usuario",   fillcolor="#f4f9f6", color="#157f52"];
+  dbc [label="App\\Core\\Database::pdo()\nsingleton  ·  una conexion por peticion\nERRMODE_EXCEPTION\nFETCH_ASSOC\nEMULATE_PREPARES = false", fillcolor="#f7f9fc", color="#2f5fe0"];
+  cfg [label="config/config.php\nvariables de entorno  O  secrets.php", shape=note, fillcolor="#fdf7ef", color="#9a6212"];
+  t1 [label="productos",  shape=cylinder, fillcolor="#f4f9f6", color="#157f52"];
+  t2 [label="categorias", shape=cylinder, fillcolor="#f4f9f6", color="#157f52"];
+  t3 [label="usuarios",   shape=cylinder, fillcolor="#f4f9f6", color="#157f52"];
+
+  ctrl -> mp; ctrl -> mc; ctrl -> mu;
+  mp -> dbc; mc -> dbc; mu -> dbc;
+  cfg -> dbc [label="credenciales", style=dashed, color="#9a6212"];
+  dbc -> t1 [label="prepare + execute", color="#157f52"];
+  dbc -> t2 [color="#157f52"];
+  dbc -> t3 [color="#157f52"];
+  t1 -> t2 [label="FK  fk_producto_categoria\nproductos.categoria -> categorias.nombre\nON UPDATE CASCADE · ON DELETE SET NULL", style=dashed, color="#9a6212", constraint=false];
+}

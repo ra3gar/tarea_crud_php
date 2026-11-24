@@ -91,7 +91,7 @@
     <li><a href="#caso-completo">Un caso completo de punta a punta</a></li>
     <li><a href="#patrones-compartidos">Patrones compartidos</a></li>
     <li><a href="#glosario">Glosario de PHP</a></li>
-    <li><a href="#invariantes">Las 5 invariantes y dónde se cumplen</a></li>
+    <li><a href="#invariantes">Las 6 invariantes y dónde se cumplen</a></li>
     <li><a href="#limites-conocidos">Límites conocidos</a></li>
     <li><a href="#tecnologias">Tecnologías del proyecto (y qué significan las siglas)</a></li>
     <li><a href="#esquema-bd">Esquema de la base de datos (diagrama)</a></li>
@@ -260,7 +260,7 @@
     <circle cx="684" cy="158" r="15" fill="#e4f5ec" stroke="#157f52" stroke-width="1.8"/>
     <path d="M677,158 l5,5 10,-11" fill="none" stroke="#157f52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
-  <p>Dónde se usa: <code class="inline">app/Core/Database.php</code> abre la conexión; todos los
+  <p>Dónde se usa: la función <code class="inline">db()</code> de <code class="inline">app/funciones.php</code> abre la conexión; todos los
      métodos en <code class="inline">app/Models/</code> usan PDO para hacer sus consultas.</p>
 
   <h3>La API de contraseñas: guardar sin ver</h3>
@@ -323,9 +323,9 @@
         código secreto de la sesión para evitar que alguien que robó una cookie vieja pueda
         usarla.</li>
   </ul>
-  <p>Dónde se usa: <code class="inline">app/Middleware/Auth.php</code> revisa la sesión en cada
-     petición protegida; <code class="inline">app/Controllers/AuthController.php</code> la crea
-     al entrar y la destruye al salir.</p>
+  <p>Dónde se usa: <code class="inline">proteger_sesion()</code>, en <code class="inline">app/funciones.php</code>,
+     revisa la sesión en cada petición protegida; <code class="inline">app/Controllers/AuthController.php</code> la crea
+     al entrar (regenerando el id, para evitar fijación de sesión) y la destruye al salir.</p>
 </section>
 
 <section id="mapa-archivos">
@@ -408,59 +408,107 @@
   </div>
   <h3>La cara visible (<code class="inline">public/</code>)</h3>
   <ul>
-    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada del sitio. Arranca la sesión, carga el <em>autoloader</em> (lo que trae cada clase automáticamente cuando se la usa, sin tener que incluir archivos a mano) y los <em>helpers</em> (funciones de ayuda globales), crea el Router y delega.</li>
+    <li><code class="inline">public/index.php</code> — el <em>front controller</em>: la ÚNICA puerta de entrada del sitio. Hace cinco cosas, siempre en el mismo orden: arranca la sesión, carga <code class="inline">app/autoload.php</code> (que trae cada clase cuando se la usa, sin includes a mano) y <code class="inline">app/funciones.php</code>, verifica el token CSRF si la petición es POST, arma el Router con las rutas de <code class="inline">routes/web.php</code>, y le pasa la dirección pedida.</li>
     <li><code class="inline">public/assets/css/bootstrap.min.css</code> — Bootstrap 5 completo, servido localmente (sin CDN).</li>
     <li><code class="inline">public/assets/css/estilo.css</code> — el tema propio: variables de color, barra de navegación, tarjetas, gráficos. Se carga último para pisar lo de Bootstrap.</li>
     <li><code class="inline">public/assets/fonts/fuentes.css</code> — declara las dos tipografías del proyecto (<em>Inter</em> y <em>Space Grotesk</em>) como fuentes locales con <code class="inline">@font-face</code>.</li>
     <li><code class="inline">public/assets/fonts/inter-400.woff2</code>, <code class="inline">inter-500.woff2</code>, <code class="inline">inter-600.woff2</code> — pesos de la fuente Inter (cuerpo de texto).</li>
     <li><code class="inline">public/assets/fonts/space-grotesk-500.woff2</code>, <code class="inline">space-grotesk-600.woff2</code>, <code class="inline">space-grotesk-700.woff2</code> — pesos de Space Grotesk (títulos y encabezados).</li>
-    <li><code class="inline">public/.htaccess</code> — le dice a Apache que reescriba todas las URLs hacia <code class="inline">index.php</code>, activando las rutas limpias del MVC.</li>
+    <li><code class="inline">public/.htaccess</code> — mejora <strong>opcional</strong>: si Apache tiene <code class="inline">mod_rewrite</code>, saca el <code class="inline">index.php</code> del medio de las direcciones. Todo el bloque va dentro de un <code class="inline">&lt;IfModule&gt;</code>, así que si el módulo no está, se ignora y el sitio funciona igual (las direcciones solo llevan el <code class="inline">index.php</code> a la vista).</li>
   </ul>
 
-  <h3>El núcleo del framework (<code class="inline">app/Core/</code>)</h3>
+  <h3>El núcleo (<code class="inline">app/</code>)</h3>
+  <p>Son tres archivos sueltos en la raíz de <code class="inline">app/</code>. No hay clase base ni
+     carpeta <code class="inline">Core/</code>: cada pieza es lo más simple que resuelve su problema.</p>
   <ul>
-    <li><code class="inline">app/Core/autoload.php</code> — registra el autoloader PSR-4: traduce <code class="inline">App\Controllers\ProductoController</code> → <code class="inline">app/Controllers/ProductoController.php</code> y carga el archivo solo cuando la clase se usa por primera vez.</li>
-    <li><code class="inline">app/Core/Router.php</code> — compara la URL pedida contra las rutas de <code class="inline">routes/web.php</code>, corre los middlewares correspondientes, crea el controlador (lo &ldquo;instancia&rdquo;: arma un objeto de esa clase) y llama al método.</li>
-    <li><code class="inline">app/Core/Controller.php</code> — clase base que heredan todos los controladores. Tiene el método <code class="inline">view()</code> para cargar una vista con variables.</li>
-    <li><code class="inline">app/Core/Database.php</code> — Singleton PDO (patrón de &ldquo;una sola instancia&rdquo;): abre una sola conexión a MySQL por petición y la reutiliza. Todos los modelos la piden acá.</li>
-    <li><code class="inline">app/Core/helpers.php</code> — funciones globales que se usan en todo el proyecto: <code class="inline">e()</code> (escapa HTML), <code class="inline">base_path()</code> (arma rutas relativas correctas), <code class="inline">redirect()</code> y <code class="inline">flash()</code> (mensajes de sesión de un solo uso).</li>
+    <li><code class="inline">app/autoload.php</code> — registra el autoloader con una sola regla: el namespace <code class="inline">App\</code> corresponde a la carpeta <code class="inline">app/</code>, así que <code class="inline">App\Models\Producto</code> se busca en <code class="inline">app/Models/Producto.php</code>. Sin Composer y sin configuración.</li>
+    <li><code class="inline">app/Router.php</code> — la única clase del núcleo, porque es la única pieza que necesita <strong>guardar estado</strong>: la tabla de rutas. <code class="inline">agregar()</code> la llena y <code class="inline">despachar()</code> la consulta, compara la dirección pedida pedazo por pedazo, aplica el permiso declarado y recién entonces instancia el controlador.</li>
+    <li><code class="inline">app/funciones.php</code> — doce funciones sueltas que usa todo el proyecto, en cuatro grupos:
+      <ul>
+        <li><strong>Enlaces</strong>: <code class="inline">base_path()</code>, <code class="inline">url()</code>, <code class="inline">asset()</code>.</li>
+        <li><strong>Seguridad</strong>: <code class="inline">e()</code> (escapa HTML), <code class="inline">csrf_token()</code>, <code class="inline">csrf_campo()</code>, <code class="inline">verificar_csrf()</code>.</li>
+        <li><strong>Permisos</strong>: <code class="inline">proteger_sesion()</code> y <code class="inline">proteger_admin()</code>.</li>
+        <li><strong>Datos y MVC</strong>: <code class="inline">db()</code>, <code class="inline">vista()</code>, <code class="inline">redirigir()</code>.</li>
+      </ul>
+    </li>
   </ul>
+  <p><code class="inline">db()</code> hace lo mismo que haría un Singleton, en cuatro líneas: una variable
+     <code class="inline">static $pdo</code> dentro de la función conserva su valor entre llamadas, así que
+     la primera llamada abre la conexión y las siguientes devuelven la misma. No hace falta explicar
+     qué es un Singleton para entenderlo.</p>
+
+  <div class="note tip">
+    <span class="note-t">Por qué <code class="inline">vista()</code> tiene un parámetro con guiones bajos</span>
+    <p>La firma real es <code class="inline">vista(string $__viewPath, array $datos = [])</code>, y por
+       dentro hace dos cosas: <code class="inline">extract($datos)</code> y después
+       <code class="inline">require __DIR__ . '/Views/' . $__viewPath . '.php'</code>.</p>
+    <p><code class="inline">extract()</code> convierte las claves del arreglo en variables: si le pasás
+       <code class="inline">['productos' =&gt; [...]]</code>, dentro de la vista existe
+       <code class="inline">$productos</code>. Eso es justamente lo que hace útil a la función, pero
+       tiene un filo: <strong>también puede pisar el propio parámetro</strong>.</p>
+    <p>Cuando el parámetro se llamaba <code class="inline">$nombre</code>, el controlador de registro
+       pasaba <code class="inline">['nombre' =&gt; '', ...]</code> para precargar el formulario. El
+       <code class="inline">extract()</code> dejaba <code class="inline">$nombre</code> en cadena vacía,
+       y el <code class="inline">require</code> terminaba buscando
+       <code class="inline">app/Views/.php</code>: error fatal en <code class="inline">/registro</code>.
+       Con <code class="inline">$__viewPath</code> la colisión es imposible, porque ninguna vista recibe
+       un dato que se llame así.</p>
+  </div>
 
   <h3>Los controladores (<code class="inline">app/Controllers/</code>)</h3>
   <p>Cada controlador recibe una petición del Router, le pide datos al modelo y elige la vista a mostrar.</p>
   <ul>
     <li><code class="inline">app/Controllers/ProductoController.php</code> — gestiona el CRUD completo de productos: listar con filtro/búsqueda, mostrar formulario de alta (<code class="inline">crear</code>), procesar el formulario (<code class="inline">guardar</code>), editar, actualizar y eliminar.</li>
-    <li><code class="inline">app/Controllers/CategoriaController.php</code> — gestiona la lista de categorías; solo visible para admin.</li>
-    <li><code class="inline">app/Controllers/UsuarioController.php</code> — gestiona el CRUD de usuarios (solo admin): listar, crear, editar, actualizar y eliminar. Tiene la lógica que impide quedar sin ningún administrador.</li>
+    <li><code class="inline">app/Controllers/CategoriaController.php</code> — lista las categorías, agrega una nueva (si no existe ya) y borra una <strong>solo si ningún producto la está usando</strong>. Lo alcanza cualquier usuario con sesión iniciada, no hace falta ser admin.</li>
+    <li><code class="inline">app/Controllers/UsuarioController.php</code> — gestiona el CRUD de usuarios (solo admin): listar, crear, editar, resetear la contraseña y eliminar. Tiene dos candados de negocio: no podés eliminar tu propia cuenta, y no podés quitar ni borrar al último administrador que quede.</li>
     <li><code class="inline">app/Controllers/AuthController.php</code> — maneja el ciclo de autenticación: mostrar y procesar el formulario de login, el registro de nuevos usuarios, la recuperación de contraseña por pregunta de seguridad y el logout.</li>
   </ul>
 
   <h3>Los modelos (<code class="inline">app/Models/</code>)</h3>
   <p>Solo hablan con la base de datos. Todas las consultas usan <em>prepared statements</em>; los modelos no saben nada de HTTP ni de HTML.</p>
   <ul>
-    <li><code class="inline">app/Models/Producto.php</code> — consultas de productos: listar con filtros opcionales, obtener uno por id, crear, actualizar, eliminar y validar datos del formulario.</li>
-    <li><code class="inline">app/Models/Categoria.php</code> — consultas de categorías: listar todas, crear, eliminar.</li>
-    <li><code class="inline">app/Models/Usuario.php</code> — consultas de usuarios: listar, buscar por nombre de usuario (login), crear, actualizar, eliminar y contar admins (para el candado que evita quedar sin administrador).</li>
+    <li><code class="inline">app/Models/Producto.php</code> — consultas de productos: listar con filtros opcionales, obtener uno por id, crear, actualizar, eliminar y validar los datos del formulario. También calcula los números del tablero: <code class="inline">metricas()</code> (los cuatro indicadores), <code class="inline">valorPorCategoria()</code> (alimenta el gráfico de barras) y <code class="inline">stockPorCategoria()</code> (alimenta el de pastel). Un método privado <code class="inline">filtro()</code> arma el <code class="inline">WHERE</code> una sola vez y lo reusan todas.</li>
+    <li><code class="inline">app/Models/Categoria.php</code> — listar todas, devolver solo los nombres para los desplegables, comprobar si una ya existe, crear, eliminar y <code class="inline">enUso()</code>, que cuenta cuántos productos usan una categoría para no borrar una que esté en uso.</li>
+    <li><code class="inline">app/Models/Usuario.php</code> — buscar por login, comprobar si existe, traer la pregunta de seguridad para la recuperación, cambiar la contraseña, y el CRUD del panel: listar, buscar por id, crear, actualizar, eliminar. Además <code class="inline">contarAdmins()</code> y <code class="inline">contarTodos()</code>, que sostienen el candado del último administrador y la regla de que el primer usuario del sistema nace admin.</li>
   </ul>
 
-  <h3>Los middlewares (<code class="inline">app/Middleware/</code>)</h3>
-  <p>El Router los corre antes de pasarle la petición al controlador.</p>
+  <h3>Los permisos (dos funciones, no middlewares)</h3>
+  <p>No hay carpeta <code class="inline">Middleware/</code> ni cadena de middlewares. El permiso de cada
+     ruta se <strong>declara</strong> en <code class="inline">routes/web.php</code>, como cuarto parámetro
+     de <code class="inline">agregar()</code>, y el Router corre el guardia que corresponda
+     <strong>antes</strong> de instanciar el controlador. Las dos funciones viven en
+     <code class="inline">app/funciones.php</code>:</p>
   <ul>
-    <li><code class="inline">app/Middleware/Auth.php</code> — comprueba que haya una sesión activa (<code class="inline">$_SESSION['usuario_id']</code>). Si no la hay, redirige al login. Protege todas las rutas que no son públicas.</li>
-    <li><code class="inline">app/Middleware/Admin.php</code> — además de exigir sesión, comprueba que el rol sea <code class="inline">admin</code>. Si no, devuelve un error <strong>403</strong> (&ldquo;prohibido&rdquo;). Protege la gestión de usuarios y categorías.</li>
+    <li><code class="inline">proteger_sesion()</code> — comprueba que exista <code class="inline">$_SESSION['usuario_id']</code>. Si no hay sesión, manda al login y corta.</li>
+    <li><code class="inline">proteger_admin()</code> — comprueba que <code class="inline">$_SESSION['rol']</code> sea <code class="inline">admin</code>. Si no lo es, deja un aviso en <code class="inline">$_SESSION['mensaje']</code> y redirige a <strong>Productos</strong>. No devuelve 403: el usuario ya está autenticado, simplemente no le alcanza el rol.</li>
   </ul>
+  <p>Corren en ese orden: primero sesión, después rol. Son funciones sueltas y no clases porque lo único
+     que hacen es un <code class="inline">if</code>; una clase con un solo método estático que nunca se
+     instancia es una función con el nombre más largo.</p>
+
+  <div class="note tip">
+    <span class="note-t">Los tres niveles de acceso, y cuántas rutas tiene cada uno</span>
+    <p>El sistema declara <strong>25 rutas</strong> en total, repartidas así:</p>
+    <ul>
+      <li><strong>Público</strong> (<code class="inline">null</code>, sin guardia) — <strong>7 rutas</strong>: login, registro y recuperar (cada una en GET y POST) más logout.</li>
+      <li><strong>Requiere sesión</strong> (<code class="inline">'sesion'</code>) — <strong>11 rutas</strong>: las 8 de productos y las 3 de categorías.</li>
+      <li><strong>Solo administrador</strong> (<code class="inline">'admin'</code>) — <strong>7 rutas</strong>: todas las de <code class="inline">/usuarios</code>.</li>
+    </ul>
+    <p><strong>Categorías NO es solo de admin</strong>: cualquier usuario con la sesión iniciada puede
+       entrar, agregar y borrar categorías. Lo único reservado al administrador es la gestión de usuarios.</p>
+  </div>
 
   <h3>Las vistas (<code class="inline">app/Views/</code>)</h3>
   <p>Solo arman el HTML que se ve. No consultan la base de datos ni toman decisiones (nada de <em>lógica de negocio</em>): reciben del controlador las <strong>variables</strong> con los datos ya listos —por ejemplo, la lista de productos a mostrar— y se limitan a pintarlos.</p>
   <ul>
     <li><code class="inline">app/Views/layouts/header.php</code> — encabezado compartido: <code class="inline">&lt;head&gt;</code>, las tres hojas de CSS y la barra de navegación con el menú.</li>
-    <li><code class="inline">app/Views/layouts/footer.php</code> — cierre de página: etiquetas <code class="inline">&lt;/body&gt;&lt;/html&gt;</code> y el bloque para mostrar los avisos flash.</li>
+    <li><code class="inline">app/Views/layouts/footer.php</code> — cierre de página: etiquetas <code class="inline">&lt;/body&gt;&lt;/html&gt;</code>. Los avisos de un solo uso NO se muestran acá: los imprime <code class="inline">header.php</code>, que lee <code class="inline">$_SESSION['mensaje']</code> y lo borra en el acto para que no vuelva a aparecer.</li>
     <li><code class="inline">app/Views/productos/index.php</code> — tablero con gráficos + tabla de productos con búsqueda y filtro por categoría.</li>
     <li><code class="inline">app/Views/productos/crear.php</code> — formulario de alta de producto. Incluye <code class="inline">_campos.php</code>.</li>
     <li><code class="inline">app/Views/productos/editar.php</code> — formulario de edición. También incluye <code class="inline">_campos.php</code> con los valores ya cargados.</li>
     <li><code class="inline">app/Views/productos/eliminar.php</code> — pantalla de confirmación antes de borrar un producto.</li>
     <li><code class="inline">app/Views/productos/_campos.php</code> — fragmento reutilizable con los campos del formulario de producto (nombre, descripción, precio, stock, categoría). Lo incluyen tanto <code class="inline">crear.php</code> como <code class="inline">editar.php</code> para no duplicar el HTML.</li>
-    <li><code class="inline">app/Views/categorias/index.php</code> — lista de categorías con opción de alta y eliminación (solo admin).</li>
+    <li><code class="inline">app/Views/categorias/index.php</code> — lista de categorías con el formulario de alta y el botón de borrado. Accesible para cualquier usuario con sesión.</li>
     <li><code class="inline">app/Views/usuarios/index.php</code> — lista de usuarios con sus roles (solo admin).</li>
     <li><code class="inline">app/Views/usuarios/crear.php</code> — formulario para que un admin cree un nuevo usuario.</li>
     <li><code class="inline">app/Views/usuarios/editar.php</code> — formulario para editar datos y rol de un usuario existente.</li>
@@ -471,26 +519,26 @@
 
   <h3>Las rutas (<code class="inline">routes/web.php</code>)</h3>
   <ul>
-    <li><code class="inline">routes/web.php</code> — define el mapa completo de URLs: método HTTP, patrón de ruta, controlador, método y middlewares que aplican. Es el único lugar donde se declara si una ruta es pública o privada.</li>
+    <li><code class="inline">routes/web.php</code> — define el mapa completo de URLs. Cada línea es <code class="inline">agregar(VERBO, DIRECCIÓN, [Controlador, método], PERMISO)</code>, y el permiso es <code class="inline">null</code>, <code class="inline">'sesion'</code> o <code class="inline">'admin'</code>. Es la <strong>única</strong> fuente de verdad sobre quién accede a qué: no hay permisos escondidos dentro de los controladores. El archivo devuelve una función que recibe el Router y le carga las 25 rutas.</li>
   </ul>
 
   <h3>La base de datos (<code class="inline">database/</code>)</h3>
   <ul>
     <li><code class="inline">database/schema.sql</code> — crea las tres tablas (<code class="inline">productos</code>, <code class="inline">categorias</code>, <code class="inline">usuarios</code>), define claves primarias, foráneas y datos de prueba iniciales. Es la base de un entorno limpio.</li>
-    <li><code class="inline">database/seed-categorias.sql</code> — inserta las cuatro categorías de ejemplo (Electrónica, Ropa, Alimentos, Herramientas). Se corre después de <code class="inline">schema.sql</code>.</li>
-    <li><code class="inline">database/migracion-01-usuarios-roles.sql</code> — agrega la columna <code class="inline">rol</code> a la tabla <code class="inline">usuarios</code> en bases ya existentes que no tenían esa columna.</li>
+    <li><code class="inline">database/seed-categorias.sql</code> — las cuatro categorías iniciales (Almacenamiento, Audio, Monitores, Perifericos). Ya vienen dentro de <code class="inline">schema.sql</code>; este archivo queda como referencia por si hay que recargarlas sueltas.</li>
+    <li><code class="inline">database/migracion-01-usuarios-roles.sql</code> — agrega las columnas <code class="inline">nombre</code>, <code class="inline">apellido</code> y <code class="inline">rol</code> a la tabla <code class="inline">usuarios</code> en bases ya existentes, sin borrar datos. Además garantiza que quede al menos un administrador.</li>
     <li><code class="inline">database/migracion-02-fk-categoria.sql</code> — normaliza valores de categoría vacíos o inexistentes a <code class="inline">NULL</code> y agrega la clave foránea <code class="inline">fk_producto_categoria</code> en bases existentes.</li>
   </ul>
 
   <h3>La configuración (<code class="inline">config/</code> y archivos raíz)</h3>
   <ul>
-    <li><code class="inline">config/config.php</code> — lee las credenciales de la base de datos desde <code class="inline">secrets.php</code> (o las variables de entorno en Docker). Vive fuera de <code class="inline">public/</code>: el navegador no puede alcanzarlo.</li>
-    <li><code class="inline">secrets.php</code> — credenciales reales (host, puerto, usuario, contraseña, nombre de BD). Está en <code class="inline">.gitignore</code>: nunca se sube al repositorio.</li>
+    <li><code class="inline">config/config.php</code> — decide de dónde salen las credenciales y devuelve un arreglo. Mira <strong>primero</strong> las variables de entorno (las inyecta docker-compose); si no hay, cae en <code class="inline">secrets.php</code>. Con Docker, entonces, <code class="inline">secrets.php</code> no hace falta. Vive fuera de <code class="inline">public/</code>: el navegador no puede alcanzarlo.</li>
+    <li><code class="inline">secrets.php</code> — define <code class="inline">$DB_HOST</code>, <code class="inline">$DB_NAME</code>, <code class="inline">$DB_USER</code> y <code class="inline">$DB_PASS</code> para el montaje manual (sin Docker). Está en <code class="inline">.gitignore</code>: nunca se sube al repositorio.</li>
     <li><code class="inline">secrets.example.php</code> — copia de <code class="inline">secrets.php</code> con valores de ejemplo. Sí está en el repositorio: sirve como plantilla para quien clone el proyecto.</li>
     <li><code class="inline">.env</code> — variables de entorno para el stack Docker (contraseñas, nombre de BD, puertos). No se versiona.</li>
     <li><code class="inline">.env.example</code> — copia con valores de ejemplo. Sí está en el repositorio.</li>
     <li><code class="inline">.gitignore</code> — lista los archivos que Git debe ignorar: <code class="inline">secrets.php</code>, <code class="inline">.env</code>, <code class="inline">DOCUMENTACION_MD/</code> y directorios generados.</li>
-    <li><code class="inline">apache-deny.conf</code> — reglas de Apache que bloquean el acceso directo a rutas sensibles (ej. <code class="inline">/config</code>, <code class="inline">/app</code>, <code class="inline">/database</code>). Se copia dentro del contenedor Docker.</li>
+    <li><code class="inline">apache-deny.conf</code> — cinturón de seguridad por si algún archivo sensible quedara dentro de la carpeta servida. Niega por <strong>nombre de archivo</strong>: todo lo que empiece con punto (<code class="inline">.env</code>, <code class="inline">.git…</code>), todo lo que termine en <code class="inline">.env</code>, <code class="inline">.sql</code> o <code class="inline">.md</code>, y los archivos <code class="inline">Dockerfile</code>, <code class="inline">docker-compose.yml</code>, <code class="inline">secrets.php</code> y <code class="inline">apache-deny.conf</code>. No bloquea rutas como <code class="inline">/app</code>: esas carpetas directamente no están dentro de <code class="inline">public/</code>.</li>
   </ul>
 
   <h3>Docker y el entorno de desarrollo (<code class="inline">docker/</code>)</h3>
@@ -507,12 +555,6 @@
     <li><code class="inline">README.md</code> — índice del repositorio en GitHub: qué es el proyecto, tecnologías, estructura y cómo arrancar.</li>
   </ul>
 
-  <h3>Carpeta legacy (<code class="inline">includes/</code>)</h3>
-  <p>Estos archivos son el layout de la versión anterior al MVC. Se mantienen en el repositorio como referencia histórica pero el MVC <strong>no los usa</strong>; el layout activo está en <code class="inline">app/Views/layouts/</code>.</p>
-  <ul>
-    <li><code class="inline">includes/header.php</code> — encabezado del sitio original (antes del refactor MVC).</li>
-    <li><code class="inline">includes/footer.php</code> — pie de página del sitio original.</li>
-  </ul>
 </section>
 
 <section id="ciclo-peticion">
@@ -521,8 +563,9 @@
   <ol>
     <li>El <strong>navegador</strong> pide una dirección, por ejemplo <code class="inline">/index.php/productos</code>.</li>
     <li><strong>Apache</strong> sirve <code class="inline">public/index.php</code> (la raíz web es <code class="inline">public/</code>).</li>
-    <li>El <strong>front controller</strong> arranca la sesión, carga el autoloader y los helpers, crea el <em>Router</em> y le pasa las rutas de <code class="inline">routes/web.php</code>.</li>
-    <li>El <strong>Router</strong> busca la ruta que coincide con la dirección. Si es privada, primero corre el guardia <code class="inline">Auth</code>; si no hay sesión, manda al login.</li>
+    <li>El <strong>front controller</strong> arranca la sesión, carga <code class="inline">app/autoload.php</code> y <code class="inline">app/funciones.php</code>, y —solo si la petición es POST— corre <code class="inline">verificar_csrf()</code>. Después crea el <em>Router</em> y le carga las rutas de <code class="inline">routes/web.php</code>.</li>
+    <li>La dirección pedida sale de <code class="inline">$_SERVER['PATH_INFO']</code>: la parte que va después de <code class="inline">index.php</code>. Si no hay nada, queda <code class="inline">/</code>.</li>
+    <li>El <strong>Router</strong> busca la ruta que coincide, partiéndola en pedazos y comparándolos uno a uno. Según el permiso declarado para esa ruta, corre <code class="inline">proteger_sesion()</code> y/o <code class="inline">proteger_admin()</code>. Sin sesión, manda al login.</li>
     <li>El Router crea el <strong>controlador</strong> y llama a su método (ej. <code class="inline">ProductoController::index</code>).</li>
     <li>El controlador le pide los datos al <strong>modelo</strong>, que consulta la <strong>base de datos</strong> con una consulta preparada.</li>
     <li>El controlador elige una <strong>vista</strong>, que arma el <strong>HTML</strong>. Eso es lo que vuelve al navegador.</li>
@@ -538,7 +581,7 @@
     <rect x="60" y="86" width="390" height="50" rx="9" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
     <text x="78" y="108" font-size="12.5" font-weight="600" fill="#1f3252">2 &#183; Apache → public/index.php</text><text x="78" y="126" font-size="11" fill="#6b7890">el front controller: única puerta de entrada</text>
     <rect x="60" y="160" width="390" height="50" rx="9" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
-    <text x="78" y="182" font-size="12.5" font-weight="600" fill="#1f3252">3 &#183; Router (+ Auth si es privada)</text><text x="78" y="200" font-size="11" fill="#6b7890">elige la ruta; sin sesión, manda al login</text>
+    <text x="78" y="182" font-size="12.5" font-weight="600" fill="#1f3252">3 &#183; Router (+ guardia si es privada)</text><text x="78" y="200" font-size="11" fill="#6b7890">elige la ruta; sin sesión, manda al login</text>
     <rect x="60" y="234" width="390" height="50" rx="9" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
     <text x="78" y="256" font-size="12.5" font-weight="600" fill="#1f3252">4 &#183; Controlador</text><text x="78" y="274" font-size="11" fill="#6b7890">ej. ProductoController::index &#8212; coordina</text>
     <rect x="60" y="308" width="390" height="50" rx="9" fill="#ffffff" stroke="#2f5fe0" stroke-width="1.5"/>
@@ -585,7 +628,7 @@
      números mayores o iguales a cero. Una sola definición, usada por las dos acciones.</p>
 
   <h3 id="patron-busqueda-filtro">Buscar y filtrar sin abrir la puerta a una inyección</h3>
-  <p class="lead">Cómo <code class="inline">index.php</code> arma las condiciones del <code class="inline">WHERE</code>
+  <p class="lead">Cómo <code class="inline">Producto::filtro()</code> arma las condiciones del <code class="inline">WHERE</code>
      en PHP y deja que los valores viajen aparte — y por qué eso no es lo mismo que "armar la consulta a mano".</p>
   <p>El método <code class="inline">Producto::filtro()</code> decide EN PHP qué condiciones entran al
      <code class="inline">WHERE</code>, pero lo que vos escribiste NUNCA se pega dentro del texto del SQL: viaja
@@ -632,7 +675,7 @@
 
   <h3 id="glosario-includes"><code class="inline">require</code>, <code class="inline">require_once</code> y el orden de inclusión</h3>
   <p>El front controller usa <code class="inline">require</code> para cargar el autoloader y los helpers una sola vez.
-     Las clases NO se incluyen a mano: el <strong>autoloader</strong> (<code class="inline">app/Core/autoload.php</code>) las
+     Las clases NO se incluyen a mano: el <strong>autoloader</strong> (<code class="inline">app/autoload.php</code>) las
      carga solas cuando se usan, traduciendo el namespace <code class="inline">App\</code> a la carpeta <code class="inline">app/</code>.</p>
 
   <h3 id="glosario-pdo">PDO y las consultas preparadas</h3>
@@ -653,14 +696,15 @@
 </section>
 
 <section id="invariantes">
-  <h2>6. Las 5 invariantes y dónde se cumplen</h2>
-  <p class="lead">Las cinco reglas que el proyecto no rompe nunca, cada una con el archivo y el bloque
+  <h2>6. Las 6 invariantes y dónde se cumplen</h2>
+  <p class="lead">Las seis reglas que el proyecto no rompe nunca, cada una con el archivo y el bloque
      que la implementa.</p>
   <ol>
-    <li><strong>Sin inyección SQL:</strong> todas las consultas usan <em>prepared statements</em> en los modelos (<code class="inline">app/Models/</code>).</li>
-    <li><strong>Control de sesión:</strong> el guardia <code class="inline">Auth</code> protege las rutas privadas; el login guarda el usuario en la sesión.</li>
+    <li><strong>Sin inyección SQL:</strong> todas las consultas usan <em>prepared statements</em> en los modelos (<code class="inline">app/Models/</code>), con <code class="inline">EMULATE_PREPARES</code> desactivado para que las prepare el servidor MySQL de verdad.</li>
+    <li><strong>Control de sesión:</strong> <code class="inline">proteger_sesion()</code> protege las rutas privadas según lo declarado en <code class="inline">routes/web.php</code>; el login guarda el usuario en la sesión y regenera el id.</li>
     <li><strong>Sin XSS:</strong> todo lo que se muestra pasa por <code class="inline">e()</code> en las vistas.</li>
-    <li><strong>Roles:</strong> el guardia <code class="inline">Admin</code> cierra la sección Usuarios a quien no sea admin; hay candados para no quedar sin administrador.</li>
+    <li><strong>Sin CSRF:</strong> <code class="inline">verificar_csrf()</code> corre en <code class="inline">public/index.php</code> para <strong>todos</strong> los POST, en un solo lugar. Ningún formulario puede quedar sin proteger por olvido, y la comparación usa <code class="inline">hash_equals()</code> (tiempo constante).</li>
+    <li><strong>Roles:</strong> <code class="inline">proteger_admin()</code> cierra la sección Usuarios a quien no sea admin; además hay candados de negocio para no quedar sin administrador ni poder eliminarse a uno mismo.</li>
     <li><strong>Sin JavaScript:</strong> los gráficos del tablero son CSS puro; toda la lógica corre en el servidor.</li>
   </ol>
 </section>
@@ -670,7 +714,7 @@
   <p class="lead">Lo que este proyecto no resuelve, dicho de frente. Es un trabajo educativo: señalar
      un límite y explicar por qué está ahí enseña más que disimularlo.</p>
   <ul>
-    <li>No hay tokens CSRF en los formularios: queda fuera del alcance de este trabajo educativo.</li>
+    <li>No hay registro de auditoría: el sistema no guarda quién creó o modificó cada producto (la tabla <code class="inline">productos</code> no tiene relación con <code class="inline">usuarios</code>).</li>
     <li>La recuperación de contraseña es por pregunta de seguridad, no por correo.</li>
     <li>Los roles son dos y fijos (admin / usuario); no hay permisos finos.</li>
     <li>Las URLs limpias (sin <code class="inline">index.php/</code>) dependen de cómo se sirva el sitio; por eso se usa el patrón con <code class="inline">index.php/</code>, que funciona en cualquier lado.</li>

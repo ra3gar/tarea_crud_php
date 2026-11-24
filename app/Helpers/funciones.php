@@ -292,8 +292,8 @@ function vista(string $__viewPath, array $datos = []): void
     // Despues del extract(), si $datos tenia 'productos', aqui existe $productos.
     extract($datos);
 
-    // Ruta completa al archivo de vista dentro de la estructura por modulos
-    $__archivo = dirname(__DIR__) . '/Modules/' . $__viewPath . '.php';
+    // Ruta completa al archivo de vista dentro de app/Vistas/
+    $__archivo = dirname(__DIR__) . '/Vistas/' . strtolower($__viewPath) . '.php';
 
     require $__archivo;
 }

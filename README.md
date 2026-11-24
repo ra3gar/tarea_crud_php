@@ -29,8 +29,36 @@ tarea_crud_php/
   sistema**, cómo conectarse a la base de datos (phpMyAdmin y DBeaver) y el
   desglose de carpetas por capa. Incluye un glosario para quien arranca de cero.
 - **`docs/guia-lectura.html` — cómo entender el código.** La organización MVC,
-  qué es cada carpeta, cómo viaja una petición, las tecnologías usadas y los
-  diagramas (comunicación y esquema de la base de datos).
+  cómo viaja una petición, las tecnologías usadas y los diagramas. Actualizada
+  para la estructura vigente (`app/funciones.php`, `app/autoload.php`,
+  `app/Router.php` y los permisos declarados en `routes/web.php`).
+
+### 📑 Documentación técnica (Markdown, en `docs/`)
+
+| Documento | Qué contiene |
+|---|---|
+| `ARQUITECTURA.md` | MVC simplificado, flujo de ejecución, responsabilidad de cada componente |
+| `ESTRUCTURA.md` | Árbol de carpetas y qué hace cada archivo |
+| `GUIA_CODIGO.md` | Clases, funciones, métodos, consultas SQL y validaciones |
+| `BASE_DATOS.md` | Tablas, claves, relaciones, integridad y consultas importantes |
+| `DOCKER.md` | Servicios, puertos, volúmenes, variables y comandos |
+| `INSTALACION.md` | Requisitos, puesta en marcha y problemas frecuentes |
+| `SEGURIDAD.md` | Cada medida de seguridad y qué problema evita |
+
+### 📘 Manuales e ilustraciones (en `DOCUMENTACION/`)
+
+| Documento | Para quién | Qué contiene |
+|---|---|---|
+| `MANUAL_TECNICO_CRUD_INVENTARIO.docx` | Desarrolladores y administradores | Arquitectura, código archivo por archivo, base de datos, seguridad, Docker, instalación y resolución de problemas |
+| `MANUAL_DE_USUARIO_CRUD_INVENTARIO.docx` | Quien usa el sistema | Cada pantalla y cada procedimiento, paso a paso y con capturas reales |
+| `GUIA_RAPIDA_CRUD_INVENTARIO.pdf` | Consulta rápida | Las operaciones más frecuentes, en pocas páginas |
+
+```
+DOCUMENTACION/
+└── recursos/
+    ├── capturas/     15 capturas reales de la aplicación en funcionamiento
+    └── diagramas/    7 diagramas: arquitectura, flujo, MVC, ER, Docker, permisos, árbol
+```
 
 > ℹ️ Las credenciales de acceso y los pasos de instalación **no** están en este
 > README a propósito: viven en la guía de instalación, que es el manual oficial.
@@ -49,8 +77,12 @@ tarea_crud_php/
   recuperación de contraseña por pregunta de seguridad.
 - **Gestión de usuarios con roles** (`admin` / `usuario`): solo un admin
   administra usuarios.
-- **Seguridad** (3 reglas): PDO + *prepared statements* (anti inyección SQL),
-  `password_hash()` (contraseñas nunca en texto), y `htmlspecialchars()` (anti XSS).
+- **Seguridad**: PDO + *prepared statements* (anti inyección SQL),
+  `password_hash()` (contraseñas nunca en texto), `htmlspecialchars()` (anti XSS)
+  y **protección CSRF** en los 13 formularios que modifican información,
+  verificada de forma central en el front controller.
+- **Permisos en un solo lugar**: cada ruta declara en `routes/web.php` si es
+  pública, si requiere sesión o si requiere rol `admin`.
 
 ## 🧰 Tecnologías
 
@@ -63,8 +95,8 @@ tarea_crud_php/
 | Entorno | Docker + Docker Compose |
 | Administración BD | phpMyAdmin |
 
-> La estructura de carpetas, las tecnologías en detalle y los diagramas están
-> explicados en `docs/guia-lectura.html`.
+> La estructura de carpetas y la explicación del código están en
+> `docs/ESTRUCTURA.md` y `docs/GUIA_CODIGO.md`.
 
 ## 🔐 Seguridad y credenciales
 

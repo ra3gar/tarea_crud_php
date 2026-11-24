@@ -1,0 +1,44 @@
+// Diagrama 7 - Diagrama entidad-relacion del esquema real
+digraph er {
+  rankdir=LR; bgcolor="white";
+  graph [fontname="Helvetica", fontsize=11, nodesep=0.6, ranksep=1.1];
+  node  [fontname="Helvetica", shape=plaintext];
+  edge  [fontname="Helvetica", fontsize=9, color="#9a6212"];
+
+  productos [label=<
+  <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#157f52">
+   <TR><TD BGCOLOR="#157f52" COLSPAN="3"><FONT COLOR="white" FACE="Helvetica"><B>productos</B></FONT></TD></TR>
+   <TR><TD BGCOLOR="#f4f9f6"><FONT POINT-SIZE="9"><B>PK</B></FONT></TD><TD BGCOLOR="#f4f9f6"><FONT POINT-SIZE="9">id</FONT></TD><TD BGCOLOR="#f4f9f6"><FONT POINT-SIZE="9">INT AUTO_INCREMENT</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">nombre</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(100) NOT NULL</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">descripcion</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(255) NULL</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">precio</FONT></TD><TD><FONT POINT-SIZE="9">DECIMAL(10,2) NOT NULL DEFAULT 0.00</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">stock</FONT></TD><TD><FONT POINT-SIZE="9">INT NOT NULL DEFAULT 0</FONT></TD></TR>
+   <TR><TD BGCOLOR="#fdf7ef" PORT="fk"><FONT POINT-SIZE="9"><B>FK</B></FONT></TD><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9">categoria</FONT></TD><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9">VARCHAR(50) NULL</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">fecha_creacion</FONT></TD><TD><FONT POINT-SIZE="9">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</FONT></TD></TR>
+  </TABLE>>];
+
+  categorias [label=<
+  <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#157f52">
+   <TR><TD BGCOLOR="#157f52" COLSPAN="3"><FONT COLOR="white" FACE="Helvetica"><B>categorias</B></FONT></TD></TR>
+   <TR><TD BGCOLOR="#f4f9f6"><FONT POINT-SIZE="9"><B>PK</B></FONT></TD><TD BGCOLOR="#f4f9f6"><FONT POINT-SIZE="9">id</FONT></TD><TD BGCOLOR="#f4f9f6"><FONT POINT-SIZE="9">INT AUTO_INCREMENT</FONT></TD></TR>
+   <TR><TD BGCOLOR="#fdf7ef" PORT="uq"><FONT POINT-SIZE="9"><B>UQ</B></FONT></TD><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9">nombre</FONT></TD><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9">VARCHAR(50) NOT NULL UNIQUE</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">fecha_creacion</FONT></TD><TD><FONT POINT-SIZE="9">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</FONT></TD></TR>
+  </TABLE>>];
+
+  usuarios [label=<
+  <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" COLOR="#2f5fe0">
+   <TR><TD BGCOLOR="#2f5fe0" COLSPAN="3"><FONT COLOR="white" FACE="Helvetica"><B>usuarios</B></FONT></TD></TR>
+   <TR><TD BGCOLOR="#eef2f8"><FONT POINT-SIZE="9"><B>PK</B></FONT></TD><TD BGCOLOR="#eef2f8"><FONT POINT-SIZE="9">id</FONT></TD><TD BGCOLOR="#eef2f8"><FONT POINT-SIZE="9">INT AUTO_INCREMENT</FONT></TD></TR>
+   <TR><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9"><B>UQ</B></FONT></TD><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9">usuario</FONT></TD><TD BGCOLOR="#fdf7ef"><FONT POINT-SIZE="9">VARCHAR(50) NOT NULL UNIQUE</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">nombre</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(50) NOT NULL</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">apellido</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(50) NOT NULL</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">rol</FONT></TD><TD><FONT POINT-SIZE="9">ENUM('admin','usuario') DEFAULT 'usuario'</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">password_hash</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(255) NOT NULL  (bcrypt)</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">pregunta</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(255) NOT NULL</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">respuesta_hash</FONT></TD><TD><FONT POINT-SIZE="9">VARCHAR(255) NOT NULL  (bcrypt)</FONT></TD></TR>
+   <TR><TD></TD><TD><FONT POINT-SIZE="9">fecha_creacion</FONT></TD><TD><FONT POINT-SIZE="9">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</FONT></TD></TR>
+  </TABLE>>];
+
+  productos:fk -> categorias:uq [label="N : 1\nfk_producto_categoria\nON UPDATE CASCADE\nON DELETE SET NULL", arrowhead=crow, arrowtail=none, dir=back];
+  usuarios -> productos [label="sin relacion formal en el esquema:\nel sistema no registra que usuario\ncreo cada producto", style=dotted, color="#9aa7b8", fontcolor="#5a6b86", arrowhead=none];
+}

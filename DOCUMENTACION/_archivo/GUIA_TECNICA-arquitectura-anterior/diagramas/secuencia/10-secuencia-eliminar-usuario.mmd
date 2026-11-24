@@ -1,0 +1,43 @@
+sequenceDiagram
+    autonumber
+    actor A as Administrador
+    participant NAV as Navegador
+    participant RT as Core\Router
+    participant MWA as Middleware\Auth
+    participant MWD as Middleware\Admin
+    participant UC as UsuarioController
+    participant MU as Models\Usuario
+    participant SQL as MySQL usuarios
+
+    A->>NAV: clic en "Eliminar" de la fila de un usuario
+    NAV->>RT: POST /usuarios/{id}/eliminar
+    RT->>MWA: proteger() -- ruta privada
+    MWA-->>RT: hay sesion
+    RT->>UC: new UsuarioController()
+    UC->>MWD: proteger() -- desde el constructor
+    alt el rol de la sesion no es admin
+        MWD-->>NAV: aviso "Solo un administrador..." + Location /productos
+    else es admin
+        MWD-->>UC: pasa
+        RT->>UC: eliminar(id)
+        alt candado 1 -- el id es el de la propia sesion
+            UC-->>NAV: "No podes eliminar tu propia cuenta." + /usuarios
+        else no es uno mismo
+            UC->>MU: porId(id)
+            MU->>SQL: SELECT ... WHERE id = :id
+            SQL-->>MU: fila
+            MU-->>UC: fila o null
+            alt candado 2 -- es admin y contarAdmins() <= 1
+                UC->>MU: contarAdmins()
+                MU->>SQL: SELECT COUNT(*) WHERE rol = 'admin'
+                SQL-->>UC: 1
+                UC-->>NAV: "No podes eliminar el ultimo administrador." + /usuarios
+            else se puede borrar
+                UC->>MU: eliminar(id)
+                MU->>SQL: DELETE FROM usuarios WHERE id = :id
+                SQL-->>MU: rowCount
+                MU-->>UC: filas borradas
+                UC-->>NAV: "Usuario eliminado." (o "ya no existe" si fue 0) + /usuarios
+            end
+        end
+    end

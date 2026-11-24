@@ -32,11 +32,11 @@
  */
 
 // Importar los controladores de cada módulo con sus namespaces correctos
-use App\Modules\Auth\AuthController;
-use App\Modules\Productos\ProductoController;
-use App\Modules\Categorias\CategoriaController;
-use App\Modules\Usuarios\UsuarioController;
-use App\Modules\Exportar\ExportarController;
+use App\Controladores\AuthController;
+use App\Controladores\ProductoController;
+use App\Controladores\CategoriaController;
+use App\Controladores\UsuarioController;
+use App\Controladores\ExportarController;
 
 /**
  * Función anónima que recibe el Router ya instanciado y le registra
