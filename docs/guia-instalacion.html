@@ -524,9 +524,10 @@ cd tarea_crud_php</pre></div>
       <tr><td>app/autoload.php</td><td>Backend (el motor)</td><td>Encuentra las clases: el namespace <code class="inline">App\</code> corresponde a la carpeta <code class="inline">app/</code>. Sin Composer.</td></tr>
       <tr><td>app/funciones.php</td><td>Backend (el motor)</td><td>Las ayudas de todo el proyecto: enlaces (<code class="inline">url()</code>), escape (<code class="inline">e()</code>), CSRF, los permisos, <code class="inline">db()</code> y <code class="inline">vista()</code>.</td></tr>
       <tr><td>app/Router.php</td><td>Backend (el motor)</td><td>Guarda la tabla de rutas, elige qué controlador responde y aplica el permiso declarado antes de llamarlo.</td></tr>
-      <tr><td>app/Controllers/</td><td>Backend</td><td>Reciben el pedido y eligen la vista: Producto, Categoria, Auth, Usuario.</td></tr>
-      <tr><td>app/Models/</td><td>Backend (habla con la BD)</td><td>Donde viven las consultas SQL: Producto, Categoria, Usuario.</td></tr>
-      <tr><td>app/Views/</td><td>Backend &#8594; arma el Frontend</td><td>Plantillas que generan el HTML: layouts, productos, categorias, usuarios, auth.</td></tr>
+      <tr><td>app/Controladores/</td><td>Backend</td><td>Reciben el pedido y eligen la vista: Producto, Categoria, Auth, Usuario, Exportar.</td></tr>
+      <tr><td>app/Modelos/</td><td>Backend (habla con la BD)</td><td>Donde viven las consultas SQL: Producto, Categoria, Usuario.</td></tr>
+      <tr><td>app/Servicios/</td><td>Backend (l&oacute;gica auxiliar)</td><td>Generadores de PDF (Dompdf) y Excel (PhpSpreadsheet).</td></tr>
+      <tr><td>app/Vistas/</td><td>Backend &#8594; arma el Frontend</td><td>Plantillas que generan el HTML: layouts, productos, categorias, usuarios, auth, exportar.</td></tr>
       <tr><td>routes/web.php</td><td>Backend</td><td>La tabla de rutas: qué dirección va a qué controlador, y <strong>quién puede entrar</strong> (público, con sesión, o solo admin).</td></tr>
       <tr><td>config/config.php</td><td>Configuración</td><td>De dónde salen las credenciales de la base. Vive fuera de <code class="inline">public/</code>.</td></tr>
       <tr><td>database/</td><td>Base de datos</td><td><code class="inline">schema.sql</code> (tablas + 5 productos de prueba), migraciones y seeds.</td></tr>

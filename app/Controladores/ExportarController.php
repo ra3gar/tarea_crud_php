@@ -1,13 +1,12 @@
 <?php
 // =====================================================================
-//  app/Modules/Exportar/ExportarController.php — Punto de entrada del módulo
+//  app/Controladores/ExportarController.php — Punto de entrada de exportación
 //
-//  Ubicación en la arquitectura por módulos:
-//    app/Modules/Exportar/
-//      ExportarController.php <- este archivo (controlador)
-//      PdfExporter.php        <- servicio que genera el PDF
-//      ExcelExporter.php      <- servicio que genera el .xlsx
-//      Views/                 <- plantillas HTML para los PDFs
+//  Ubicación en la arquitectura MVC clásica:
+//    app/Controladores/ExportarController.php  <- este archivo
+//    app/Servicios/PdfExporter.php             <- servicio que genera el PDF
+//    app/Servicios/ExcelExporter.php           <- servicio que genera el .xlsx
+//    app/Vistas/exportar/                      <- plantillas HTML para los PDFs
 //
 //  Qué hace:
 //    Recibe las peticiones de exportación (PDF o Excel), consulta los

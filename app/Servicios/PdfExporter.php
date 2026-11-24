@@ -1,13 +1,12 @@
 <?php
 // =====================================================================
-//  app/Modules/Exportar/PdfExporter.php — Generador de archivos PDF
+//  app/Servicios/PdfExporter.php — Generador de archivos PDF
 //
-//  Ubicación en la arquitectura por módulos:
-//    app/Modules/Exportar/
-//      PdfExporter.php        <- este archivo (servicio PDF)
-//      ExcelExporter.php      <- servicio Excel
-//      ExportarController.php <- controlador del módulo
-//      Views/                 <- plantillas HTML que se renderizan a PDF
+//  Ubicación en la arquitectura MVC clásica:
+//    app/Servicios/PdfExporter.php             <- este archivo
+//    app/Servicios/ExcelExporter.php           <- servicio Excel
+//    app/Controladores/ExportarController.php  <- controlador
+//    app/Vistas/exportar/                      <- plantillas HTML que se renderizan a PDF
 //
 //  Qué hace:
 //    Envuelve la biblioteca Dompdf para convertir una plantilla HTML
@@ -54,7 +53,7 @@ class PdfExporter
      *
      * @param string               $plantilla Nombre de la vista sin extensión
      *                                        (ej. 'pdf_productos'). Debe existir
-     *                                        en app/Modules/Exportar/Views/.
+     *                                        en app/Vistas/exportar/.
      * @param array<string, mixed> $datos     Variables que necesita la plantilla
      *                                        (ej. ['productos' => [...]]).
      * @param string               $nombreArchivo Nombre del .pdf que descarga el usuario.
@@ -68,7 +67,7 @@ class PdfExporter
         extract($datos, EXTR_SKIP);
 
         // La vista está en el mismo módulo, una subcarpeta más abajo.
-        // __DIR__ apunta a app/Modules/Exportar/, así la ruta es siempre correcta
+        // dirname(__DIR__) apunta a app/, así la ruta es siempre correcta
         // sin importar desde dónde se llame al método.
         $rutaVista = dirname(__DIR__) . '/Vistas/exportar/' . $plantilla . '.php';
 

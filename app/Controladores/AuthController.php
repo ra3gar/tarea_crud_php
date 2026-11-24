@@ -1,15 +1,14 @@
 <?php
 // =====================================================================
-//  app/Modules/Auth/AuthController.php — Entrar, registrarse, recuperar, salir.
+//  app/Controladores/AuthController.php — Entrar, registrarse, recuperar, salir.
 //
-//  Ubicacion en la arquitectura por modulos:
-//    app/Modules/Auth/
-//      AuthController.php  <- este archivo
-//      Usuario.php         <- modelo del usuario
-//      Views/
-//        login.php         <- formulario de inicio de sesion
-//        registro.php      <- formulario de alta de cuenta
-//        recuperar.php     <- recuperacion de contrasena en dos pasos
+//  Ubicacion en la arquitectura MVC clasica:
+//    app/Controladores/AuthController.php  <- este archivo
+//    app/Modelos/Usuario.php               <- modelo del usuario
+//    app/Vistas/auth/
+//      login.php         <- formulario de inicio de sesion
+//      registro.php      <- formulario de alta de cuenta
+//      recuperar.php     <- recuperacion de contrasena en dos pasos
 //
 //  Que hace este controlador:
 //    - Muestra y procesa el formulario de login

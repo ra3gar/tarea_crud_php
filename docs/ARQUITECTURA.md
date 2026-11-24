@@ -26,11 +26,11 @@ app/Router.php            ENRUTADOR
     |   busca la ruta que coincide
     |   aplica el permiso declarado (sesion / admin)
     v
-app/Controllers/...       CONTROLADOR
+app/Controladores/...     CONTROLADOR
     |   lee $_POST / $_GET, valida
     |   pide datos al modelo
     v
-app/Models/...            MODELO  ---- PDO ----> MySQL
+app/Modelos/...           MODELO  ---- PDO ----> MySQL
     |   devuelve arreglos
     v
 vista('productos/index')  VISTA
@@ -44,12 +44,12 @@ HTML al NAVEGADOR
 | Componente | Responsabilidad | Lo que NO hace |
 |---|---|---|
 | `public/index.php` | Arrancar sesion, cargar ayudas, verificar CSRF, despachar | No tiene logica de negocio |
-| `app/autoload.php` | Traducir `App\Models\Producto` a `app/Models/Producto.php` | No carga clases ajenas al namespace `App\` |
+| `app/autoload.php` | Traducir `App\Modelos\Producto` a `app/Modelos/Producto.php` | No carga clases ajenas al namespace `App\` |
 | `app/funciones.php` | Enlaces, escape, CSRF, permisos, conexion, `vista()`, `redirigir()` | No consulta la base ni arma HTML |
 | `app/Router.php` | Guardar la tabla de rutas y elegir el controlador | No valida formularios ni toca la base |
-| `app/Controllers/` | Recibir la peticion, validar, coordinar, elegir vista | No escribe SQL ni HTML |
-| `app/Models/` | Todas las consultas SQL con PDO preparado | No imprime nada |
-| `app/Views/` | Mostrar informacion | No consulta la base |
+| `app/Controladores/` | Recibir la peticion, validar, coordinar, elegir vista | No escribe SQL ni HTML |
+| `app/Modelos/` | Todas las consultas SQL con PDO preparado | No imprime nada |
+| `app/Vistas/` | Mostrar informacion | No consulta la base |
 | `config/config.php` | Decir de donde salen las credenciales | No contiene secretos |
 | `routes/web.php` | Declarar direcciones y permisos | No ejecuta nada |
 

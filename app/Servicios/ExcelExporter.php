@@ -1,13 +1,12 @@
 <?php
 // =====================================================================
-//  app/Modules/Exportar/ExcelExporter.php — Generador de archivos Excel
+//  app/Servicios/ExcelExporter.php — Generador de archivos Excel
 //
-//  Ubicación en la arquitectura por módulos:
-//    app/Modules/Exportar/
-//      ExcelExporter.php      <- este archivo (servicio Excel)
-//      PdfExporter.php        <- servicio PDF
-//      ExportarController.php <- controlador del módulo
-//      Views/                 <- plantillas HTML (solo para PDF)
+//  Ubicación en la arquitectura MVC clásica:
+//    app/Servicios/ExcelExporter.php           <- este archivo
+//    app/Servicios/PdfExporter.php             <- servicio PDF
+//    app/Controladores/ExportarController.php  <- controlador
+//    app/Vistas/exportar/                      <- plantillas HTML (solo para PDF)
 //
 //  Qué hace:
 //    Envuelve la biblioteca PhpSpreadsheet para construir un archivo .xlsx

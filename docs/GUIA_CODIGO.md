@@ -52,7 +52,7 @@ vista('auth/registro', ['nombre' => '', 'apellido' => '', ...]);
 
 haria que `extract()` **pisara el propio parametro** con el valor de
 `$datos['nombre']` (cadena vacia), y el `require` siguiente intentaria abrir
-`app/Views/.php`. Eso es exactamente lo que rompia `GET /registro` con un error
+`app/Vistas/.php`. Eso es exactamente lo que rompia `GET /registro` con un error
 fatal: el codigo que llamaba era correcto, pero la variable se perdia dentro de
 la funcion.
 

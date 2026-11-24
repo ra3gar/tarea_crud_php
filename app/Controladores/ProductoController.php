@@ -1,12 +1,11 @@
 <?php
 // =====================================================================
-//  app/Modules/Productos/ProductoController.php — Orquesta el modulo de productos.
+//  app/Controladores/ProductoController.php — Orquesta el modulo de productos.
 //
-//  Ubicacion en la arquitectura por modulos:
-//    app/Modules/Productos/
-//      ProductoController.php  <- este archivo
-//      Producto.php            <- modelo
-//      Views/                  <- vistas
+//  Ubicacion en la arquitectura MVC clasica:
+//    app/Controladores/ProductoController.php  <- este archivo
+//    app/Modelos/Producto.php                  <- modelo
+//    app/Vistas/productos/                     <- vistas
 //
 //  Que hace este controlador:
 //    Lee la peticion HTTP, le pide datos al modelo Producto (y a Categoria

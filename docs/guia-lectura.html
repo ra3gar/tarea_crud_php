@@ -158,7 +158,7 @@
 
   <h3>El CSS: tres archivos y el orden en que se cargan</h3>
   <p>Todo el estilo entra por <strong>tres hojas de CSS</strong>, enlazadas en el encabezado de
-     las páginas — el archivo real es <code class="inline">app/Views/layouts/header.php</code> — y
+     las páginas — el archivo real es <code class="inline">app/Vistas/layouts/header.php</code> — y
      se cargan <strong>en este orden</strong>, que es justamente lo que hace que todo funcione:</p>
   <ol>
     <li><strong>Bootstrap 5</strong> (framework de CSS) — <code class="inline">public/assets/css/bootstrap.min.css</code>, servido <strong>localmente</strong> (sin CDN, sin depender de internet). Aporta la base ya hecha: botones, tarjetas, alertas y la grilla (las clases que vas a ver en las vistas son <code class="inline">btn</code>, <code class="inline">card</code>, <code class="inline">alert</code> y <code class="inline">row</code>).</li>
@@ -261,7 +261,7 @@
     <path d="M677,158 l5,5 10,-11" fill="none" stroke="#157f52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <p>Dónde se usa: la función <code class="inline">db()</code> de <code class="inline">app/funciones.php</code> abre la conexión; todos los
-     métodos en <code class="inline">app/Models/</code> usan PDO para hacer sus consultas.</p>
+     métodos en <code class="inline">app/Modelos/</code> usan PDO para hacer sus consultas.</p>
 
   <h3>La API de contraseñas: guardar sin ver</h3>
   <p>Guardar una contraseña en texto plano en la base de datos es peligroso: si alguien accede a
@@ -275,7 +275,7 @@
         lo que escribió contra la huella guardada. No "descifra" nada: vuelve a calcular la huella
         de lo escrito y comprueba si coincide. Si sí → acceso; si no → rechaza.</li>
   </ul>
-  <p>Dónde se usa: <code class="inline">app/Controllers/AuthController.php</code> al registrar
+  <p>Dónde se usa: <code class="inline">app/Controladores/AuthController.php</code> al registrar
      (hash) y al hacer login (verify). La respuesta de seguridad de recuperación de contraseña
      se guarda con el mismo mecanismo.</p>
 
@@ -324,7 +324,7 @@
         usarla.</li>
   </ul>
   <p>Dónde se usa: <code class="inline">proteger_sesion()</code>, en <code class="inline">app/funciones.php</code>,
-     revisa la sesión en cada petición protegida; <code class="inline">app/Controllers/AuthController.php</code> la crea
+     revisa la sesión en cada petición protegida; <code class="inline">app/Controladores/AuthController.php</code> la crea
      al entrar (regenerando el id, para evitar fijación de sesión) y la destruye al salir.</p>
 </section>
 
@@ -421,7 +421,7 @@
   <p>Son tres archivos sueltos en la raíz de <code class="inline">app/</code>. No hay clase base ni
      carpeta <code class="inline">Core/</code>: cada pieza es lo más simple que resuelve su problema.</p>
   <ul>
-    <li><code class="inline">app/autoload.php</code> — registra el autoloader con una sola regla: el namespace <code class="inline">App\</code> corresponde a la carpeta <code class="inline">app/</code>, así que <code class="inline">App\Models\Producto</code> se busca en <code class="inline">app/Models/Producto.php</code>. Sin Composer y sin configuración.</li>
+    <li><code class="inline">app/autoload.php</code> — registra el autoloader con una sola regla: el namespace <code class="inline">App\</code> corresponde a la carpeta <code class="inline">app/</code>, así que <code class="inline">App\Modelos\Producto</code> se busca en <code class="inline">app/Modelos/Producto.php</code>. Sin Composer y sin configuración.</li>
     <li><code class="inline">app/Router.php</code> — la única clase del núcleo, porque es la única pieza que necesita <strong>guardar estado</strong>: la tabla de rutas. <code class="inline">agregar()</code> la llena y <code class="inline">despachar()</code> la consulta, compara la dirección pedida pedazo por pedazo, aplica el permiso declarado y recién entonces instancia el controlador.</li>
     <li><code class="inline">app/funciones.php</code> — doce funciones sueltas que usa todo el proyecto, en cuatro grupos:
       <ul>
@@ -441,7 +441,7 @@
     <span class="note-t">Por qué <code class="inline">vista()</code> tiene un parámetro con guiones bajos</span>
     <p>La firma real es <code class="inline">vista(string $__viewPath, array $datos = [])</code>, y por
        dentro hace dos cosas: <code class="inline">extract($datos)</code> y después
-       <code class="inline">require __DIR__ . '/Views/' . $__viewPath . '.php'</code>.</p>
+       <code class="inline">require dirname(__DIR__) . '/Vistas/' . strtolower($__viewPath) . '.php'</code>.</p>
     <p><code class="inline">extract()</code> convierte las claves del arreglo en variables: si le pasás
        <code class="inline">['productos' =&gt; [...]]</code>, dentro de la vista existe
        <code class="inline">$productos</code>. Eso es justamente lo que hace útil a la función, pero
@@ -450,26 +450,26 @@
        pasaba <code class="inline">['nombre' =&gt; '', ...]</code> para precargar el formulario. El
        <code class="inline">extract()</code> dejaba <code class="inline">$nombre</code> en cadena vacía,
        y el <code class="inline">require</code> terminaba buscando
-       <code class="inline">app/Views/.php</code>: error fatal en <code class="inline">/registro</code>.
+       <code class="inline">app/Vistas/.php</code>: error fatal en <code class="inline">/registro</code>.
        Con <code class="inline">$__viewPath</code> la colisión es imposible, porque ninguna vista recibe
        un dato que se llame así.</p>
   </div>
 
-  <h3>Los controladores (<code class="inline">app/Controllers/</code>)</h3>
+  <h3>Los controladores (<code class="inline">app/Controladores/</code>)</h3>
   <p>Cada controlador recibe una petición del Router, le pide datos al modelo y elige la vista a mostrar.</p>
   <ul>
-    <li><code class="inline">app/Controllers/ProductoController.php</code> — gestiona el CRUD completo de productos: listar con filtro/búsqueda, mostrar formulario de alta (<code class="inline">crear</code>), procesar el formulario (<code class="inline">guardar</code>), editar, actualizar y eliminar.</li>
-    <li><code class="inline">app/Controllers/CategoriaController.php</code> — lista las categorías, agrega una nueva (si no existe ya) y borra una <strong>solo si ningún producto la está usando</strong>. Lo alcanza cualquier usuario con sesión iniciada, no hace falta ser admin.</li>
-    <li><code class="inline">app/Controllers/UsuarioController.php</code> — gestiona el CRUD de usuarios (solo admin): listar, crear, editar, resetear la contraseña y eliminar. Tiene dos candados de negocio: no podés eliminar tu propia cuenta, y no podés quitar ni borrar al último administrador que quede.</li>
-    <li><code class="inline">app/Controllers/AuthController.php</code> — maneja el ciclo de autenticación: mostrar y procesar el formulario de login, el registro de nuevos usuarios, la recuperación de contraseña por pregunta de seguridad y el logout.</li>
+    <li><code class="inline">app/Controladores/ProductoController.php</code> — gestiona el CRUD completo de productos: listar con filtro/búsqueda, mostrar formulario de alta (<code class="inline">crear</code>), procesar el formulario (<code class="inline">guardar</code>), editar, actualizar y eliminar.</li>
+    <li><code class="inline">app/Controladores/CategoriaController.php</code> — lista las categorías, agrega una nueva (si no existe ya) y borra una <strong>solo si ningún producto la está usando</strong>. Lo alcanza cualquier usuario con sesión iniciada, no hace falta ser admin.</li>
+    <li><code class="inline">app/Controladores/UsuarioController.php</code> — gestiona el CRUD de usuarios (solo admin): listar, crear, editar, resetear la contraseña y eliminar. Tiene dos candados de negocio: no podés eliminar tu propia cuenta, y no podés quitar ni borrar al último administrador que quede.</li>
+    <li><code class="inline">app/Controladores/AuthController.php</code> — maneja el ciclo de autenticación: mostrar y procesar el formulario de login, el registro de nuevos usuarios, la recuperación de contraseña por pregunta de seguridad y el logout.</li>
   </ul>
 
-  <h3>Los modelos (<code class="inline">app/Models/</code>)</h3>
+  <h3>Los modelos (<code class="inline">app/Modelos/</code>)</h3>
   <p>Solo hablan con la base de datos. Todas las consultas usan <em>prepared statements</em>; los modelos no saben nada de HTTP ni de HTML.</p>
   <ul>
-    <li><code class="inline">app/Models/Producto.php</code> — consultas de productos: listar con filtros opcionales, obtener uno por id, crear, actualizar, eliminar y validar los datos del formulario. También calcula los números del tablero: <code class="inline">metricas()</code> (los cuatro indicadores), <code class="inline">valorPorCategoria()</code> (alimenta el gráfico de barras) y <code class="inline">stockPorCategoria()</code> (alimenta el de pastel). Un método privado <code class="inline">filtro()</code> arma el <code class="inline">WHERE</code> una sola vez y lo reusan todas.</li>
-    <li><code class="inline">app/Models/Categoria.php</code> — listar todas, devolver solo los nombres para los desplegables, comprobar si una ya existe, crear, eliminar y <code class="inline">enUso()</code>, que cuenta cuántos productos usan una categoría para no borrar una que esté en uso.</li>
-    <li><code class="inline">app/Models/Usuario.php</code> — buscar por login, comprobar si existe, traer la pregunta de seguridad para la recuperación, cambiar la contraseña, y el CRUD del panel: listar, buscar por id, crear, actualizar, eliminar. Además <code class="inline">contarAdmins()</code> y <code class="inline">contarTodos()</code>, que sostienen el candado del último administrador y la regla de que el primer usuario del sistema nace admin.</li>
+    <li><code class="inline">app/Modelos/Producto.php</code> — consultas de productos: listar con filtros opcionales, obtener uno por id, crear, actualizar, eliminar y validar los datos del formulario. También calcula los números del tablero: <code class="inline">metricas()</code> (los cuatro indicadores), <code class="inline">valorPorCategoria()</code> (alimenta el gráfico de barras) y <code class="inline">stockPorCategoria()</code> (alimenta el de pastel). Un método privado <code class="inline">filtro()</code> arma el <code class="inline">WHERE</code> una sola vez y lo reusan todas.</li>
+    <li><code class="inline">app/Modelos/Categoria.php</code> — listar todas, devolver solo los nombres para los desplegables, comprobar si una ya existe, crear, eliminar y <code class="inline">enUso()</code>, que cuenta cuántos productos usan una categoría para no borrar una que esté en uso.</li>
+    <li><code class="inline">app/Modelos/Usuario.php</code> — buscar por login, comprobar si existe, traer la pregunta de seguridad para la recuperación, cambiar la contraseña, y el CRUD del panel: listar, buscar por id, crear, actualizar, eliminar. Además <code class="inline">contarAdmins()</code> y <code class="inline">contarTodos()</code>, que sostienen el candado del último administrador y la regla de que el primer usuario del sistema nace admin.</li>
   </ul>
 
   <h3>Los permisos (dos funciones, no middlewares)</h3>
@@ -498,23 +498,23 @@
        entrar, agregar y borrar categorías. Lo único reservado al administrador es la gestión de usuarios.</p>
   </div>
 
-  <h3>Las vistas (<code class="inline">app/Views/</code>)</h3>
+  <h3>Las vistas (<code class="inline">app/Vistas/</code>)</h3>
   <p>Solo arman el HTML que se ve. No consultan la base de datos ni toman decisiones (nada de <em>lógica de negocio</em>): reciben del controlador las <strong>variables</strong> con los datos ya listos —por ejemplo, la lista de productos a mostrar— y se limitan a pintarlos.</p>
   <ul>
-    <li><code class="inline">app/Views/layouts/header.php</code> — encabezado compartido: <code class="inline">&lt;head&gt;</code>, las tres hojas de CSS y la barra de navegación con el menú.</li>
-    <li><code class="inline">app/Views/layouts/footer.php</code> — cierre de página: etiquetas <code class="inline">&lt;/body&gt;&lt;/html&gt;</code>. Los avisos de un solo uso NO se muestran acá: los imprime <code class="inline">header.php</code>, que lee <code class="inline">$_SESSION['mensaje']</code> y lo borra en el acto para que no vuelva a aparecer.</li>
-    <li><code class="inline">app/Views/productos/index.php</code> — tablero con gráficos + tabla de productos con búsqueda y filtro por categoría.</li>
-    <li><code class="inline">app/Views/productos/crear.php</code> — formulario de alta de producto. Incluye <code class="inline">_campos.php</code>.</li>
-    <li><code class="inline">app/Views/productos/editar.php</code> — formulario de edición. También incluye <code class="inline">_campos.php</code> con los valores ya cargados.</li>
-    <li><code class="inline">app/Views/productos/eliminar.php</code> — pantalla de confirmación antes de borrar un producto.</li>
-    <li><code class="inline">app/Views/productos/_campos.php</code> — fragmento reutilizable con los campos del formulario de producto (nombre, descripción, precio, stock, categoría). Lo incluyen tanto <code class="inline">crear.php</code> como <code class="inline">editar.php</code> para no duplicar el HTML.</li>
-    <li><code class="inline">app/Views/categorias/index.php</code> — lista de categorías con el formulario de alta y el botón de borrado. Accesible para cualquier usuario con sesión.</li>
-    <li><code class="inline">app/Views/usuarios/index.php</code> — lista de usuarios con sus roles (solo admin).</li>
-    <li><code class="inline">app/Views/usuarios/crear.php</code> — formulario para que un admin cree un nuevo usuario.</li>
-    <li><code class="inline">app/Views/usuarios/editar.php</code> — formulario para editar datos y rol de un usuario existente.</li>
-    <li><code class="inline">app/Views/auth/login.php</code> — formulario de inicio de sesión.</li>
-    <li><code class="inline">app/Views/auth/registro.php</code> — formulario de registro de cuenta nueva.</li>
-    <li><code class="inline">app/Views/auth/recuperar.php</code> — formulario de recuperación de contraseña por pregunta de seguridad.</li>
+    <li><code class="inline">app/Vistas/layouts/header.php</code> — encabezado compartido: <code class="inline">&lt;head&gt;</code>, las tres hojas de CSS y la barra de navegación con el menú.</li>
+    <li><code class="inline">app/Vistas/layouts/footer.php</code> — cierre de página: etiquetas <code class="inline">&lt;/body&gt;&lt;/html&gt;</code>. Los avisos de un solo uso NO se muestran acá: los imprime <code class="inline">header.php</code>, que lee <code class="inline">$_SESSION['mensaje']</code> y lo borra en el acto para que no vuelva a aparecer.</li>
+    <li><code class="inline">app/Vistas/productos/index.php</code> — tablero con gráficos + tabla de productos con búsqueda y filtro por categoría.</li>
+    <li><code class="inline">app/Vistas/productos/crear.php</code> — formulario de alta de producto. Incluye <code class="inline">_campos.php</code>.</li>
+    <li><code class="inline">app/Vistas/productos/editar.php</code> — formulario de edición. También incluye <code class="inline">_campos.php</code> con los valores ya cargados.</li>
+    <li><code class="inline">app/Vistas/productos/eliminar.php</code> — pantalla de confirmación antes de borrar un producto.</li>
+    <li><code class="inline">app/Vistas/productos/_campos.php</code> — fragmento reutilizable con los campos del formulario de producto (nombre, descripción, precio, stock, categoría). Lo incluyen tanto <code class="inline">crear.php</code> como <code class="inline">editar.php</code> para no duplicar el HTML.</li>
+    <li><code class="inline">app/Vistas/categorias/index.php</code> — lista de categorías con el formulario de alta y el botón de borrado. Accesible para cualquier usuario con sesión.</li>
+    <li><code class="inline">app/Vistas/usuarios/index.php</code> — lista de usuarios con sus roles (solo admin).</li>
+    <li><code class="inline">app/Vistas/usuarios/crear.php</code> — formulario para que un admin cree un nuevo usuario.</li>
+    <li><code class="inline">app/Vistas/usuarios/editar.php</code> — formulario para editar datos y rol de un usuario existente.</li>
+    <li><code class="inline">app/Vistas/auth/login.php</code> — formulario de inicio de sesión.</li>
+    <li><code class="inline">app/Vistas/auth/registro.php</code> — formulario de registro de cuenta nueva.</li>
+    <li><code class="inline">app/Vistas/auth/recuperar.php</code> — formulario de recuperación de contraseña por pregunta de seguridad.</li>
   </ul>
 
   <h3>Las rutas (<code class="inline">routes/web.php</code>)</h3>
@@ -700,7 +700,7 @@
   <p class="lead">Las seis reglas que el proyecto no rompe nunca, cada una con el archivo y el bloque
      que la implementa.</p>
   <ol>
-    <li><strong>Sin inyección SQL:</strong> todas las consultas usan <em>prepared statements</em> en los modelos (<code class="inline">app/Models/</code>), con <code class="inline">EMULATE_PREPARES</code> desactivado para que las prepare el servidor MySQL de verdad.</li>
+    <li><strong>Sin inyección SQL:</strong> todas las consultas usan <em>prepared statements</em> en los modelos (<code class="inline">app/Modelos/</code>), con <code class="inline">EMULATE_PREPARES</code> desactivado para que las prepare el servidor MySQL de verdad.</li>
     <li><strong>Control de sesión:</strong> <code class="inline">proteger_sesion()</code> protege las rutas privadas según lo declarado en <code class="inline">routes/web.php</code>; el login guarda el usuario en la sesión y regenera el id.</li>
     <li><strong>Sin XSS:</strong> todo lo que se muestra pasa por <code class="inline">e()</code> en las vistas.</li>
     <li><strong>Sin CSRF:</strong> <code class="inline">verificar_csrf()</code> corre en <code class="inline">public/index.php</code> para <strong>todos</strong> los POST, en un solo lugar. Ningún formulario puede quedar sin proteger por olvido, y la comparación usa <code class="inline">hash_equals()</code> (tiempo constante).</li>

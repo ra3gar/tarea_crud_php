@@ -23,12 +23,13 @@
  *   {id} en la URL acepta solo números; el Router lo valida y lo
  *   pasa como primer argumento al método del controlador.
  *
- * Estructura de módulos (feature-based):
- *   Los controladores ya no están en app/Controllers/ sino en:
- *     app/Modules/Auth/AuthController.php        -> App\Modules\Auth\AuthController
- *     app/Modules/Productos/ProductoController.php -> App\Modules\Productos\ProductoController
- *     app/Modules/Categorias/CategoriaController.php -> App\Modules\Categorias\CategoriaController
- *     app/Modules/Usuarios/UsuarioController.php  -> App\Modules\Usuarios\UsuarioController
+ * Estructura MVC clásica por capas:
+ *   Los controladores están en app/Controladores/:
+ *     app/Controladores/AuthController.php        -> App\Controladores\AuthController
+ *     app/Controladores/ProductoController.php    -> App\Controladores\ProductoController
+ *     app/Controladores/CategoriaController.php   -> App\Controladores\CategoriaController
+ *     app/Controladores/UsuarioController.php     -> App\Controladores\UsuarioController
+ *     app/Controladores/ExportarController.php    -> App\Controladores\ExportarController
  */
 
 // Importar los controladores de cada módulo con sus namespaces correctos
@@ -137,8 +138,8 @@ return function (App\Core\Router $router): void {
     // EXPORTACIÓN — PDF y Excel (requieren sesión; usuarios solo admin)
     // ----------------------------------------------------------------
     // Estas rutas no modifican datos: solo leen y generan un archivo.
-    // Se separan en su propio módulo (app/Modules/Exportar/) para no
-    // mezclar la lógica de exportación con los módulos de negocio.
+    // Se separan en su propio controlador (app/Controladores/ExportarController)
+    // con servicios auxiliares en app/Servicios/ (PdfExporter, ExcelExporter).
 
     // --- Productos ---
     $router->agregar('GET', '/exportar/productos/pdf',   [ExportarController::class, 'productosPdf'],   'sesion');
