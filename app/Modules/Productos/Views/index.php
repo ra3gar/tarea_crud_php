@@ -104,8 +104,25 @@ $gradientePastel = implode(', ', $paradasPastel);
     <div class="page-head-actions no-print">
       <!-- Botón para agregar un producto nuevo -->
       <a href="<?= url('productos/crear') ?>" class="btn btn-primary">+ Nuevo producto</a>
-      <!-- Botón de impresión: llama a window.print() del navegador.
-           La clase no-print asegura que el botón no aparezca al imprimir. -->
+
+      <!-- ── Botones de exportación ── -->
+      <!-- PDF: descarga un informe del inventario en formato PDF.
+           Usa Dompdf en el servidor; no depende del diálogo de impresión. -->
+      <a href="<?= url('exportar/productos/pdf') ?>"
+         class="btn btn-outline-danger no-print"
+         title="Descargar inventario como PDF">
+        📄 PDF
+      </a>
+
+      <!-- Excel: descarga el inventario como archivo .xlsx.
+           Usa PhpSpreadsheet; se puede abrir en Excel, LibreOffice, etc. -->
+      <a href="<?= url('exportar/productos/excel') ?>"
+         class="btn btn-outline-success no-print"
+         title="Descargar inventario como Excel (.xlsx)">
+        📊 Excel
+      </a>
+
+      <!-- Impresión rápida en el navegador (ventana de impresión del SO) -->
       <button onclick="window.print()" class="btn btn-outline-secondary no-print" title="Imprimir listado">
         🖨️ Imprimir
       </button>

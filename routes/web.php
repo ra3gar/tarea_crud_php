@@ -36,6 +36,7 @@ use App\Modules\Auth\AuthController;
 use App\Modules\Productos\ProductoController;
 use App\Modules\Categorias\CategoriaController;
 use App\Modules\Usuarios\UsuarioController;
+use App\Modules\Exportar\ExportarController;
 
 /**
  * Función anónima que recibe el Router ya instanciado y le registra
@@ -131,4 +132,23 @@ return function (App\Core\Router $router): void {
     // Eliminar usuario — con bloqueos: no puede borrarse a sí mismo
     // ni eliminar al último administrador del sistema
     $router->agregar('POST', '/usuarios/{id}/eliminar', [UsuarioController::class, 'eliminar'],         'admin');
+
+    // ----------------------------------------------------------------
+    // EXPORTACIÓN — PDF y Excel (requieren sesión; usuarios solo admin)
+    // ----------------------------------------------------------------
+    // Estas rutas no modifican datos: solo leen y generan un archivo.
+    // Se separan en su propio módulo (app/Modules/Exportar/) para no
+    // mezclar la lógica de exportación con los módulos de negocio.
+
+    // --- Productos ---
+    $router->agregar('GET', '/exportar/productos/pdf',   [ExportarController::class, 'productosPdf'],   'sesion');
+    $router->agregar('GET', '/exportar/productos/excel', [ExportarController::class, 'productosExcel'], 'sesion');
+
+    // --- Categorías ---
+    $router->agregar('GET', '/exportar/categorias/pdf',   [ExportarController::class, 'categoriasPdf'],   'sesion');
+    $router->agregar('GET', '/exportar/categorias/excel', [ExportarController::class, 'categoriasExcel'], 'sesion');
+
+    // --- Usuarios (solo admin) ---
+    $router->agregar('GET', '/exportar/usuarios/pdf',   [ExportarController::class, 'usuariosPdf'],   'admin');
+    $router->agregar('GET', '/exportar/usuarios/excel', [ExportarController::class, 'usuariosExcel'], 'admin');
 };

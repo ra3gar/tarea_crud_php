@@ -25,10 +25,26 @@ require dirname(__DIR__, 2) . '/Views/layouts/header.php';
        ============================================================ -->
   <div class="page-head">
     <h1>Categorías</h1>
-    <!-- Botón de impresión: oculto en @media print (clase no-print) -->
-    <button onclick="window.print()" class="btn btn-outline-secondary no-print" title="Imprimir listado">
-      🖨️ Imprimir
-    </button>
+    <div class="page-head-actions no-print">
+      <!-- Descargar listado de categorías en PDF -->
+      <a href="<?= url('exportar/categorias/pdf') ?>"
+         class="btn btn-outline-danger no-print"
+         title="Descargar categorías como PDF">
+        📄 PDF
+      </a>
+
+      <!-- Descargar listado de categorías en Excel -->
+      <a href="<?= url('exportar/categorias/excel') ?>"
+         class="btn btn-outline-success no-print"
+         title="Descargar categorías como Excel (.xlsx)">
+        📊 Excel
+      </a>
+
+      <!-- Impresión rápida del navegador -->
+      <button onclick="window.print()" class="btn btn-outline-secondary no-print" title="Imprimir listado">
+        🖨️ Imprimir
+      </button>
+    </div>
   </div>
 
   <!-- ============================================================

@@ -27,10 +27,20 @@
 //    Aquí viven los mensajes flash, el usuario logueado y el token CSRF.
 session_start();
 
-// 2. El autoloader mapea namespaces a rutas de archivo.
-//    Ejemplo: App\Modules\Productos\ProductoController
-//          -> app/Modules/Productos/ProductoController.php
-//    Ubicación nueva: app/Core/autoload.php (antes: app/autoload.php)
+// 2a. Autoloader de Composer — carga las librerías externas (Dompdf, PhpSpreadsheet, etc.)
+//     El archivo vendor/autoload.php es generado automáticamente por Composer
+//     cuando se ejecuta "composer install" dentro del contenedor Docker.
+//     Si el archivo no existe el sistema funciona sin las librerías de exportación,
+//     pero las rutas /exportar/* fallarán con un error de clase no encontrada.
+$vendorAutoload = __DIR__ . '/../vendor/autoload.php';
+if (is_file($vendorAutoload)) {
+    require $vendorAutoload;
+}
+
+// 2b. Autoloader propio del proyecto — mapea namespaces App\ a rutas de archivo.
+//     Ejemplo: App\Modules\Productos\ProductoController
+//           -> app/Modules/Productos/ProductoController.php
+//     Ubicación nueva: app/Core/autoload.php (antes: app/autoload.php)
 require __DIR__ . '/../app/Core/autoload.php';
 
 // 3. Funciones de ayuda globales reutilizadas en controladores y vistas:

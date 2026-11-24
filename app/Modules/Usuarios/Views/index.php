@@ -30,7 +30,22 @@ require dirname(__DIR__, 2) . '/Views/layouts/header.php';
     <div class="page-head-actions no-print">
       <!-- Botón para agregar un usuario nuevo -->
       <a href="<?= url('usuarios/crear') ?>" class="btn btn-primary">+ Nuevo usuario</a>
-      <!-- Botón de impresión: oculto en @media print (clase no-print) -->
+
+      <!-- Descargar listado de usuarios en PDF (solo admin, igual que esta vista) -->
+      <a href="<?= url('exportar/usuarios/pdf') ?>"
+         class="btn btn-outline-danger no-print"
+         title="Descargar usuarios como PDF">
+        📄 PDF
+      </a>
+
+      <!-- Descargar listado de usuarios en Excel -->
+      <a href="<?= url('exportar/usuarios/excel') ?>"
+         class="btn btn-outline-success no-print"
+         title="Descargar usuarios como Excel (.xlsx)">
+        📊 Excel
+      </a>
+
+      <!-- Impresión rápida del navegador -->
       <button onclick="window.print()" class="btn btn-outline-secondary no-print" title="Imprimir listado">
         🖨️ Imprimir
       </button>

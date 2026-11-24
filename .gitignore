@@ -7,3 +7,8 @@ DOCUMENTACION_MD/
 
 # Archivos del sistema operativo
 .DS_Store
+
+# Dependencias de Composer: se instalan dentro del contenedor con "composer install"
+# No se suben al repositorio; composer.json define qué instalar.
+vendor/
+composer.lock
