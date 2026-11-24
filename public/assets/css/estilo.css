@@ -206,3 +206,69 @@ a:focus-visible,.btn:focus-visible,.form-control:focus-visible{ outline:2px soli
 .aviso{ max-width:1060px; margin:12px auto 0; padding:10px 18px; border-radius:var(--radius); font-size:.92rem; }
 .aviso-ok{ background:var(--ok-bg); color:var(--ok); border:1px solid #bfe3cf; }
 .aviso-error{ background:var(--bad-bg); color:var(--bad); border:1px solid #f0c4c4; }
+
+/* ================================================================
+   IMPRESIÓN (@media print)
+   ================================================================
+   Cuando el usuario hace clic en "🖨️ Imprimir" (o usa Ctrl+P),
+   el navegador activa este bloque de reglas en lugar de las normales.
+
+   Objetivo: que la página quede como un informe limpio en papel,
+   sin los elementos de navegación, formularios y botones de acción
+   que solo tienen sentido en la pantalla.
+
+   Clase .no-print:
+     Cualquier elemento con esta clase desaparece al imprimir.
+     Se usa en:
+       - Barra de navegación superior (topbar)
+       - Botón de impresión en sí mismo (evitar que se imprima el
+         botón "Imprimir" en el informe)
+       - Formularios de filtro y búsqueda
+       - Columna de acciones en las tablas (Editar / Eliminar)
+       - Botones de crear, editar y cancelar
+   ================================================================ */
+@media print {
+
+    /* Ocultar todos los elementos marcados como no imprimibles */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Fondo blanco y texto negro: las impresoras de tinta ahorran
+       color y los fondos de colores suelen quedar mal en papel. */
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    /* El panel (tarjeta blanca con sombra) no necesita sombra ni
+       borde redondeado en papel; con fondo blanco queda limpio. */
+    .panel {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+
+    /* Los enlaces no deben mostrar la URL entre paréntesis al imprimir,
+       ya que en papel no son clicables y ensucian el informe. */
+    a[href]::after {
+        content: none !important;
+    }
+
+    /* Evitar que una fila de tabla quede partida entre dos páginas.
+       Mejora la legibilidad del informe impreso. */
+    tr {
+        page-break-inside: avoid;
+    }
+
+    /* Los encabezados de sección no deben quedar solos al pie de
+       una página con el contenido en la siguiente. */
+    h1, h2, h3, h4 {
+        page-break-after: avoid;
+    }
+
+    /* Márgenes de impresión: dejar margen suficiente para que el
+       contenido no quede pegado al borde del papel. */
+    @page {
+        margin: 1.5cm;
+    }
+}
